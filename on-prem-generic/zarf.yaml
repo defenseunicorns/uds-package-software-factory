@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
 kind: ZarfPackageConfig
 metadata:
-  name: on-prem-generic-swf
-  description: "UDS On Prem Generic Software Factory Package"
+  name: wip-on-prem-generic-swf
+  description: "Work In Progress UDS On Prem Generic Software Factory Package"
   version: "0.0.1"
   architecture: amd64
 components:

@@ -92,7 +92,7 @@ deploy/dubbd-kind: ## Deploy the kind flavor of DUBBD
 	cd ./build && ./zarf package deploy zarf-package-big-bang-distro-kind-amd64-$(DUBBD_KIND_VERSION).tar.zst --confirm
 
 deploy/software-factory: ## Deploy the software factory package
-	build/zarf package deploy build/zarf-package-on-prem-generic-swf-amd64-$(SWF_VERSION).tar.zst --confirm
+	build/zarf package deploy build/zarf-package-wip-on-prem-generic-swf-amd64-$(SWF_VERSION).tar.zst --confirm
 
 ########################################################################
 # Cluster Section
