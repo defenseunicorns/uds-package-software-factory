@@ -2,9 +2,7 @@
 # the build folder.
 ZARF_VERSION := v0.28.0
 
-SWF_VERSION := 0.1.0
-
-OCI_REGISTRY := oci://ghcr.io/defenseunicorns/packages/swf
+SWF_VERSION := 0.0.1
 
 DUBBD_KIND_VERSION := 2.2.0
 
