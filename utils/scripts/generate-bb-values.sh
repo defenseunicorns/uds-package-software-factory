@@ -2,7 +2,7 @@
 
 # Simple help message
 if [ "$1" == "-h" ] ||[ "$1" == "--help" ] || [ -z "$1" ] || [ -z "$2" ] || [ ! -z "$3" ]; then
-  echo "Usage: `basename $./` <path to values file> <name of app/bb package>"
+  echo "Usage: `basename $0` <path to values file> <name of app/bb package>"
   exit 0
 fi
 
