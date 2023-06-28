@@ -1,0 +1,9 @@
+addons:
+  gitlab:
+    enabled: true
+  gitlabRunner:
+    enabled: true
+  nexusRepositoryManager:
+    enabled: true
+  sonarqube:
+    enabled: true

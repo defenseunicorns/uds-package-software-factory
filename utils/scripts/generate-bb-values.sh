@@ -2,7 +2,7 @@
 
 # Simple help message
 if [ "$1" == "-h" ] ||[ "$1" == "--help" ] || [ -z "$1" ] || [ -z "$2" ] || [ ! -z "$3" ]; then
-  echo "Usage: `basename $0` <path to values file> <name of app/bb package>"
+  echo "Usage: `basename $./` <path to values file> <name of app/bb package>"
   exit 0
 fi
 
@@ -26,6 +26,9 @@ VALUES_URL_TMPL="https:\/\/raw.githubusercontent.com\/defenseunicorns\/uds-packa
 
 # Get the current bigbang version from the dubbd zarf.yaml
 BB_VERSION=$(echo "${DUBBD_ZARF_CONFIG}" | yq .package.create.set.bigbang_version)
+
+echo "DUBBD_VERSION: ${DUBBD_VERSION}"
+echo "BB_VERSION: ${BB_VERSION}"
 
 # Using the VALUES_URL_TMPL and the dubbd zarf.yaml get the list of values files and format them as arguments to `helm template`
 VALUES_ARGS=$(echo "${DUBBD_ZARF}" | yq '.components[] | select(.name == "bigbang") | .extensions.bigbang.valuesFiles[]' | xargs | sed "s/\.\.\/values\//-f ${VALUES_URL_TMPL}/g")

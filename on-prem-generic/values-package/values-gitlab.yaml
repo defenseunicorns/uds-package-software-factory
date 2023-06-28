@@ -11,10 +11,10 @@ istio:
   injection: enabled
   gitlab:
     gateways:
-    - istio-system/public
+    - istio-system/tenant
   registry:
     gateways:
-    - istio-system/public
+    - istio-system/tenant
 
 monitoring:
   enabled: true
@@ -22,7 +22,7 @@ monitoring:
 networkPolicies:
   enabled: true
   ingressLabels:
-    app: public-ingressgateway
+    app: null
     istio: null
   controlPlaneCidr: 0.0.0.0/0
 redis:
@@ -144,7 +144,7 @@ global:
   # added to help with Gitlab sub-chart configuration
   image:
     pullPolicy: IfNotPresent
-    
+
   istio:
     enabled: true
     injection: enabled
