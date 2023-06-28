@@ -64,7 +64,7 @@ build/zarf-init.sha256: | build/ ## Download the init package
 	echo "Creating shasum of the init package"
 	shasum -a 256 build/zarf-init-amd64-$(ZARF_VERSION).tar.zst | awk '{print $$1}' > build/zarf-init.sha256
 
-build/values-package | build/
+build/values-package: | build/
 	build/zarf package create values-package/ --skip-sbom --confirm --output-directory build
 
 build/software-factory: | build/ build/values-package
