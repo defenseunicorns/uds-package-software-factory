@@ -28,4 +28,5 @@ There should be good environment parity between the tests that are run locally a
 * It will be easy to run tests locally and in CI.
 * It will be easy for new team members to get started with running tests locally since the only local dependencies are `make` and `docker`.
 * We will have environment parity between tests that are run locally and those that are run in CI.
+* A large portion of the code that happens in CI will be portable across SCM+CI/CD tools. In other words with the approach defined above, with minimal glue the processes could "just work" with GitHub and GitLab.
 * The tests that are run in CI will likely be somewhat slower, since the Build Harness docker image is fairly large due to being a "general use" image that contains more tools than we really need for this particular project. 
