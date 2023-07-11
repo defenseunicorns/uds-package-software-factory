@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: zarf-package-software-factory
+  description: "software factory package using dubbd"
+  version: "0.0.1"
+  architecture: amd64
+
+components:
+  - name: values
+    required: true
+    files:
+      - source: values/gitlab.yaml
+        target: values-gitlab.yaml
+  - name: gitlab
+    required: true
+    import:
+      name: gitlab
+      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.1-skeleton

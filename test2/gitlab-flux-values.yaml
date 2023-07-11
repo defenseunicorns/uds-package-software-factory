@@ -1,0 +1,10 @@
+global:
+  psql:
+    host: gitlab-postgres
+    port: 5432
+    database: gitlab-uds-software-factory
+    username: gitlab
+    password:
+      useSecret: true
+      secret: gitlab-postgres
+      key: password
