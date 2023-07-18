@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-postgres
+  namespace: gitlab
+spec:
+  type: ExternalName
+  externalName: postgresql.gitlab-db.svc.cluster.local

@@ -1,0 +1,7 @@
+namespaces:
+  - name: gitlab
+    labels:
+      istio-injection: enabled
+  - name: gitlab-db
+    labels:
+      istio-injection: enabled

@@ -1,0 +1,3 @@
+auth:
+  username: gitlab
+  database: gitlab-uds-software-factory
