@@ -16,7 +16,29 @@ global:
       enabled: true
       secret: gitlab-redis
       key: password
+  minio:
+    enabled: false
+  appConfig:
+    object_store:
+      enabled: true
+      proxy_download: true
+      connection:
+        secret: gitlab-object-store
+        key: connection
 postgresql:
   install: false
 redis:
   install: false
+
+registry:
+  storage:
+    secret: gitlab-object-store
+    key: registry
+
+gitlab:
+  toolbox:
+    backups:
+      objectStorage:
+        config:
+          secret: gitlab-object-store
+          key: backups

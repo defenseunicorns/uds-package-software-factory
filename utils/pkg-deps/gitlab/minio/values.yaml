@@ -1,0 +1,21 @@
+replicas: 1
+mode: standalone
+
+buckets:
+  - name: gitlab-artifacts
+  - name: gitlab-backups
+  - name: gitlab-ci-secure-files
+  - name: gitlab-dependency-proxy
+  - name: git-lfs
+  - name: gitlab-mr-diffs
+  - name: gitlab-packages
+  - name: gitlab-pages
+  - name: gitlab-terraform-state
+  - name: gitlab-uploads
+  - name: registry
+  - name: runner-cache
+  - name: tmp
+
+postJob:
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
