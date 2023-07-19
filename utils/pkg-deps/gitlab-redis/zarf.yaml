@@ -1,44 +1,44 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
 kind: ZarfPackageConfig
 metadata:
-  name: gitlab-postgres
+  name: gitlab-redis
   version: "0.0.1"
   architecture: amd64
 
 components:
-  - name: postgres
+  - name: redis
     required: true
     charts:
-      - name: postgresql
-        version: 12.6.6
-        namespace: gitlab-db
+      - name: redis
+        version: 17.13.2
+        namespace: gitlab-redis
         url: https://charts.bitnami.com/bitnami
         valuesFiles:
           - "values.yaml"
     images:
-      - docker.io/bitnami/postgresql:15.3.0-debian-11-r24
+      - docker.io/bitnami/redis:7.0.12-debian-11-r2
     actions:
       onDeploy:
         after:
           - wait:
               cluster:
                 kind: Pod
-                name: postgresql-0
+                name: redis-master-0
                 condition: Ready
-                namespace: gitlab-db
-  - name: postgres-secret
+                namespace: gitlab-redis
+  - name: redis-secret
     required: true
     actions:
       onDeploy:
         before:
-          - cmd: kubectl get secret -n gitlab-db postgresql --template={{.data.password}} | base64 -d
+          - cmd: kubectl get secret -n gitlab-redis redis --template='{{ index .data "redis-password" }}' | base64 -d
             mute: true
             setVariables:
-              - name: DB_PASSWORD
+              - name: REDIS_PASSWORD
                 sensitive: true
         after:
-          - cmd: kubectl create secret generic gitlab-postgres -n gitlab --from-literal=password=${ZARF_VAR_DB_PASSWORD}
-  - name: postgres-service
+          - cmd: kubectl create secret generic gitlab-redis -n gitlab --from-literal=password=${ZARF_VAR_REDIS_PASSWORD}
+  - name: redis-service
     required: true
     manifests:
       - name: service for gitlab
