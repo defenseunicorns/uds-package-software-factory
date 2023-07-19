@@ -1,0 +1,20 @@
+apiVersion: kyverno.io/v2alpha1
+kind: PolicyException
+metadata:
+  name: gitlab-redis-registry-exception
+  namespace: gitlab-redis
+spec:
+  exceptions:
+  - policyName: restrict-image-registries
+    ruleNames:
+    - validate-registries
+    - autogen-validate-registries
+  match:
+    any:
+    - resources:
+        kinds:
+        - StatefulSet
+        namespaces:
+        - gitlab-redis
+        names:
+        - redis-master
