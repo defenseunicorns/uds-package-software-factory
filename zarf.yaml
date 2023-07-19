@@ -14,21 +14,6 @@ variables:
     default: "false"
 
 components:
-  - name: namespaces
-    required: true
-    charts:
-      - name: namespaces
-        version: 1.0.0
-        namespace: default
-        url: https://defenseunicorns.github.io/uds-support-charts/
-        valuesFiles:
-          - values/namespaces.yaml
-  - name: gitlab-db
-    required: true
-    actions:
-      onDeploy:
-        before:
-          - cmd: zarf package deploy --no-progress --confirm utils/pkg-deps/gitlab-postgres/zarf-package-gitlab-postgres-amd64-0.0.1.tar.zst
   - name: values
     required: true
     files:
