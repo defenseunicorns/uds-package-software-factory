@@ -6,6 +6,13 @@ metadata:
   architecture: amd64
 
 components:
+  - name: redis-kyverno-exceptions
+    required: true
+    manifests:
+      - name: kyverno-exceptions
+        files:
+          - policy-exceptions/externalName.yaml
+          - policy-exceptions/registry.yaml
   - name: redis
     required: true
     charts:

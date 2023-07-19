@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v2alpha1
+kind: PolicyException
+metadata:
+  name: gitlab-postgres-external-names-exception
+  namespace: gitlab
+spec:
+  exceptions:
+  - policyName: restrict-external-names
+    ruleNames:
+    - external-names
+  match:
+    any:
+    - resources:
+        kinds:
+        - Service
+        namespaces:
+        - gitlab
+        names:
+        - gitlab-postgres
