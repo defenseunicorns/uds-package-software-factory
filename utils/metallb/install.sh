@@ -10,7 +10,7 @@ kubectl rollout status deployment/controller -n metallb-system --watch --timeout
 
 kubectl rollout status daemonset/speaker -n metallb-system --watch --timeout=90s 2>&1 >/dev/null
 
-NETWORK_BASE=$(docker network inspect -f '{{(index .IPAM.Config 0).Subnet}}' kind | cut -d '.' --fields '1 2 3')
+NETWORK_BASE=$(docker network inspect -f '{{(index .IPAM.Config 0).Subnet}}' k3d-k3d-test-cluster | cut -d '.' --fields '1 2 3')
 
 NETWORK_RANGE_START="${NETWORK_BASE}.200"
 NETWORK_RANGE_END="${NETWORK_BASE}.210"
