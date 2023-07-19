@@ -15,3 +15,5 @@ build/
 *.tar.zst
 zarf-sbom
 tmp/
+
+values-*.yaml
