@@ -18,3 +18,10 @@ spec:
         - gitlab-minio
         names:
         - minio
+    - resources:
+        kinds:
+        - Job
+        namespaces:
+        - gitlab-minio
+        names:
+        - minio-post-job
