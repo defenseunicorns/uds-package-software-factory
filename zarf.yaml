@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
 kind: ZarfPackageConfig
 metadata:
-  name: zarf-package-software-factory
+  name: software-factory
   description: "software factory package using dubbd"
   version: "0.0.1"
   architecture: amd64

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: wip-on-prem-generic-swf
+  description: "Work In Progress UDS On Prem Generic Software Factory Package"
+  version: "0.0.1"
+  architecture: amd64
+components:
+  - name: on-prem-generic-values-package
+    required: true
+    files:
+      - source: build/zarf-package-on-prem-generic-values-amd64-0.0.1.tar.zst
+        target: build/zarf-package-on-prem-generic-values-amd64-0.0.1.tar.zst
+    actions:
+      onDeploy:
+        after:
+          - cmd: ./zarf package deploy zarf-package-on-prem-generic-values-amd64-0.0.1.tar.zst --confirm --no-progress=true
+            dir: build
+  - name: gitlab
+    required: true
+    files:
+       - source: build/zarf-package-gitlab-amd64-0.0.1.tar.zst
+         target: build/zarf-package-gitlab-amd64-0.0.1.tar.zst
+    actions:
+      onCreate:
+        before:
+          - cmd: ./zarf package pull oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.1-amd64 --oci-concurrency 9 --output-directory build --no-progress=true
+      onDeploy:
+        after:
+          - cmd: ./zarf package deploy zarf-package-gitlab-amd64-0.0.1.tar.zst --confirm --no-progress=true
+            dir: build
