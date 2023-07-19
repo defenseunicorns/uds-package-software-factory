@@ -6,6 +6,12 @@ metadata:
   architecture: amd64
 
 components:
+  - name: minio-kyverno-exceptions
+    required: true
+    manifests:
+      - name: kyverno-exceptions
+        files:
+          - policy-exceptions/registry.yaml
   - name: minio
     required: true
     charts:
