@@ -6,7 +6,7 @@ ZARF_VERSION := v0.28.2
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness
 BUILD_HARNESS_VERSION := 1.7.1
 
-DUBBD_K3D_VERSION := 0.4.1
+DUBBD_K3D_VERSION := 0.5.0
 
 # Figure out which Zarf binary we should use based on the operating system we are on
 ZARF_BIN := zarf
@@ -183,7 +183,7 @@ deploy/test-pkg-deps: ## Deploy the package dependancies needed for testing the 
 	cd ./build && ./zarf package deploy zarf-package-swf-namespaces-* --confirm
 	cd ./build && ./zarf package deploy zarf-package-gitlab-postgres-* --confirm
 	cd ./build && ./zarf package deploy zarf-package-gitlab-redis-* --confirm
-	cd ./build && ./zarf package deploy zarf-package-gitlab-gitlab-minio-* --confirm
+	cd ./build && ./zarf package deploy zarf-package-gitlab-minio-* --confirm
 
 deploy/uds-package-software-factory: ## Deploy the software factory package
 	cd ./build && ./zarf package deploy zarf-package-software-factory-*.tar.zst --confirm
