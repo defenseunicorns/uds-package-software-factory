@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
 kind: ZarfPackageConfig
 metadata:
-  name: zarf-package-swf-namespaces
-  description: "software factory package using dubbd"
+  name: swf-namespaces
+  description: "package used to deploy needed namespaces"
   version: "0.0.1"
   architecture: amd64
 
