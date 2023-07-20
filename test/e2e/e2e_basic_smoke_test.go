@@ -42,7 +42,7 @@ func TestAllServicesRunning(t *testing.T) { //nolint:funlen
 
 		// Setup DNS records for cluster services
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && utils/metallb/dns.sh && utils/metallb/hosts-write.sh`)
-		equire.NoError(t, err, output)
+		require.NoError(t, err, output)
 
 		// Ensure that GitLab is available outside of the cluster.
 		output, err = platform.RunSSHCommandAsSudo(`timeout 1200 bash -c "while ! curl -L -s --fail --show-error https://gitlab.bigbang.dev/-/health > /dev/null; do sleep 5; done"`)
