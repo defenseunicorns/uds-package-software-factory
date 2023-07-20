@@ -160,7 +160,9 @@ build/dubbd-pull-k3d.sha256: | build ## Download dubbd k3d oci package
 
 build/test-pkg-deps: | build ## Build package dependancies for testing
 	build/zarf package create utils/pkg-deps/namespaces/ --skip-sbom --confirm --output-directory build
-	build/zarf package create utils/pkg-deps/gitlab-postgres/ --skip-sbom --confirm --output-directory build
+	build/zarf package create utils/pkg-deps/gitlab/postgres/ --skip-sbom --confirm --output-directory build
+	build/zarf package create utils/pkg-deps/gitlab/redis/ --skip-sbom --confirm --output-directory build
+	build/zarf package create utils/pkg-deps/gitlab/minio/ --skip-sbom --confirm --output-directory build
 
 build/uds-package-software-factory: | build ## Build the software factory
 	build/zarf package create . --skip-sbom --confirm --output-directory build
@@ -180,6 +182,8 @@ deploy/dubbd-k3d: ## Deploy the k3d flavor of DUBBD
 deploy/test-pkg-deps: ## Deploy the package dependancies needed for testing the software factory
 	cd ./build && ./zarf package deploy zarf-package-swf-namespaces-* --confirm
 	cd ./build && ./zarf package deploy zarf-package-gitlab-postgres-* --confirm
+	cd ./build && ./zarf package deploy zarf-package-gitlab-redis-* --confirm
+	cd ./build && ./zarf package deploy zarf-package-gitlab-gitlab-minio-* --confirm
 
 deploy/uds-package-software-factory: ## Deploy the software factory package
 	cd ./build && ./zarf package deploy zarf-package-software-factory-*.tar.zst --confirm
