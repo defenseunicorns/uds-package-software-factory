@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: gitlab-redis
+  version: "0.0.1"
+  architecture: amd64
+
+components:
+  - name: redis-kyverno-exceptions
+    required: true
+    manifests:
+      - name: kyverno-exceptions
+        files:
+          - policy-exceptions/externalName.yaml
+          - policy-exceptions/registry.yaml
+  - name: redis
+    required: true
+    charts:
+      - name: redis
+        version: 17.13.2
+        namespace: gitlab-redis
+        url: https://charts.bitnami.com/bitnami
+        valuesFiles:
+          - "values.yaml"
+    images:
+      - docker.io/bitnami/redis:7.0.12-debian-11-r2
+    actions:
+      onDeploy:
+        after:
+          - wait:
+              cluster:
+                kind: Pod
+                name: redis-master-0
+                condition: Ready
+                namespace: gitlab-redis
+  - name: redis-secret
+    required: true
+    actions:
+      onDeploy:
+        before:
+          - cmd: kubectl get secret -n gitlab-redis redis --template='{{ index .data "redis-password" }}' | base64 -d
+            mute: true
+            setVariables:
+              - name: REDIS_PASSWORD
+                sensitive: true
+        after:
+          - cmd: kubectl create secret generic gitlab-redis -n gitlab --from-literal=password=${ZARF_VAR_REDIS_PASSWORD}
+  - name: redis-service
+    required: true
+    manifests:
+      - name: service for gitlab
+        files:
+          - service.yaml

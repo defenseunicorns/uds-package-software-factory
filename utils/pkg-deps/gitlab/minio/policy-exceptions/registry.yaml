@@ -1,0 +1,27 @@
+apiVersion: kyverno.io/v2alpha1
+kind: PolicyException
+metadata:
+  name: gitlab-minio-registry-exception
+  namespace: gitlab-minio
+spec:
+  exceptions:
+  - policyName: restrict-image-registries
+    ruleNames:
+    - validate-registries
+    - autogen-validate-registries
+  match:
+    any:
+    - resources:
+        kinds:
+        - Deployment
+        namespaces:
+        - gitlab-minio
+        names:
+        - minio
+    - resources:
+        kinds:
+        - Job
+        namespaces:
+        - gitlab-minio
+        names:
+        - minio-post-job

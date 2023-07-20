@@ -8,5 +8,37 @@ global:
       useSecret: true
       secret: gitlab-postgres
       key: password
+  redis:
+    host: gitlab-redis
+    port: 6379
+    # `password` key replaced by `auth` in gitlab 16
+    password:
+      enabled: true
+      secret: gitlab-redis
+      key: password
+  minio:
+    enabled: false
+  appConfig:
+    object_store:
+      enabled: true
+      proxy_download: true
+      connection:
+        secret: gitlab-object-store
+        key: connection
 postgresql:
   install: false
+redis:
+  install: false
+
+registry:
+  storage:
+    secret: gitlab-object-store
+    key: registry
+
+gitlab:
+  toolbox:
+    backups:
+      objectStorage:
+        config:
+          secret: gitlab-object-store
+          key: backups

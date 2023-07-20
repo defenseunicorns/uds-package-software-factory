@@ -6,6 +6,13 @@ metadata:
   architecture: amd64
 
 components:
+  - name: postgres-kyverno-exceptions
+    required: true
+    manifests:
+      - name: kyverno-exceptions
+        files:
+          - policy-exceptions/externalName.yaml
+          - policy-exceptions/registry.yaml
   - name: postgres
     required: true
     charts:
@@ -26,9 +33,6 @@ components:
                 name: postgresql-0
                 condition: Ready
                 namespace: gitlab-db
-      onRemove:
-        after:
-          - cmd: kubectl delete namespace gitlab-db --wait=true
   - name: postgres-secret
     required: true
     actions:
@@ -40,7 +44,6 @@ components:
               - name: DB_PASSWORD
                 sensitive: true
         after:
-          - cmd: kubectl create namespace gitlab --dry-run=client -o yaml | kubectl apply -f -
           - cmd: kubectl create secret generic gitlab-postgres -n gitlab --from-literal=password=${ZARF_VAR_DB_PASSWORD}
   - name: postgres-service
     required: true

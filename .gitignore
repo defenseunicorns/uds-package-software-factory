@@ -18,6 +18,7 @@ build/
 test/tf/public-ec2-instance/.tool-versions
 zarf-sbom
 tmp/
+values-*.yaml
 
 # Terraform
 test/tf/public-ec2-instance/.test-data

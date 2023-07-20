@@ -1,0 +1,20 @@
+apiVersion: kyverno.io/v2alpha1
+kind: PolicyException
+metadata:
+  name: gitlab-postgres-registry-exception
+  namespace: gitlab-db
+spec:
+  exceptions:
+  - policyName: restrict-image-registries
+    ruleNames:
+    - validate-registries
+    - autogen-validate-registries
+  match:
+    any:
+    - resources:
+        kinds:
+        - StatefulSet
+        namespaces:
+        - gitlab-db
+        names:
+        - postgresql

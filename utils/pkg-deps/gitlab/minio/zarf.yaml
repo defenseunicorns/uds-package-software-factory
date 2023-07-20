@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: gitlab-minio
+  version: "0.0.1"
+  architecture: amd64
+
+components:
+  - name: minio-kyverno-exceptions
+    required: true
+    manifests:
+      - name: kyverno-exceptions
+        files:
+          - policy-exceptions/registry.yaml
+  - name: minio
+    required: true
+    charts:
+      - name: minio
+        version: 5.0.13
+        namespace: gitlab-minio
+        url: https://charts.min.io/
+        valuesFiles:
+          - "values.yaml"
+    images:
+      - quay.io/minio/mc:RELEASE.2023-06-28T21-54-17Z
+      - quay.io/minio/minio:RELEASE.2023-07-07T07-13-57Z
+  - name: minio-secret
+    required: true
+    actions:
+      onDeploy:
+        before:
+          - cmd: kubectl get secret -n gitlab-minio minio --template='{{ index .data "rootPassword" }}' | base64 -d
+            mute: true
+            setVariables:
+              - name: SECRET_KEY
+                sensitive: true
+          - cmd: kubectl get secret -n gitlab-minio minio --template='{{ index .data "rootUser" }}' | base64 -d
+            mute: true
+            setVariables:
+              - name: ACCESS_KEY
+                sensitive: true
+  - name: gitlab-secret
+    required: true
+    manifests:
+      - name: gitlab-secret
+        files:
+          - "secret.yaml"
