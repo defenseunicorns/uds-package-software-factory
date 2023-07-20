@@ -100,6 +100,7 @@ test: ## Run all automated tests. Requires access to an AWS account. Costs money
 	-e AWS_SESSION_EXPIRATION \
 	-e SKIP_SETUP -e SKIP_TEST \
 	-e SKIP_TEARDOWN \
+	-e AWS_AVAILABILITY_ZONE \
 	$(BUILD_HARNESS_REPO):$(BUILD_HARNESS_VERSION) \
 	bash -c 'asdf install && go test -v -timeout 2h -p 1 ./...'
 
