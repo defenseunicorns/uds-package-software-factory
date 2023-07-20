@@ -1,3 +1,7 @@
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
+hostname: bigbang.dev
+domain: bigbang.dev
+
 global:
   psql:
     host: gitlab-postgres
@@ -25,6 +29,21 @@ global:
       connection:
         secret: gitlab-object-store
         key: connection
+  # added to help with Gitlab sub-chart configuration
+  image:
+    pullPolicy: IfNotPresent
+  istio:
+    enabled: true
+    injection: enabled
+  hosts:
+    domain: bigbang.dev
+
+    gitlab:
+      name: gitlab.bigbang.dev
+
+    registry:
+      name: registry.bigbang.dev
+
 postgresql:
   install: false
 redis:
@@ -42,3 +61,25 @@ gitlab:
         config:
           secret: gitlab-object-store
           key: backups
+
+openshift: false
+
+istio:
+  enabled: true
+  injection: enabled
+  gitlab:
+    gateways:
+    - istio-system/tenant
+  registry:
+    gateways:
+    - istio-system/tenant
+
+monitoring:
+  enabled: true
+
+networkPolicies:
+  enabled: true
+  ingressLabels:
+    app: tenant-ingressgateway
+    istio: null
+  controlPlaneCidr: 0.0.0.0/0
