@@ -2,7 +2,7 @@
 kind: ZarfPackageConfig
 metadata:
   name: software-factory
-  description: "software factory package using dubbd"
+  description: "uds software factory package"
   version: "0.0.1"
   architecture: amd64
 
