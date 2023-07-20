@@ -8,3 +8,6 @@ namespaces:
   - name: gitlab-redis
     labels:
       istio-injection: enabled
+  - name: gitlab-minio
+    labels:
+      istio-injection: enabled
