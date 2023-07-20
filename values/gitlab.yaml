@@ -1,6 +1,5 @@
-# hostname is deprecated and replaced with domain. But if hostname exists then use it.
-hostname: bigbang.dev
-domain: bigbang.dev
+hostname: ###ZARF_VAR_DOMAIN###
+domain: ###ZARF_VAR_DOMAIN###
 
 global:
   psql:
@@ -36,13 +35,15 @@ global:
     enabled: true
     injection: enabled
   hosts:
-    domain: bigbang.dev
+    domain: ###ZARF_VAR_DOMAIN###
 
     gitlab:
-      name: gitlab.bigbang.dev
+      name: gitlab.###ZARF_VAR_DOMAIN###
 
     registry:
-      name: registry.bigbang.dev
+      name: registry.###ZARF_VAR_DOMAIN###
+  registry:
+    relativeurls: true
 
 postgresql:
   install: false
@@ -53,6 +54,16 @@ registry:
   storage:
     secret: gitlab-object-store
     key: registry
+  metrics:
+    serviceMonitor:
+      endpointConfig:
+        scheme: https
+        tlsConfig:
+          caFile: /etc/prom-certs/root-cert.pem
+          certFile: /etc/prom-certs/cert-chain.pem
+          keyFile: /etc/prom-certs/key.pem
+          insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
+
 
 gitlab:
   toolbox:
@@ -61,6 +72,57 @@ gitlab:
         config:
           secret: gitlab-object-store
           key: backups
+  gitlab-exporter:
+    enabled: true
+    metrics:
+      serviceMonitor:
+        endpointConfig:
+          scheme: https
+          tlsConfig:
+            caFile: /etc/prom-certs/root-cert.pem
+            certFile: /etc/prom-certs/cert-chain.pem
+            keyFile: /etc/prom-certs/key.pem
+            insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
+  webservice:
+    metrics:
+      serviceMonitor:
+        endpointConfig:
+          scheme: https
+          tlsConfig:
+            caFile: /etc/prom-certs/root-cert.pem
+            certFile: /etc/prom-certs/cert-chain.pem
+            keyFile: /etc/prom-certs/key.pem
+            insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
+    workhorse:
+      metrics:
+        serviceMonitor:
+          endpointConfig:
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
+  gitaly:
+    metrics:
+      serviceMonitor:
+        endpointConfig:
+          scheme: https
+          tlsConfig:
+            caFile: /etc/prom-certs/root-cert.pem
+            certFile: /etc/prom-certs/cert-chain.pem
+            keyFile: /etc/prom-certs/key.pem
+            insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
+  gitlab-shell:
+    metrics:
+      serviceMonitor:
+        endpointConfig:
+          scheme: https
+          tlsConfig:
+            caFile: /etc/prom-certs/root-cert.pem
+            certFile: /etc/prom-certs/cert-chain.pem
+            keyFile: /etc/prom-certs/key.pem
+            insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
 
 openshift: false
 
@@ -81,5 +143,4 @@ networkPolicies:
   enabled: true
   ingressLabels:
     app: tenant-ingressgateway
-    istio: null
   controlPlaneCidr: 0.0.0.0/0

@@ -12,6 +12,8 @@ variables:
     default: "[]"
   - name: GITLAB_CREATE_NAMESPACE
     default: "false"
+  - name: DOMAIN
+    default: "bigbang.dev"
 
 components:
   - name: values
