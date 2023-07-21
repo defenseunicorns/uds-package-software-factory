@@ -2,26 +2,24 @@
 
 HOST_LIST=$(kubectl get vs -A -o=jsonpath='{range .items[*]}{.spec.gateways[*]}{" "}{.spec.hosts[*]}{"\n"}{end}' | sort -u)
 
-PUBLIC_HOSTS=$(echo "${HOST_LIST}" | grep public | cut -d ' ' -f2)
-PRIVATE_HOSTS=$(echo "${HOST_LIST}" | grep private | cut -d ' ' -f2)
+TENANT_HOSTS=$(echo "${HOST_LIST}" | grep tenant | cut -d ' ' -f2)
+ADMIN_HOSTS=$(echo "${HOST_LIST}" | grep admin | cut -d ' ' -f2)
 
-PUBLIC_LB_IP=$(kubectl get svc -n istio-system public-ingressgateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-PRIVATE_LB_IP=$(kubectl get svc -n istio-system private-ingressgateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+TENANT_LB_IP=$(kubectl get svc -n istio-system tenant-ingressgateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+ADMIN_LB_IP=$(kubectl get svc -n istio-system admin-ingressgateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-sed -i -z 's/\n# Following entries are from metallb dns.sh.*# End of metallb dns.sh//' /etc/hosts
+echo "# Following entries are from metallb dns.sh" >> hosts.patch
 
-echo "# Following entries are from metallb dns.sh" >> /etc/hosts
+echo "# Tenant hostnames" >> hosts.patch
 
-echo "# Public hostnames" >> /etc/hosts
-
-for host in $PUBLIC_HOSTS; do
-    echo "${PUBLIC_LB_IP} ${host}" >> /etc/hosts
+for host in $TENANT_HOSTS; do
+    echo "${TENANT_LB_IP} ${host}" >> hosts.patch
 done
 
-echo "# Private hostnames" >> /etc/hosts
+echo "# Admin hostnames" >> hosts.patch
 
-for host in $PRIVATE_HOSTS; do
-    echo "${PRIVATE_LB_IP} ${host}" >> /etc/hosts
+for host in $ADMIN_HOSTS; do
+    echo "${ADMIN_LB_IP} ${host}" >> hosts.patch
 done
 
-echo "# End of metallb dns.sh" >> /etc/hosts
+echo "# End of metallb dns.sh" >> hosts.patch

@@ -1,0 +1,96 @@
+# Attribution for a bunch of this goes to CloudPosse
+# https://github.com/cloudposse/actions/blob/master/.github/workflows/test-command.yml
+
+name: test
+on:
+  repository_dispatch:
+    types: [test-command]
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+defaults:
+  run:
+    # We need -e -o pipefail for consistency with GitHub Actions' default behavior
+    shell: bash -e -o pipefail {0}
+
+jobs:
+  # Parse the command so we can decide which tests to run. Examples: "/test all", "/test validate", "/test e2e"
+  # We can do as many of these as we want to get as granular as we want.
+  parse:
+    runs-on: ubuntu-latest
+    outputs:
+      run-ping: ${{ steps.parse.outputs.run-ping }}
+      run-e2e: ${{ steps.parse.outputs.run-e2e }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.event.client_payload.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}
+      - name: Parse Args
+        id: parse
+        uses: ./.github/actions/parse-test
+
+   # Update the comment that triggered the /test command to show the run url
+  comment:
+    if: github.event_name == 'repository_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.event.client_payload.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}
+      - name: Update Comment
+        uses: ./.github/actions/comment
+        with:
+          token: ${{ secrets.PAT }}
+
+  # Do a simple ping/pong status update to validate things are working
+  ping:
+    runs-on: ubuntu-latest
+    needs: parse
+    if: needs.parse.outputs.run-ping == 'true'
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.event.client_payload.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}
+      - name: Ping Test
+        uses: ./.github/actions/ping
+        with:
+          token: ${{ secrets.PAT }}
+
+  # Run the E2E tests
+  e2e:
+    runs-on: ubuntu-latest
+    needs: parse
+    if: needs.parse.outputs.run-e2e == 'true'
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.event.client_payload.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}
+      - name: Run E2E Tests
+        uses: ./.github/actions/e2e
+        with:
+          token: ${{ secrets.PAT }}
+          role-to-assume: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME }}
+          region: ${{ vars.AWS_REGION }}
+          github-context: "test / e2e (${{github.event_name}})"
+          aws-availability-zone: ${{ vars.AWS_AVAILABILITY_ZONE }}
+          ghcr-username: ${{ github.actor }}
+          ghcr-password: ${{ secrets.GITHUB_TOKEN }}
+          registry1-username: ${{ secrets.REGISTRY1_USERNAME }}
+          registry1-password: ${{ secrets.REGISTRY1_PASSWORD }}
