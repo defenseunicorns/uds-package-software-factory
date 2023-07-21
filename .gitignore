@@ -11,7 +11,6 @@ zarf-sbom
 
 .cache/
 .idea/
-.vscode/
 build/
 .DS_Store
 *.tar.zst

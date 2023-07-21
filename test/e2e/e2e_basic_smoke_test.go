@@ -39,5 +39,13 @@ func TestAllServicesRunning(t *testing.T) { //nolint:funlen
 		// Ensure that GitLab does not accept TLSv1.1
 		output, err = platform.RunSSHCommandAsSudo(`sslscan gitlab.bigbang.dev | grep "TLSv1.1" | grep "disabled"`)
 		require.NoError(t, err, output)
+
+		// Setup DNS records for cluster services
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && utils/metallb/dns.sh && utils/metallb/hosts-write.sh`)
+		require.NoError(t, err, output)
+
+		// Ensure that GitLab is available outside of the cluster.
+		output, err = platform.RunSSHCommandAsSudo(`timeout 1200 bash -c "while ! curl -L -s --fail --show-error https://gitlab.bigbang.dev/-/health > /dev/null; do sleep 5; done"`)
+		require.NoError(t, err, output)
 	})
 }
