@@ -1,58 +1,51 @@
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
 hostname: ###ZARF_VAR_DOMAIN###
 domain: ###ZARF_VAR_DOMAIN###
 
-global:
-  psql:
-    host: gitlab-postgres
-    port: 5432
-    database: gitlab-uds-software-factory
-    username: gitlab
-    password:
-      useSecret: true
-      secret: gitlab-postgres
-      key: password
-  redis:
-    host: gitlab-redis
-    port: 6379
-    auth:
-      enabled: true
-      secret: gitlab-redis
-      key: password
-  minio:
-    enabled: false
-  appConfig:
-    object_store:
-      enabled: true
-      proxy_download: true
-      connection:
-        secret: gitlab-object-store
-        key: connection
-  # added to help with Gitlab sub-chart configuration
-  image:
-    pullPolicy: IfNotPresent
-  istio:
-    enabled: true
-    injection: enabled
-  hosts:
-    domain: ###ZARF_VAR_DOMAIN###
+# Define variables to help with conditionals later
 
-    gitlab:
-      name: gitlab.###ZARF_VAR_DOMAIN###
+openshift: false
 
-    registry:
-      name: registry.###ZARF_VAR_DOMAIN###
+istio:
+  enabled: true
+  injection: enabled
+  gitlab:
+    gateways:
+    - istio-system/public
   registry:
-    relativeurls: true
+    gateways:
+    - istio-system/public
 
-postgresql:
-  install: false
+monitoring:
+  enabled: true
+
+networkPolicies:
+  enabled: true
+  ingressLabels:
+    app: null
+    istio: null
+  controlPlaneCidr: 0.0.0.0/0
 redis:
-  install: false
-
+  metrics:
+    serviceMonitor:
+      enabled: true
+      namespace: gitlab
+  master:
+    podAnnotations:
+      bigbang.dev/istioVersion: 1.17.3
+  slave:
+    podAnnotations:
+      bigbang.dev/istioVersion: 1.17.3
+postgresql:
+  master:
+    podAnnotations:
+      bigbang.dev/istioVersion: 1.17.3
+  slave:
+    podAnnotations:
+      bigbang.dev/istioVersion: 1.17.3
 registry:
-  storage:
-    secret: gitlab-object-store
-    key: registry
+  annotations:
+    bigbang.dev/istioVersion: 1.17.3
   metrics:
     serviceMonitor:
       endpointConfig:
@@ -63,16 +56,15 @@ registry:
           keyFile: /etc/prom-certs/key.pem
           insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
 
-
 gitlab:
   toolbox:
-    backups:
-      objectStorage:
-        config:
-          secret: gitlab-object-store
-          key: backups
+    annotations:
+      bigbang.dev/istioVersion: 1.17.3
   gitlab-exporter:
     enabled: true
+    metrics:
+      annotations:
+        bigbang.dev/istioVersion: 1.17.3
     metrics:
       serviceMonitor:
         endpointConfig:
@@ -102,7 +94,17 @@ gitlab:
               certFile: /etc/prom-certs/cert-chain.pem
               keyFile: /etc/prom-certs/key.pem
               insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
+    annotations:
+      bigbang.dev/istioVersion: 1.17.3
+  sidekiq:
+    annotations:
+      bigbang.dev/istioVersion: 1.17.3
+  migrations:
+    annotations:
+      bigbang.dev/istioVersion: 1.17.3
   gitaly:
+    annotations:
+      bigbang.dev/istioVersion: 1.17.3
     metrics:
       serviceMonitor:
         endpointConfig:
@@ -113,6 +115,8 @@ gitlab:
             keyFile: /etc/prom-certs/key.pem
             insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
   gitlab-shell:
+    annotations:
+      bigbang.dev/istioVersion: 1.17.3
     metrics:
       serviceMonitor:
         endpointConfig:
@@ -123,23 +127,34 @@ gitlab:
             keyFile: /etc/prom-certs/key.pem
             insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target pod certificate
 
-openshift: false
+  praefect:
+    annotations:
+      bigbang.dev/istioVersion: 1.17.3
+  gitlab-grafana:
+    annotations:
+      bigbang.dev/istioVersion: 1.17.3
+shared-secrets:
+  annotations:
+    bigbang.dev/istioVersion: 1.17.3
+minio:
+  podAnnotations:
+    bigbang.dev/istioVersion: 1.17.3
 
-istio:
-  enabled: true
-  injection: enabled
-  gitlab:
-    gateways:
-    - istio-system/tenant
-  registry:
-    gateways:
-    - istio-system/tenant
+global:
 
-monitoring:
-  enabled: true
+  # added to help with Gitlab sub-chart configuration
+  image:
+    pullPolicy: IfNotPresent
+    
+  istio:
+    enabled: true
+    injection: enabled
 
-networkPolicies:
-  enabled: true
-  ingressLabels:
-    app: tenant-ingressgateway
-  controlPlaneCidr: 0.0.0.0/0
+  hosts:
+    domain: ###ZARF_VAR_DOMAIN###
+
+    gitlab:
+      name: gitlab.###ZARF_VAR_DOMAIN###
+
+    registry:
+      name: registry.###ZARF_VAR_DOMAIN###
