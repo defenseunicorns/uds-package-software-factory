@@ -1,6 +1,6 @@
 # Welcome to the UDS Package Software Factory (SWF)
 
-Thank you for your interest in the UDS SWF!
+Thank you for your interest in the Defense Unicorns UDS SWF!
 
 This document describes the process and requirements for contributing to the UDS SWF.
 
