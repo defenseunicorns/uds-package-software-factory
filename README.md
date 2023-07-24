@@ -45,7 +45,7 @@ Object Storage works a bit differently as there are many kinds of file stores gi
 - Create the secret `gitlab-object-store` in the `gitlab` namespace with the following keys:
   - An example for in-cluster Minio can be found in this repository at the path `utils/pkg-deps/gitlab/minio/secret.yaml`
   - `connection`
-    - This key refers to the configuration for the main gitlab service. The documentation for what goes in this key is located [here](https://docs.gitlab.com/15.11/ee/administration/object_storage.html#connection-settings)
+    - This key refers to the configuration for the main gitlab service. The documentation for what goes in this key is located [here](https://docs.gitlab.com/16.0/ee/administration/object_storage.html#configure-the-connection-settings)
   - `registry`
     - This key refers to the configuration for the gitlab registry. The documentation for what goes in this key is located [here](https://docs.docker.com/registry/configuration/#storage)
   - `backups`
