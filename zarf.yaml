@@ -25,4 +25,4 @@ components:
     required: true
     import:
       name: gitlab
-      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.2-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.3-skeleton
