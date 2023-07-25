@@ -34,9 +34,9 @@ components:
     required: true
     import:
       name: gitlab
-      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.3-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.4-skeleton
   - name: gitlab-runner
     required: true
     import:
       name: gitlab-runner
-      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab-runner:0.0.2-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab-runner:0.0.3-skeleton
