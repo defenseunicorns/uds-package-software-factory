@@ -20,3 +20,8 @@ monitoring:
 # autoRegister requires kyverno
 autoRegister:
   enabled: true
+
+# Look at this later for user CI
+# rbac:
+#   create: true
+#   clusterWideAccess: true
