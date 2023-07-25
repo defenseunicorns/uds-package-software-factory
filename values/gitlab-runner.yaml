@@ -1,12 +1,8 @@
 imagePullPolicy: IfNotPresent
 
-imagePullSecrets:
-- name: private-registry
-
 istio:
   enabled: true
   injection: enabled
-
 
 networkPolicies:
   enabled: true
