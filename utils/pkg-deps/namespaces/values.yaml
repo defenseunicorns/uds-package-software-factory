@@ -11,6 +11,3 @@ namespaces:
   - name: gitlab-minio
     labels:
       istio-injection: enabled
-  - name: gitlab-runner
-    labels:
-      istio-injection: enabled
