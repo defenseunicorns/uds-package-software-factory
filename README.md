@@ -3,6 +3,14 @@
 
 A tool to facilitate the development, sharing, testing, deployment and accreditation of custom software. This package assumes all its prerequisites are met.
 
+## Capabilities
+
+  - [X] Gitlab
+  - [X] Gitlab-Runner
+  - [ ] SonarQube
+  - [ ] Nexus
+  - [ ] Mattermost
+
 ## Prerequisites
 
 ### Kubernetes Cluster
