@@ -1,0 +1,27 @@
+imagePullPolicy: IfNotPresent
+
+istio:
+  enabled: true
+  injection: enabled
+
+networkPolicies:
+  enabled: true
+
+# no longer necessary to directly pass through .Values.monitoring.enabled
+# the package chart uses: .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" to toggle monitoring
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+monitoring:
+  enabled: true
+
+# autoRegister requires kyverno
+autoRegister:
+  enabled: true
+
+# Look at this later for user CI
+# rbac:
+#   create: true
+#   clusterWideAccess: true
