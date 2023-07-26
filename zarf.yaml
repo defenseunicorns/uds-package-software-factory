@@ -56,6 +56,16 @@ components:
       - name: gitlab-sso-secret
         files:
           - gitlab-secret.yaml
+  - name: keycloak-internal-hostname
+    required: true
+    files:
+      - source: files/coredns-add-hostname.sh
+        target: files/coredns-add-hostname.sh
+        executable: true
+    actions:
+      onDeploy:
+        after:
+          - cmd: ./files/coredns-add-hostname.sh
   - name: gitlab
     required: true
     import:
