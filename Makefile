@@ -1,10 +1,10 @@
 # The version of Zarf to use. To keep this repo as portable as possible the Zarf binary will be downloaded and added to
 # the build folder.
-ZARF_VERSION := v0.28.2
+ZARF_VERSION := v0.28.3
 
 # The version of the build harness container to use
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness
-BUILD_HARNESS_VERSION := 1.7.1
+BUILD_HARNESS_VERSION := 1.8.1
 
 DUBBD_K3D_VERSION := 0.5.0
 
