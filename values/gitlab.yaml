@@ -21,6 +21,13 @@ global:
   minio:
     enabled: false
   appConfig:
+    omniauth:
+      enabled: true
+      allowSingleSignOn: ['openid_connect']
+      blockAutoCreatedUsers: false
+      providers:
+        - secret: gitlab-sso-provider
+          key: gitlab-sso.json
     object_store:
       enabled: true
       proxy_download: true
