@@ -23,6 +23,13 @@ variables:
     default: "bigbang.dev"
 
 components:
+  - name: dubbd-check
+    required: true
+    description: "Check if a compatible dubbd version is already deployed"
+    actions:
+      onDeploy:
+        before:
+          - cmd: ./files/dubbd-check.sh
   - name: values
     required: true
     files:
