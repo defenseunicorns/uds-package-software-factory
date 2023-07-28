@@ -40,5 +40,3 @@ components:
     import:
       name: gitlab-runner
       url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab-runner:0.0.3-skeleton
-    images:
-      - "registry1.dso.mil/ironbank/redhat/ubi/ubi8:8.7"

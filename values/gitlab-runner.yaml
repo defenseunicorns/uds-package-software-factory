@@ -23,6 +23,13 @@ autoRegister:
 
 unregisterRunners: true
 
+runners:
+  job:
+    # Adding this as a workaround
+    # bigbang package-images.yaml says its using 8.8 but gitlab-runner is actually using 8.7. Forcing it to use 8.8
+    # since the capability is pulling that in based on bigbang package-images.yaml
+    tag: "8.8"
+
 # runners:
 #   config: |
 #     [[runners]]
