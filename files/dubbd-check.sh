@@ -1,17 +1,14 @@
 #!/bin/bash
 
-MINIMUM_VERSION="0.5.0"
+MINIMUM_VERSION="###ZARF_PKG_TMPL_MIN_DUBBD_VERSION###"
 
 # Adds "━" for each character in minimum version number
 for (( i=0; i<${#MINIMUM_VERSION}; i++ )); do
   LENGTH=$(printf "%s━" "$LENGTH")
 done
 
-# Looks at the dubbd version in the zarf secret
-DEPLOYED_VERSION=$(kubectl get secret -n zarf --no-headers=true | awk '/dubbd/{print $1}' | xargs kubectl get secret -n zarf -o=jsonpath='{.data.data}' | base64 -d | jq -r .data.metadata.version)
-
 # Get older of two versions
-OLDER_VERSION=$(echo -e "${DEPLOYED_VERSION}\n${MINIMUM_VERSION}" | sort -V | head -n1)
+OLDER_VERSION=$(echo -e "${1}\n${MINIMUM_VERSION}" | sort -V | head -n1)
 
 # If statement that handles if the version is older or not than the minimum version
 if [[ "${OLDER_VERSION}" != "${MINIMUM_VERSION}" ]]; then
