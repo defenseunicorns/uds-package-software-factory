@@ -21,6 +21,18 @@ monitoring:
 autoRegister:
   enabled: true
 
+unregisterRunners: true
+
+# runners:
+#   config: |
+#     [[runners]]
+#       [runners.kubernetes]
+#         image = "registry1.dso.mil/ironbank/redhat/ubi/ubi8:8.8"
+#         [runners.kubernetes.pod_labels]
+#           "job_id" = "${CI_JOB_ID}"
+#           "job_name" = "${CI_JOB_NAME}"
+#           "pipeline_id" = "${CI_PIPELINE_ID}"
+
 # Look at this later for user CI
 # rbac:
 #   create: true
