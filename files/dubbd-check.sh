@@ -2,6 +2,10 @@
 
 MINIMUM_VERSION="0.5.0"
 
+for (( i=0; i<${#MINIMUM_VERSION}; i++ )); do
+  LENGTH=$(printf "$LENGTH━")
+done
+
 DEPLOYED_VERSION=$(kubectl get secret -n zarf --no-headers=true | awk '/dubbd/{print $1}' | xargs kubectl get secret -n zarf -o=jsonpath='{.data.data}' | base64 -d | jq -r .data.metadata.version)
 
 # Get newer of two versions
@@ -9,9 +13,9 @@ OLDER_VERSION=$(echo -e "${DEPLOYED_VERSION}\n${MINIMUM_VERSION}" | sort -V | he
 
 if [[ "${OLDER_VERSION}" != "${MINIMUM_VERSION}" ]]; then
 
-  printf "\033[1;91m┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\033[0m\n"
+  printf "\033[1;91m┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$LENGTH┓\033[0m\n"
   printf "\033[1;91m┃ dubbd is older than minimum version: $MINIMUM_VERSION ┃\033[0m\n"
-  printf "\033[1;91m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\033[0m\n"
+  printf "\033[1;91m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$LENGTH┛\033[0m\n"
   echo
   exit 1
 else
