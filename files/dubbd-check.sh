@@ -12,9 +12,9 @@ DEPLOYED_VERSION=$(kubectl get secret -n zarf --no-headers=true | awk '/dubbd/{p
 OLDER_VERSION=$(echo -e "${DEPLOYED_VERSION}\n${MINIMUM_VERSION}" | sort -V | head -n1)
 
 if [[ "${OLDER_VERSION}" != "${MINIMUM_VERSION}" ]]; then
-  printf "\033[1;91m┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%s┓\033[0m\n" "$LENGTH"
+  printf "\033[1;91m┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%s━┓\033[0m\n" "$LENGTH"
   printf "\033[1;91m┃ dubbd is older than minimum version: %s ┃\033[0m\n" "$MINIMUM_VERSION"
-  printf "\033[1;91m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%s┛\033[0m\n" "$LENGTH"
+  printf "\033[1;91m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%s━┛\033[0m\n" "$LENGTH"
   echo
   exit 1
 else
