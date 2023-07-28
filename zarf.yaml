@@ -30,20 +30,17 @@ components:
         target: values-gitlab.yaml
       - source: values/gitlab-runner.yaml
         target: values-gitlab-runner.yaml
+      - source: values/keycloak.yaml
+        target: values-keycloak.yaml
   - name: keycloak-ingressgateway-addon
     required: true
     import:
       name: keycloak-ingressgateway-addon
       url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.5-skeleton
   - name: realm-config-default-files
-    required: true
+    required: false
     import:
       name: realm-config-default-files
-      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.5-skeleton
-  - name: keycloak-values
-    required: true
-    import:
-      name: keycloak-values
       url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.5-skeleton
   - name: keycloak
     required: true
