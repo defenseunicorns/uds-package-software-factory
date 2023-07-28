@@ -26,9 +26,13 @@ components:
   - name: dubbd-check
     required: true
     description: "Check if a compatible dubbd version is already deployed"
+    files:
+      - source: files/dubbd-check.sh
+        target: files/dubbd-check.sh
+        executable: true
     actions:
       onDeploy:
-        before:
+        after:
           - cmd: ./files/dubbd-check.sh
   - name: values
     required: true
