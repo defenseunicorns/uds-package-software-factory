@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MINIMUM_VERSION="###ZARF_PKG_TMPL_MIN_DUBBD_VERSION###"
+MINIMUM_VERSION= ###ZARF_PKG_TMPL_MIN_DUBBD_VERSION###
 
 # Adds "━" for each character in minimum version number
 for (( i=0; i<${#MINIMUM_VERSION}; i++ )); do
