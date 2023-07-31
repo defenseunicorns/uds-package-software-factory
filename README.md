@@ -5,11 +5,13 @@ A tool to facilitate the development, sharing, testing, deployment and accredita
 
 ## Capabilities
 
-  - [X] Gitlab
-  - [X] Gitlab-Runner
-  - [ ] SonarQube
-  - [ ] Nexus
-  - [ ] Mattermost
+| Service                                                                          | Status      |
+|----------------------------------------------------------------------------------|-------------|
+| [GitLab](https://github.com/defenseunicorns/uds-capability-gitlab)               | Integrated  |
+| [GitLab Runner](https://github.com/defenseunicorns/uds-capability-gitlab-runner) | Integrated  |
+| [SonarQube](https://github.com/defenseunicorns/uds-capability-sonarqube)         | Repeateable |
+| Nexus                                                                            | Not Started |
+| Mattermost                                                                       | Not Started |
 
 ## Prerequisites
 
