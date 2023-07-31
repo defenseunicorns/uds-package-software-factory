@@ -23,6 +23,20 @@ variables:
     default: "bigbang.dev"
 
 components:
+  - name: dubbd-check
+    required: true
+    description: "Check if a compatible dubbd version is already deployed"
+    files:
+      - source: files/dubbd-check.sh
+        target: files/dubbd-check.sh
+        executable: true
+    actions:
+      onDeploy:
+        after:
+          - cmd: ./zarf package list 2>&1 | grep dubbd | cut -d '|' -f 2 | tr -d " " | tr -d "v"
+            setVariables:
+              - name: DEPLOYED_DUBBD_VERSION
+          - cmd: ./files/dubbd-check.sh $ZARF_VAR_DEPLOYED_DUBBD_VERSION
   - name: values
     required: true
     files:
