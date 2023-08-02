@@ -164,6 +164,7 @@ build/test-pkg-deps: | build ## Build package dependencies for testing
 	build/zarf package create utils/pkg-deps/gitlab/postgres/ --skip-sbom --confirm --output-directory build
 	build/zarf package create utils/pkg-deps/gitlab/redis/ --skip-sbom --confirm --output-directory build
 	build/zarf package create utils/pkg-deps/gitlab/minio/ --skip-sbom --confirm --output-directory build
+	build/zarf package create utils/pkg-deps/sonarqube/postgres/ --skip-sbom --confirm --output-directory build
 
 build/uds-package-software-factory: | build ## Build the software factory
 	build/zarf package create . --skip-sbom --confirm --output-directory build
@@ -185,6 +186,7 @@ deploy/test-pkg-deps: ## Deploy the package dependencies needed for testing the 
 	cd ./build && ./zarf package deploy zarf-package-gitlab-postgres-* --confirm
 	cd ./build && ./zarf package deploy zarf-package-gitlab-redis-* --confirm
 	cd ./build && ./zarf package deploy zarf-package-gitlab-minio-* --confirm
+	cd ./build && ./zarf package deploy zarf-package-sonarqube-postgres-* --confirm
 
 deploy/uds-package-software-factory: ## Deploy the software factory package
 	cd ./build && ./zarf package deploy zarf-package-software-factory-*.tar.zst --confirm

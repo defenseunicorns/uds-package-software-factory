@@ -11,3 +11,6 @@ namespaces:
   - name: gitlab-minio
     labels:
       istio-injection: enabled
+  - name: sonarqube-db
+    labels:
+      istio-injection: enabled
