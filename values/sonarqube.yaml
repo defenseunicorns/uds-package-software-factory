@@ -27,6 +27,13 @@ image:
 annotations:
   bigbang.dev/istioVersion: 1.17.3
 
+jdbcOverwrite:
+  enable: true
+  jdbcUrl: jdbc:postgresql://postgresql.sonarqube-db.svc.cluster.local:5432/sonarqube-uds-software-factory
+  jdbcUsername: sonarqube
+  jdbcSecretName: sonarqube-postgres
+  jdbcSecretPasswordKey: password
+
 postgresql:
   master:
     podAnnotations:
