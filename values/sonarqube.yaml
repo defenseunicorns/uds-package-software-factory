@@ -22,6 +22,22 @@ networkPolicies:
     app: null
     istio: null
 
+networkPolicy:
+  enabled: true
+  additionalNetworkPolicys:
+    egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            app.kubernetes.io/name: gitlab
+        podSelector:
+          matchLabels:
+            app: webservice
+    podSelector:
+      matchLabels: {}
+    policyTypes:
+    - Egress
+
 image:
   pullPolicy: IfNotPresent
 annotations:

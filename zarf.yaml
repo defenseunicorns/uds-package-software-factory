@@ -66,8 +66,3 @@ components:
     import:
       name: sonarqube
       url: oci://ghcr.io/defenseunicorns/uds-capability/sonarqube:0.0.3-skeleton
-  - name: pipeline-images
-    required: true
-    images:
-    - "registry1.dso.mil/ironbank/solutions-delivery-platform/sonar-scanner/sonar-scanner:4.6.2.2472"
-    - "registry1.dso.mil/ironbank/sonarsource/sonar-scanner-cli:5.0"
