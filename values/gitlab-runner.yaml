@@ -6,6 +6,25 @@ istio:
 
 networkPolicies:
   enabled: true
+  additionalPolicies:
+  # expected use case is to open egress for runner jobs
+  # This is a dev example policy spec and CIDR 0.0.0.0/0 is unsafe for operational environments
+  # requests to controlPlane should also be blocked in an operational policy
+  - name: egress-runner-jobs
+    spec:
+      podSelector: {}
+      policyTypes:
+      - Egress
+      egress:
+      - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+            # Block requests to AWS cloud metadata IP
+            - 169.254.169.254/32
+            # Block requests to controlPlane if CIDR not 0.0.0.0/0
+            # - "{{ $.Values.networkPolicies.controlPlaneCidr }}"
+
 
 # no longer necessary to directly pass through .Values.monitoring.enabled
 # the package chart uses: .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" to toggle monitoring
@@ -20,6 +39,25 @@ monitoring:
 # autoRegister requires kyverno
 autoRegister:
   enabled: true
+
+unregisterRunners: true
+
+runners:
+  job:
+    # Adding this as a workaround
+    # bigbang package-images.yaml says its using 8.8 but gitlab-runner is actually using 8.7. Forcing it to use 8.8
+    # since the capability is pulling that in based on bigbang package-images.yaml
+    tag: "8.8"
+
+# runners:
+#   config: |
+#     [[runners]]
+#       [runners.kubernetes]
+#         image = "registry1.dso.mil/ironbank/redhat/ubi/ubi8:8.8"
+#         [runners.kubernetes.pod_labels]
+#           "job_id" = "${CI_JOB_ID}"
+#           "job_name" = "${CI_JOB_NAME}"
+#           "pipeline_id" = "${CI_PIPELINE_ID}"
 
 # Look at this later for user CI
 # rbac:
