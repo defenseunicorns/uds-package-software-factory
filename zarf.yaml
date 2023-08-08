@@ -19,6 +19,11 @@ variables:
         namespace: bigbang
   - name: GITLAB_RUNNER_CREATE_NAMESPACE
     default: "true"
+  - name: SONARQUBE_DEPENDS_ON
+    autoIndent: true
+    default: "[]"
+  - name: SONARQUBE_CREATE_NAMESPACE
+    default: "false"
   - name: DOMAIN
     default: "bigbang.dev"
 
@@ -44,6 +49,8 @@ components:
         target: values-gitlab.yaml
       - source: values/gitlab-runner.yaml
         target: values-gitlab-runner.yaml
+      - source: values/sonarqube.yaml
+        target: values-sonarqube.yaml
   - name: gitlab
     required: true
     import:
@@ -54,3 +61,8 @@ components:
     import:
       name: gitlab-runner
       url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab-runner:0.0.3-skeleton
+  - name: sonarqube
+    required: true
+    import:
+      name: sonarqube
+      url: oci://ghcr.io/defenseunicorns/uds-capability/sonarqube:0.0.3-skeleton
