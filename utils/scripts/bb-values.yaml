@@ -3,3 +3,5 @@ addons:
     enabled: true
   gitlabRunner:
     enabled: true
+  sonarqube:
+    enabled: true

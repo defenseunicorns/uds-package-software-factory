@@ -7,7 +7,7 @@ A tool to facilitate the development, sharing, testing, deployment and accredita
 
   - [X] Gitlab
   - [X] Gitlab-Runner
-  - [ ] SonarQube
+  - [X] SonarQube
   - [ ] Nexus
   - [ ] Mattermost
 
@@ -72,5 +72,22 @@ Object Storage works a bit differently as there are many kinds of file stores gi
   - registry
   - runner-cache
   - tmp
+
+### SonarQube Capability
+The SonarQube Capability expects the database listed below to exist in the cluster before being deployed.
+
+#### General
+
+- Create `sonarqube` namespace
+- Label `sonarqube` namespace with `istio-injection: enabled`
+
+#### Database
+
+- A Postgres database is running on port `5432` and accessible to the cluster
+- This database can be logged into via the username `sonarqube`
+- This database instance has a psql database created called `sonarqube-uds-software-factory`
+- The `sonarqube` user has read/write access to `sonarqube-uds-software-factory`
+- Create `sonarqube-postgres` service in `sonarqube` namespace that points to the psql database
+- Create `sonarqube-postgres` secret in `sonarqube` namespace with the key `password` that contains the password to the `sonarqube` user for the psql database
 
 ### More capabilities are under construction
