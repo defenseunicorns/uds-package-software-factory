@@ -1,7 +1,7 @@
 # UDS Software Factory
 :construction: **This project is still early in its development.**
 
-A tool to facilitate the development, sharing, testing, deployment and accreditation of custom software. This package assumes all its prerequisites are met.
+A tool to facilitate the development, sharing, testing, deployment and accreditation of custom software. This package assumes all its prerequisites are met. 
 
 ## Capabilities
 
