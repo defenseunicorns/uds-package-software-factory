@@ -11,17 +11,15 @@ DUBBD_K3D_VERSION := 0.5.0
 # Figure out which Zarf binary we should use based on the operating system we are on
 ZARF_BIN := zarf
 UNAME_S := $(shell uname -s)
-UNAME_P := $(shell uname -p)
-ifneq ($(UNAME_S),Linux)
-	ifeq ($(UNAME_S),Darwin)
-		ZARF_BIN := $(addsuffix -mac,$(ZARF_BIN))
-	endif
-	ifeq ($(UNAME_P),i386)
-		ZARF_BIN := $(addsuffix -intel,$(ZARF_BIN))
-	endif
-	ifeq ($(UNAME_P),arm64)
-		ZARF_BIN := $(addsuffix -apple,$(ZARF_BIN))
-	endif
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_M),x86_64)
+    ARCH := amd64
+else ifeq ($(UNAME_M),amd64)
+    ARCH := amd64
+else ifeq ($(UNAME_M),arm64)
+    ARCH := arm64
+else
+    $(error Unsupported architecture: $(UNAME_M))
 endif
 
 # Silent mode by default. Run `make VERBOSE=1` to turn off silent mode.
@@ -145,15 +143,10 @@ build: ## Create build directory
 clean: ## Clean up build files
 	rm -rf ./build
 
-build/zarf: | build ## Download the Linux flavor of Zarf to the build dir
+build/zarf: | build ## Download the Zarf to the build dir
 	echo "Downloading zarf"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_Linux_amd64 -o build/zarf
+	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf
 	chmod +x build/zarf
-
-build/zarf-mac-intel: | build ## Download the Mac (Intel) flavor of Zarf to the build dir
-	echo "Downloading zarf-mac-intel"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_Darwin_amd64 -o build/zarf-mac-intel
-	chmod +x build/zarf-mac-intel
 
 build/zarf-init.sha256: | build ## Download the init package
 	echo "Downloading zarf-init-amd64-$(ZARF_VERSION).tar.zst"
