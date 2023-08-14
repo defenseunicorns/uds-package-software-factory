@@ -176,7 +176,7 @@ build/uds-package-software-factory: | build ## Build the software factory
 deploy/all: deploy/init deploy/dubbd-k3d deploy/test-pkg-deps deploy/uds-package-software-factory ##
 
 deploy/init: ## Deploy the zarf init package
-	./build/zarf init --confirm --components=git-server
+	./build/zarf init -a amd64 --confirm --components=git-server
 
 deploy/dubbd-k3d: ## Deploy the k3d flavor of DUBBD
 	cd ./build && ./zarf package deploy zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst --confirm
