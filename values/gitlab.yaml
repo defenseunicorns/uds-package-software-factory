@@ -20,6 +20,7 @@ global:
       key: password
   minio:
     enabled: false
+
   appConfig:
     omniauth:
       enabled: true
@@ -28,12 +29,34 @@ global:
       providers:
         - secret: gitlab-sso-provider
           key: gitlab-sso.json
+    registry:
+      bucket: uds-gitlab-registry###ZARF_VAR_BUCKET_SUFFIX###
+    lfs:
+      bucket: uds-gitlab-lfs###ZARF_VAR_BUCKET_SUFFIX###
+    artifacts:
+      bucket: uds-gitlab-artifacts###ZARF_VAR_BUCKET_SUFFIX###
+    uploads:
+      bucket: uds-gitlab-uploads###ZARF_VAR_BUCKET_SUFFIX###
+    packages:
+      bucket: uds-gitlab-packages###ZARF_VAR_BUCKET_SUFFIX###
+    externalDiffs:
+      bucket: uds-gitlab-mr-diffs###ZARF_VAR_BUCKET_SUFFIX###
+    terraformState:
+      bucket: uds-gitlab-terraform-state###ZARF_VAR_BUCKET_SUFFIX###
+    ciSecureFiles:
+      bucket: uds-gitlab-ci-secure-files###ZARF_VAR_BUCKET_SUFFIX###
+    dependencyProxy:
+      bucket: uds-gitlab-dependency-proxy###ZARF_VAR_BUCKET_SUFFIX###
+    backups:
+      bucket: uds-gitlab-backups###ZARF_VAR_BUCKET_SUFFIX###
+      tmpBucket: uds-gitlab-tmp###ZARF_VAR_BUCKET_SUFFIX###
     object_store:
       enabled: true
       proxy_download: true
       connection:
         secret: gitlab-object-store
         key: connection
+
   # added to help with Gitlab sub-chart configuration
   image:
     pullPolicy: IfNotPresent
@@ -50,6 +73,9 @@ global:
       name: registry.###ZARF_VAR_DOMAIN###
   registry:
     relativeurls: true
+  pages:
+    objectStore:
+      bucket: uds-gitlab-pages###ZARF_VAR_BUCKET_SUFFIX###
 
 postgresql:
   install: false

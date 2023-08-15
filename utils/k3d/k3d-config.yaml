@@ -16,6 +16,12 @@ options:
       - arg: --disable=servicelb
         nodeFilters:
           - server:*
+      - arg: --flannel-backend=none
+        nodeFilters:
+          - server:*
+      - arg: --disable-network-policy
+        nodeFilters:
+          - server:*
   k3d:
     wait: true
 ports:
