@@ -48,18 +48,29 @@ runners:
     # bigbang package-images.yaml says its using 8.8 but gitlab-runner is actually using 8.7. Forcing it to use 8.8
     # since the capability is pulling that in based on bigbang package-images.yaml
     tag: "8.8"
+  config: |
+    [[runners]]
+      clone_url = "http://gitlab-webservice-default.gitlab.svc.cluster.local:8181"
+      cache_dir = "/tmp/gitlab-runner/cache"
+      [runners.kubernetes]
+        namespace = "gitlab-runner-sandbox"
+        image = "{{ printf "%s/%s:%s" .Values.runners.job.registry .Values.runners.job.repository .Values.runners.job.tag }}"
+        helper_image = "{{ printf "%s/%s:%s" .Values.runners.helper.registry .Values.runners.helper.repository .Values.runners.helper.tag }}"
+        image_pull_secrets = ["private-registry"]
+      [runners.kubernetes.pod_labels]
+        "job_id" = "${CI_JOB_ID}"
+        "job_name" = "${CI_JOB_NAME}"
+        "pipeline_id" = "${CI_PIPELINE_ID}"
 
-# runners:
-#   config: |
-#     [[runners]]
-#       [runners.kubernetes]
-#         image = "registry1.dso.mil/ironbank/redhat/ubi/ubi8:8.8"
-#         [runners.kubernetes.pod_labels]
-#           "job_id" = "${CI_JOB_ID}"
-#           "job_name" = "${CI_JOB_NAME}"
-#           "pipeline_id" = "${CI_PIPELINE_ID}"
 
 # Look at this later for user CI
-# rbac:
-#   create: true
-#   clusterWideAccess: true
+rbac:
+  create: true
+  clusterWideAccess: true
+  rules:
+  - resources: ["configmaps", "pods", "pods/attach", "secrets", "services"]
+    verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create", "patch", "delete"]
+

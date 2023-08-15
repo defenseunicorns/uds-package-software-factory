@@ -25,6 +25,15 @@ networkPolicies:
 networkPolicy:
   enabled: true
   additionalNetworkPolicys:
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            app.kubernetes.io/name: gitlab-runner-sandbox
+        podSelector: {}
+      ports:
+      - port: 9000
+        protocol: TCP
     egress:
     - to:
       - namespaceSelector:
@@ -33,10 +42,16 @@ networkPolicy:
         podSelector:
           matchLabels:
             app: webservice
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            app.kubernetes.io/name: gitlab-runner-sandbox
+        podSelector: {}
     podSelector:
       matchLabels: {}
     policyTypes:
     - Egress
+    - Ingress
 
 image:
   pullPolicy: IfNotPresent

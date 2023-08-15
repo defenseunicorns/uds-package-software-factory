@@ -11,6 +11,10 @@ namespaces:
   - name: gitlab-minio
     labels:
       istio-injection: enabled
+  - name: gitlab-runner-sandbox
+    labels:
+      istio-injection: enabled
+      zarf.dev/agent: ignore
   - name: sonarqube
     labels:
       istio-injection: enabled
