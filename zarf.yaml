@@ -26,6 +26,8 @@ variables:
     default: "false"
   - name: DOMAIN
     default: "bigbang.dev"
+  - name: BUCKET_SUFFIX
+    default: ""
 
 components:
   - name: dubbd-check
