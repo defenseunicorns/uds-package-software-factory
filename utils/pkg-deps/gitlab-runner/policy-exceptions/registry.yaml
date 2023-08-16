@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v2alpha1
+kind: PolicyException
+metadata:
+  name: gitlab-runner-sandbox-registry-exception
+  namespace: gitlab-runner-sandbox
+spec:
+  exceptions:
+  - policyName: restrict-image-registries
+    ruleNames:
+    - validate-registries
+    - autogen-validate-registries
+  - policyName: disallow-image-tags
+    ruleNames:
+    - validate-image-tag
+  match:
+    any:
+    - resources:
+        namespaces:
+        - gitlab-runner-sandbox
