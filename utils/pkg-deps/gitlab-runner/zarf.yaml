@@ -12,6 +12,12 @@ components:
       - name: kyverno-exceptions
         files:
           - policy-exceptions/registry.yaml
+  - name: gitlab-runner-sandbox-rbac
+    required: true
+    manifests:
+      - name: gitlab-runner-sandbox-rbac
+        files:
+          - rbac/rbac.yaml
   - name: registry1-creds
     required: true
     actions:

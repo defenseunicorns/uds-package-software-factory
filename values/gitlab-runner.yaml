@@ -62,15 +62,5 @@ runners:
         "job_name" = "${CI_JOB_NAME}"
         "pipeline_id" = "${CI_PIPELINE_ID}"
 
-
-# Look at this later for user CI
 rbac:
-  create: true
-  clusterWideAccess: true
-  rules:
-  - resources: ["configmaps", "pods", "pods/attach", "secrets", "services"]
-    verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
-  - apiGroups: [""]
-    resources: ["pods/exec"]
-    verbs: ["create", "patch", "delete"]
-
+  create: false

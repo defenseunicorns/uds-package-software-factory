@@ -73,6 +73,44 @@ Object Storage works a bit differently as there are many kinds of file stores gi
   - runner-cache
   - tmp
 
+### GitLab-Runner Capability
+The Gitlab-Runner Capability expects the pieces listed below to exist in the cluster before being deployed.
+
+#### General
+
+- Create `gitlab-runner-sandbox` namespace
+- Label `gitlab-runner-sandbox` namespace with `istio-injection: enabled` & `zarf.dev/agent: ignore`
+- Create an `rbac` file for the `gitlab-runner` service account
+
+#### RBAC file
+
+- The `rbac.yaml` should create a `ClusterRole` with the following values:
+```
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "pods", "pods/attach", "secrets", "services"]
+    verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create", "patch", "delete"]
+```
+- The `ClusterRole` should then be bound using a `RoleBinding` in the `gitlab-runner-sandbox` namespace to the service account that `gitlab-runner` uses
+example:
+```
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-runner-sandbox
+  namespace: gitlab-runner-sandbox
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: gitlab-runner
+roleRef:
+  kind: ClusterRole
+  name: gitlab-runner-sandbox
+```
+
 ### SonarQube Capability
 The SonarQube Capability expects the database listed below to exist in the cluster before being deployed.
 
