@@ -63,19 +63,19 @@ Object Storage works a bit differently as there are many kinds of file stores gi
   - `backups`
     - This key refers to the configuration for the gitlab-toolbox backup tool. It relies on a program called `s3cmd`. The documentation for what goes in this key is located [here](https://s3tools.org/kb/item14.htm)
 - Below are the list of buckets that need to be created before starting GitLab:
-  - gitlab-artifacts
-  - gitlab-backups
-  - gitlab-ci-secure-files
-  - gitlab-dependency-proxy
-  - git-lfs
-  - gitlab-mr-diffs
-  - gitlab-packages
-  - gitlab-pages
-  - gitlab-terraform-state
-  - gitlab-uploads
-  - registry
-  - runner-cache
-  - tmp
+  - uds-gitlab-pages
+  - uds-gitlab-registry
+  - uds-gitlab-lfs
+  - uds-gitlab-artifacts
+  - uds-gitlab-uploads
+  - uds-gitlab-packages
+  - uds-gitlab-mr-diffs
+  - uds-gitlab-terraform-state
+  - uds-gitlab-ci-secure-files
+  - uds-gitlab-dependency-proxy
+  - uds-gitlab-backups
+  - uds-gitlab-tmp
+- These buckets can have a suffix applied via the `BUCKET_SUFFIX` zarf variable (e.x. `-some-deployment-name` plus `uds-gitlab-backups` would be `uds-gitlab-backups-some-deployment-name`)
 
 ### GitLab-Runner Capability
 

@@ -2,19 +2,18 @@ replicas: 1
 mode: standalone
 
 buckets:
-  - name: gitlab-artifacts
-  - name: gitlab-backups
-  - name: gitlab-ci-secure-files
-  - name: gitlab-dependency-proxy
-  - name: git-lfs
-  - name: gitlab-mr-diffs
-  - name: gitlab-packages
-  - name: gitlab-pages
-  - name: gitlab-terraform-state
-  - name: gitlab-uploads
-  - name: registry
-  - name: runner-cache
-  - name: tmp
+  - name: uds-gitlab-artifacts
+  - name: uds-gitlab-backups
+  - name: uds-gitlab-ci-secure-files
+  - name: uds-gitlab-dependency-proxy
+  - name: uds-gitlab-lfs
+  - name: uds-gitlab-mr-diffs
+  - name: uds-gitlab-packages
+  - name: uds-gitlab-pages
+  - name: uds-gitlab-terraform-state
+  - name: uds-gitlab-uploads
+  - name: uds-gitlab-registry
+  - name: uds-gitlab-tmp
 
 postJob:
   podAnnotations:

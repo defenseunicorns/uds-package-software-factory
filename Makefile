@@ -1,27 +1,27 @@
 # The version of Zarf to use. To keep this repo as portable as possible the Zarf binary will be downloaded and added to
 # the build folder.
-ZARF_VERSION := v0.28.2
+# renovate: datasource=github-tags depName=defenseunicorns/zarf
+ZARF_VERSION := v0.28.4
 
 # The version of the build harness container to use
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness
-BUILD_HARNESS_VERSION := 1.7.1
-
-DUBBD_K3D_VERSION := 0.5.0
+# renovate: datasource=docker depName=ghcr.io/defenseunicorns/build-harness/build-harness
+BUILD_HARNESS_VERSION := 1.10.2
+# renovate: datasource=docker depName=ghcr.io/defenseunicorns/packages/dubbd-k3d extractVersion=^(?<version>\d+\.\d+\.\d+)
+DUBBD_K3D_VERSION := 0.6.1
 
 # Figure out which Zarf binary we should use based on the operating system we are on
 ZARF_BIN := zarf
 UNAME_S := $(shell uname -s)
-UNAME_P := $(shell uname -p)
-ifneq ($(UNAME_S),Linux)
-	ifeq ($(UNAME_S),Darwin)
-		ZARF_BIN := $(addsuffix -mac,$(ZARF_BIN))
-	endif
-	ifeq ($(UNAME_P),i386)
-		ZARF_BIN := $(addsuffix -intel,$(ZARF_BIN))
-	endif
-	ifeq ($(UNAME_P),arm64)
-		ZARF_BIN := $(addsuffix -apple,$(ZARF_BIN))
-	endif
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_M),x86_64)
+    ARCH := amd64
+else ifeq ($(UNAME_M),amd64)
+    ARCH := amd64
+else ifeq ($(UNAME_M),arm64)
+    ARCH := arm64
+else
+    $(error Unsupported architecture: $(UNAME_M))
 endif
 
 # Silent mode by default. Run `make VERBOSE=1` to turn off silent mode.
@@ -145,15 +145,10 @@ build: ## Create build directory
 clean: ## Clean up build files
 	rm -rf ./build
 
-build/zarf: | build ## Download the Linux flavor of Zarf to the build dir
+build/zarf: | build ## Download the Zarf to the build dir
 	echo "Downloading zarf"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_Linux_amd64 -o build/zarf
+	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf
 	chmod +x build/zarf
-
-build/zarf-mac-intel: | build ## Download the Mac (Intel) flavor of Zarf to the build dir
-	echo "Downloading zarf-mac-intel"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_Darwin_amd64 -o build/zarf-mac-intel
-	chmod +x build/zarf-mac-intel
 
 build/zarf-init.sha256: | build ## Download the init package
 	echo "Downloading zarf-init-amd64-$(ZARF_VERSION).tar.zst"
@@ -184,7 +179,7 @@ build/uds-package-software-factory: | build ## Build the software factory
 deploy/all: deploy/init deploy/dubbd-k3d deploy/test-pkg-deps deploy/uds-package-software-factory ##
 
 deploy/init: ## Deploy the zarf init package
-	./build/zarf init --confirm --components=git-server
+	./build/zarf init -a amd64 --confirm --components=git-server
 
 deploy/dubbd-k3d: ## Deploy the k3d flavor of DUBBD
 	cd ./build && ./zarf package deploy zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst --confirm

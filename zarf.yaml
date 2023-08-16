@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory
   description: "uds software factory package"
-  version: "0.0.1"
+  version: "0.0.2"
   architecture: amd64
 
 variables:
@@ -26,6 +26,8 @@ variables:
     default: "false"
   - name: DOMAIN
     default: "bigbang.dev"
+  - name: BUCKET_SUFFIX
+    default: ""
 
 components:
   - name: dubbd-check
@@ -55,7 +57,7 @@ components:
     required: true
     import:
       name: gitlab
-      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.4-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.5-skeleton
   - name: gitlab-runner
     required: true
     import:
