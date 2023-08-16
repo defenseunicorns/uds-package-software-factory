@@ -59,17 +59,17 @@ components:
     required: true
     import:
       name: keycloak-ingressgateway-addon
-      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.5-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.7-skeleton
   - name: realm-config-default-files
     required: false
     import:
       name: realm-config-default-files
-      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.5-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.7-skeleton
   - name: keycloak
     required: true
     import:
       name: keycloak
-      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.5-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.7-skeleton
   - name: gitlab-sso-secret
     required: true
     manifests:
