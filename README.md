@@ -1,28 +1,32 @@
 # UDS Software Factory
+
 :construction: **This project is still early in its development.**
 
 A tool to facilitate the development, sharing, testing, deployment and accreditation of custom software. This package assumes all its prerequisites are met.
 
 ## Capabilities
 
-  - [X] Gitlab
-  - [X] Gitlab-Runner
-  - [X] SonarQube
-  - [ ] Nexus
-  - [ ] Mattermost
+- [X] Gitlab
+- [X] Gitlab-Runner
+- [X] SonarQube
+- [ ] Nexus
+- [ ] Mattermost
 
 ## Prerequisites
 
 ### Kubernetes Cluster
+
 - 1.26
 - Compute power that is comparable to the **[m6id.8xlarge](https://aws.amazon.com/ec2/instance-types/#:~:text=Up%20to%2010-,m6id.8xlarge,-32)** AWS instance type used in our E2E tests.
 
 ### Defense Unicorns Big Bang Distro (DUBBD)
+
 The UDS Software Factory capabilities are configured to use things like the istio service mesh. This package should be deployed to a cluster that contains the [Defense Unicorns Big Bang Distro](https://github.com/defenseunicorns/uds-package-dubbd).
 
 - Minimum Version Required: [DUBBD v0.5.0](https://github.com/defenseunicorns/uds-package-dubbd/tree/v0.5.0)
 
 ### GitLab Capability
+
 The Gitlab Capability expects the pieces listed below to exist in the cluster before being deployed.
 
 #### General
@@ -81,11 +85,28 @@ The Gitlab-Runner Capability expects the pieces listed below to exist in the clu
 - Create `gitlab-runner-sandbox` namespace
 - Label `gitlab-runner-sandbox` namespace with `istio-injection: enabled` & `zarf.dev/agent: ignore`
 - Create an `rbac` file for the `gitlab-runner` service account
+- Replace zarf-created `ImagePullSecret` - See below
+
+#### ImagePullSecret
+
+By default Zarf will create an `ImagePullSecret` in any new namespace in the cluster called `private-registry`. Since
+we have specified that the `gitlab-runner-sandbox` namespace will not be using the zarf registry that secret must be deleted.
+However, the CI job pods will still require one that has the required credentials for where you expect your users to want to pull
+CI images from.
+
+- Delete the `secret` called `private-registry` in the `gitlab-runner-sandbox` namespace
+- Create an `ImagePullSecret` type `secret` called `private-registry` in the `gitlab-runner-sandbox` with the credentials required
+  - Example using kubectl:
+
+```bash
+kubectl create secret generic private-registry --from-file=$(printf ~/.docker/config.json) --type=kubernetes.io/dockerconfigjson -n gitlab-runner-sandbox
+```
 
 #### RBAC file
 
 - The `rbac.yaml` should create a `ClusterRole` with the following values:
-```
+
+```yaml
 rules:
   - apiGroups: [""]
     resources: ["configmaps", "pods", "pods/attach", "secrets", "services"]
@@ -94,9 +115,11 @@ rules:
     resources: ["pods/exec"]
     verbs: ["create", "patch", "delete"]
 ```
+
 - The `ClusterRole` should then be bound using a `RoleBinding` in the `gitlab-runner-sandbox` namespace to the service account that `gitlab-runner` uses
 example:
-```
+
+```yaml
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -112,6 +135,7 @@ roleRef:
 ```
 
 ### SonarQube Capability
+
 The SonarQube Capability expects the database listed below to exist in the cluster before being deployed.
 
 #### General
