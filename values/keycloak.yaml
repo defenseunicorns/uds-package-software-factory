@@ -167,7 +167,7 @@ secrets:
       tls.crt: |
         ###ZARF_VAR_KEYCLOAK_CERT_FILE###
   tlskey:
-    stringData: 
+    stringData:
       tls.key: |
         ###ZARF_VAR_KEYCLOAK_KEY_FILE###
   customreg:
@@ -175,5 +175,5 @@ secrets:
       customreg.yaml: |
         ###ZARF_VAR_REALM_CUSTOM_REG_FILE###
   truststore:
-    data: 
+    data:
       truststore.jks: ###ZARF_VAR_REALM_TRUSTSTORE_FILE###
