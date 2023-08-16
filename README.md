@@ -78,6 +78,7 @@ Object Storage works a bit differently as there are many kinds of file stores gi
   - tmp
 
 ### GitLab-Runner Capability
+
 The Gitlab-Runner Capability expects the pieces listed below to exist in the cluster before being deployed.
 
 #### General
