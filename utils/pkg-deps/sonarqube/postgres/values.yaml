@@ -1,0 +1,3 @@
+auth:
+  username: sonarqube
+  database: sonarqube-uds-software-factory

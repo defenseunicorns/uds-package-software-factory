@@ -1,0 +1,68 @@
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
+domain: ###ZARF_VAR_DOMAIN###
+
+# Define variables to help with conditionals later
+
+OpenShift:
+  enabled: false
+
+istio:
+  enabled: true
+  sonarqube:
+    gateways:
+    - istio-system/tenant
+  injection: enabled
+
+monitoring:
+  enabled: true
+
+networkPolicies:
+  enabled: true
+  ingressLabels:
+    app: null
+    istio: null
+
+networkPolicy:
+  enabled: true
+  additionalNetworkPolicys:
+    egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            app.kubernetes.io/name: gitlab
+        podSelector:
+          matchLabels:
+            app: webservice
+    podSelector:
+      matchLabels: {}
+    policyTypes:
+    - Egress
+
+image:
+  pullPolicy: IfNotPresent
+annotations:
+  bigbang.dev/istioVersion: 1.17.3
+
+jdbcOverwrite:
+  enable: true
+  jdbcUrl: jdbc:postgresql://postgresql.sonarqube-db.svc.cluster.local:5432/sonarqube-uds-software-factory
+  jdbcUsername: sonarqube
+  jdbcSecretName: sonarqube-postgres
+  jdbcSecretPasswordKey: password
+
+postgresql:
+  master:
+    podAnnotations:
+      bigbang.dev/istioVersion: 1.17.3
+  slave:
+    podAnnotations:
+      bigbang.dev/istioVersion: 1.17.3
+  # Use internal database, defaults are fine
+  enabled: false
+  postgresqlServer: sonarqube-postgres
+  existingSecret: "sonarqube-postgres"
+  existingSecretPasswordKey: "password"
+  postgresqlUsername: "sonarqube"
+  postgresqlDatabase: "sonarqube-uds-software-factory"
+  service:
+    port: 5432
