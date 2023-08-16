@@ -20,6 +20,25 @@ global:
       key: password
   minio:
     enabled: false
+  # added to help with Gitlab sub-chart configuration
+  image:
+    pullPolicy: IfNotPresent
+  istio:
+    enabled: true
+    injection: enabled
+  hosts:
+    domain: ###ZARF_VAR_DOMAIN###
+
+    gitlab:
+      name: gitlab.###ZARF_VAR_DOMAIN###
+
+    registry:
+      name: registry.###ZARF_VAR_DOMAIN###
+  registry:
+    relativeurls: true
+  pages:
+    objectStore:
+      bucket: uds-gitlab-pages###ZARF_VAR_BUCKET_SUFFIX###
 
   appConfig:
     omniauth:
@@ -56,26 +75,6 @@ global:
       connection:
         secret: gitlab-object-store
         key: connection
-
-  # added to help with Gitlab sub-chart configuration
-  image:
-    pullPolicy: IfNotPresent
-  istio:
-    enabled: true
-    injection: enabled
-  hosts:
-    domain: ###ZARF_VAR_DOMAIN###
-
-    gitlab:
-      name: gitlab.###ZARF_VAR_DOMAIN###
-
-    registry:
-      name: registry.###ZARF_VAR_DOMAIN###
-  registry:
-    relativeurls: true
-  pages:
-    objectStore:
-      bucket: uds-gitlab-pages###ZARF_VAR_BUCKET_SUFFIX###
 
 postgresql:
   install: false
