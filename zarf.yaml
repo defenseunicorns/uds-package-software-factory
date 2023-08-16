@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory
   description: "uds software factory package"
-  version: "0.0.1"
+  version: "0.0.2"
   architecture: amd64
 
 variables:
@@ -90,7 +90,7 @@ components:
     required: true
     import:
       name: gitlab
-      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.4-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.5-skeleton
   - name: gitlab-runner
     required: true
     import:
