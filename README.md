@@ -1,4 +1,5 @@
 # UDS Software Factory
+
 :construction: **This project is still early in its development.**
 
 A tool to facilitate the development, sharing, testing, deployment and accreditation of custom software. This package assumes all its prerequisites are met.
@@ -77,6 +78,64 @@ Object Storage works a bit differently as there are many kinds of file stores gi
   - uds-gitlab-backups
   - uds-gitlab-tmp
 - These buckets can have a suffix applied via the `BUCKET_SUFFIX` zarf variable (e.x. `-some-deployment-name` plus `uds-gitlab-backups` would be `uds-gitlab-backups-some-deployment-name`)
+
+### GitLab-Runner Capability
+
+The Gitlab-Runner Capability expects the pieces listed below to exist in the cluster before being deployed.
+
+#### General
+
+- Create `gitlab-runner-sandbox` namespace
+- Label `gitlab-runner-sandbox` namespace with `istio-injection: enabled` & `zarf.dev/agent: ignore`
+- Create an `rbac` file for the `gitlab-runner` service account
+- Replace zarf-created `ImagePullSecret` - See below
+
+#### ImagePullSecret
+
+By default Zarf will create an `ImagePullSecret` in any new namespace in the cluster called `private-registry`. Since
+we have specified that the `gitlab-runner-sandbox` namespace will not be using the zarf registry that secret must be deleted.
+However, the CI job pods will still require one that has the required credentials for where you expect your users to want to pull
+CI images from.
+
+- Delete the `secret` called `private-registry` in the `gitlab-runner-sandbox` namespace
+- Create an `ImagePullSecret` type `secret` called `private-registry` in the `gitlab-runner-sandbox` with the credentials required
+  - Example using kubectl:
+
+```bash
+kubectl create secret generic private-registry --from-file=$(printf ~/.docker/config.json) --type=kubernetes.io/dockerconfigjson -n gitlab-runner-sandbox
+```
+
+#### RBAC file
+
+- The `rbac.yaml` should create a `ClusterRole` with the following values:
+
+```yaml
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "pods", "pods/attach", "secrets", "services"]
+    verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create", "patch", "delete"]
+```
+
+- The `ClusterRole` should then be bound using a `RoleBinding` in the `gitlab-runner-sandbox` namespace to the service account that `gitlab-runner` uses
+example:
+
+```yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-runner-sandbox
+  namespace: gitlab-runner-sandbox
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: gitlab-runner
+roleRef:
+  kind: ClusterRole
+  name: gitlab-runner-sandbox
+```
 
 ### SonarQube Capability
 

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: gitlab-runner
+  version: "0.0.1"
+  architecture: amd64
+
+components:
+  - name: gitlab-runner-sandbox-kyverno-exception
+    required: true
+    manifests:
+      - name: kyverno-exceptions
+        files:
+          - policy-exceptions/registry.yaml
+  - name: gitlab-runner-sandbox-rbac
+    required: true
+    manifests:
+      - name: gitlab-runner-sandbox-rbac
+        files:
+          - rbac/rbac.yaml
+  - name: registry1-creds
+    required: true
+    actions:
+      onDeploy:
+        before:
+          - cmd: kubectl delete secret private-registry -n gitlab-runner-sandbox
+        after:
+          - cmd: kubectl create secret generic private-registry --from-file=.dockerconfigjson=$(printf ~/.docker/config.json) --type=kubernetes.io/dockerconfigjson -n gitlab-runner-sandbox
