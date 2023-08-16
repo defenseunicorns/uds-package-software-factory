@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory
   description: "uds software factory package"
-  version: "0.0.1"
+  version: "0.0.2"
   architecture: amd64
 
 variables:
@@ -19,10 +19,31 @@ variables:
         namespace: bigbang
   - name: GITLAB_RUNNER_CREATE_NAMESPACE
     default: "true"
+  - name: SONARQUBE_DEPENDS_ON
+    autoIndent: true
+    default: "[]"
+  - name: SONARQUBE_CREATE_NAMESPACE
+    default: "false"
   - name: DOMAIN
     default: "bigbang.dev"
+  - name: BUCKET_SUFFIX
+    default: ""
 
 components:
+  - name: dubbd-check
+    required: true
+    description: "Check if a compatible dubbd version is already deployed"
+    files:
+      - source: files/dubbd-check.sh
+        target: files/dubbd-check.sh
+        executable: true
+    actions:
+      onDeploy:
+        after:
+          - cmd: ./zarf package list 2>&1 | grep dubbd | cut -d '|' -f 2 | tr -d " " | tr -d "v"
+            setVariables:
+              - name: DEPLOYED_DUBBD_VERSION
+          - cmd: ./files/dubbd-check.sh $ZARF_VAR_DEPLOYED_DUBBD_VERSION
   - name: values
     required: true
     files:
@@ -30,13 +51,20 @@ components:
         target: values-gitlab.yaml
       - source: values/gitlab-runner.yaml
         target: values-gitlab-runner.yaml
+      - source: values/sonarqube.yaml
+        target: values-sonarqube.yaml
   - name: gitlab
     required: true
     import:
       name: gitlab
-      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.4-skeleton
+      url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab:0.0.5-skeleton
   - name: gitlab-runner
     required: true
     import:
       name: gitlab-runner
       url: oci://ghcr.io/defenseunicorns/uds-capability/gitlab-runner:0.0.3-skeleton
+  - name: sonarqube
+    required: true
+    import:
+      name: sonarqube
+      url: oci://ghcr.io/defenseunicorns/uds-capability/sonarqube:0.0.3-skeleton
