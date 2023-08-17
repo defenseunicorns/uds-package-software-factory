@@ -78,6 +78,6 @@ postgresql:
   existingSecret: "sonarqube-postgres"
   existingSecretPasswordKey: "password"
   postgresqlUsername: "sonarqube"
-  postgresqlDatabase: "sonarqube-uds-software-factory"
+  postgresqlDatabase: ###ZARF_VAR_SONARQUBE_DB###
   service:
     port: 5432

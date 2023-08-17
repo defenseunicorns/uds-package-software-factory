@@ -5,7 +5,7 @@ global:
   psql:
     host: gitlab-postgres
     port: 5432
-    database: gitlab-uds-software-factory
+    database: ###ZARF_VAR_GITLAB_DB###
     username: gitlab
     password:
       useSecret: true
