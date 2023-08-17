@@ -44,6 +44,16 @@ components:
             setVariables:
               - name: DEPLOYED_DUBBD_VERSION
           - cmd: ./files/dubbd-check.sh $ZARF_VAR_DEPLOYED_DUBBD_VERSION
+  - name: keycloak-ingressgateway-addon
+    required: true
+    import:
+      name: keycloak-ingressgateway-addon
+      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.7-skeleton
+  - name: realm-config-default-files
+    required: true
+    import:
+      name: realm-config-default-files
+      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.7-skeleton
   - name: values
     required: true
     files:
@@ -55,16 +65,6 @@ components:
         target: values-sonarqube.yaml
       - source: values/keycloak.yaml
         target: values-keycloak.yaml
-  - name: keycloak-ingressgateway-addon
-    required: true
-    import:
-      name: keycloak-ingressgateway-addon
-      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.7-skeleton
-  - name: realm-config-default-files
-    required: false
-    import:
-      name: realm-config-default-files
-      url: oci://ghcr.io/defenseunicorns/uds-capability/uds-idam:0.1.7-skeleton
   - name: keycloak
     required: true
     import:
