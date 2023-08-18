@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory
   description: "uds software factory package"
-  version: "0.0.2"
+  version: "0.0.3"
   architecture: amd64
 
 variables:
@@ -12,6 +12,8 @@ variables:
     default: "[]"
   - name: GITLAB_CREATE_NAMESPACE
     default: "false"
+  - name: GITLAB_DB
+    default: "gitlabdb"
   - name: GITLAB_RUNNER_DEPENDS_ON
     autoIndent: true
     default: |
@@ -24,6 +26,8 @@ variables:
     default: "[]"
   - name: SONARQUBE_CREATE_NAMESPACE
     default: "false"
+  - name: SONARQUBE_DB
+    default: "sonarqubedb"
   - name: DOMAIN
     default: "bigbang.dev"
   - name: BUCKET_SUFFIX
