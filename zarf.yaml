@@ -12,6 +12,8 @@ variables:
     default: "[]"
   - name: GITLAB_CREATE_NAMESPACE
     default: "false"
+  - name: GITLAB_DB
+    default: "gitlabdb"
   - name: GITLAB_RUNNER_DEPENDS_ON
     autoIndent: true
     default: |
@@ -19,8 +21,6 @@ variables:
         namespace: bigbang
   - name: GITLAB_RUNNER_CREATE_NAMESPACE
     default: "true"
-  - name: GITLAB_DB
-    default: "gitlabdb"
   - name: SONARQUBE_DEPENDS_ON
     autoIndent: true
     default: "[]"
