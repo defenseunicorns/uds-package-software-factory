@@ -1,0 +1,66 @@
+kind: UDSBundle
+metadata:
+  name: software-factory-demo
+  description: A UDS bundle for deploying a software factory to k3d for demonstration purposes NOT FOR PRODUCTION
+  version: 0.0.1
+  architecture: amd64
+
+zarf-packages:
+  # Zarf init
+  - name: init
+    path: build
+    ref: v0.29.0
+    optional-components:
+      - git-server
+
+  # Defense Unicorns Big Bang Distro
+  - name: dubbd-k3d
+    repository: ghcr.io/defenseunicorns/packages/dubbd-k3d
+    ref: 0.7.0
+
+  # Gitlab
+  - name: gitlab-namespaces
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-namespaces
+    ref: 0.0.1
+
+  - name: gitlab-redis
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-redis
+    ref: 0.0.1
+
+  - name: gitlab-minio
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-minio
+    ref: 0.0.1
+
+  - name: gitlab-postgres
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-postgres
+    ref: 0.0.1
+
+  - name: gitlab
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab
+    ref: 0.0.6
+
+  # Gitlab Runner
+  - name: gitlab-runner-namespaces
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner/dev-dependency/gitlab-runner-namespaces
+    ref: 0.0.1
+
+  - name: gitlab-runner-rbac
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner/dev-dependency/gitlab-runner-rbac
+    ref: 0.0.1
+
+  - name: gitlab-runner
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner
+    ref: 0.0.4
+
+  # Sonarqube
+  - name: sonarqube-namespaces
+    repository: ghcr.io/defenseunicorns/uds-capability/sonarqube/dev-dependency/sonarqube-namespaces
+    ref: 0.0.1
+
+  - name: sonarqube-postgres
+    repository: ghcr.io/defenseunicorns/uds-capability/sonarqube/dev-dependency/sonarqube-postgres
+    ref: 0.0.1
+
+  - name: sonarqube
+    repository: ghcr.io/defenseunicorns/uds-capability/sonarqube
+    ref: 0.0.4
