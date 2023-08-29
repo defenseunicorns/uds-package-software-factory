@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/uds-cli/v0.0.3-alpha/uds.schema.json
 kind: UDSBundle
 metadata:
   name: software-factory-demo
@@ -8,7 +9,7 @@ metadata:
 zarf-packages:
   # Zarf init
   - name: init
-    path: build
+    repository: ghcr.io/defenseunicorns/packages/init
     ref: v0.29.1
     optional-components:
       - git-server
@@ -47,7 +48,7 @@ zarf-packages:
 
   - name: gitlab-runner
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner
-    ref: 0.0.4
+    ref: 0.0.5
 
   # Sonarqube
   - name: sonarqube-postgres
