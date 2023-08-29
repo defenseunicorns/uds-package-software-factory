@@ -1,7 +1,7 @@
 # The version of Zarf to use. To keep this repo as portable as possible the Zarf binary will be downloaded and added to
 # the build folder.
 # renovate: datasource=github-tags depName=defenseunicorns/zarf
-ZARF_VERSION := v0.29.0
+ZARF_VERSION := v0.29.1
 
 # The version of the build harness container to use
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness

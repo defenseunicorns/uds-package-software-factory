@@ -28,10 +28,10 @@ jobs:
         uses: supplypike/setup-bin@v3
         with:
           # renovate: zarf-uri datasource=github-tags depName=defenseunicorns/zarf
-          uri: 'https://github.com/defenseunicorns/zarf/releases/download/v0.29.0/zarf_v0.29.0_Linux_amd64'
+          uri: 'https://github.com/defenseunicorns/zarf/releases/download/v0.29.1/zarf_v0.29.1_Linux_amd64'
           name: 'zarf'
           # renovate: datasource=github-tags depName=defenseunicorns/zarf versioning=semver
-          version: 'v0.29.0'
+          version: 'v0.29.1'
 
       - name: Login to GHCR
         uses: docker/login-action@v2

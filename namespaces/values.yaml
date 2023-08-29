@@ -1,0 +1,26 @@
+namespaces:
+  - name: gitlab
+    labels:
+      istio-injection: enabled
+  - name: gitlab-db
+    labels:
+      istio-injection: enabled
+  - name: gitlab-redis
+    labels:
+      istio-injection: enabled
+  - name: gitlab-minio
+    labels:
+      istio-injection: enabled
+  - name: gitlab-runner-sandbox
+    labels:
+      istio-injection: enabled
+      zarf.dev/agent: ignore
+  - name: gitlab-runner
+    labels:
+      istio-injection: enabled
+  - name: sonarqube
+    labels:
+      istio-injection: enabled
+  - name: sonarqube-db
+    labels:
+      istio-injection: enabled

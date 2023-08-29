@@ -9,7 +9,7 @@ zarf-packages:
   # Zarf init
   - name: init
     path: build
-    ref: v0.29.0
+    ref: v0.29.1
     optional-components:
       - git-server
 
@@ -18,11 +18,12 @@ zarf-packages:
     repository: ghcr.io/defenseunicorns/packages/dubbd-k3d
     ref: 0.7.0
 
-  # Gitlab
-  - name: gitlab-namespaces
-    repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-namespaces
-    ref: 0.0.1
+  # Namespace pre-reqs for swf capabilities
+  - name: software-factory-namespaces
+    path: build
+    ref: 1.0.0
 
+  # Gitlab
   - name: gitlab-redis
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-redis
     ref: 0.0.1
@@ -40,10 +41,6 @@ zarf-packages:
     ref: 0.0.6
 
   # Gitlab Runner
-  - name: gitlab-runner-namespaces
-    repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner/dev-dependency/gitlab-runner-namespaces
-    ref: 0.0.1
-
   - name: gitlab-runner-rbac
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner/dev-dependency/gitlab-runner-rbac
     ref: 0.0.1
@@ -53,10 +50,6 @@ zarf-packages:
     ref: 0.0.4
 
   # Sonarqube
-  - name: sonarqube-namespaces
-    repository: ghcr.io/defenseunicorns/uds-capability/sonarqube/dev-dependency/sonarqube-namespaces
-    ref: 0.0.1
-
   - name: sonarqube-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/sonarqube/dev-dependency/sonarqube-postgres
     ref: 0.0.1

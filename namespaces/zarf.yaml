@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: software-factory-namespaces
+  description: "Required namespaces for all capabilities of software factory"
+  version: "1.0.0"
+  architecture: amd64
+
+components:
+  - name: namespaces
+    required: true
+    charts:
+      - name: namespaces
+        version: 1.0.0
+        namespace: default
+        url: https://defenseunicorns.github.io/uds-support-charts/
+        valuesFiles:
+          - values.yaml
