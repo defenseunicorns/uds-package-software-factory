@@ -112,8 +112,12 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/zarf`)
 		require.NoError(t, err, output)
 
-		// Copy zarf-config.toml to the build folder
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/zarf-config.toml build/zarf-config.toml`)
+		// Copy zarf-config.yaml to the build folder
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/zarf-config.yaml build/zarf-config.yaml`)
+		require.NoError(t, err, output)
+
+		// Copy uds-config.yaml to the build folder
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/uds-config.yaml build/uds-config.yaml`)
 		require.NoError(t, err, output)
 
 		// Log into registry1.dso.mil
@@ -125,27 +129,15 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		require.NoError(t, err, output)
 
 		// Build
-		output, err = platform.RunSSHCommandAsSudo(`echo "::group::Build"`)
-		require.NoError(t, err, output)
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/all`)
-		require.NoError(t, err, output)
-		output, err = platform.RunSSHCommandAsSudo(`echo "::endgroup::"`)
 		require.NoError(t, err, output)
 
 		// Cluster
-		output, err = platform.RunSSHCommandAsSudo(`echo "::group::Cluster"`)
-		require.NoError(t, err, output)
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make cluster/reset`)
-		require.NoError(t, err, output)
-		output, err = platform.RunSSHCommandAsSudo(`echo "::endgroup::"`)
 		require.NoError(t, err, output)
 
 		// Deploy
-		output, err = platform.RunSSHCommandAsSudo(`echo "::group::Deploy"`)
-		require.NoError(t, err, output)
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make deploy`)
-		require.NoError(t, err, output)
-		output, err = platform.RunSSHCommandAsSudo(`echo "::endgroup::"`)
 		require.NoError(t, err, output)
 
 	})

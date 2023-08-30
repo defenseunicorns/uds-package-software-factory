@@ -149,26 +149,24 @@ clean: ## Clean up build files
 	rm -rf ./build
 
 .PHONY: build/zarf
-.ONESHELL:
 build/zarf: | build ## Download the Zarf to the build dir
-	if [ -f build/zarf ] && [ "$$(build/zarf version)" = "$(ZARF_VERSION)" ] ; then exit 0; fi
-	echo "Downloading zarf"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf
+	if [ -f build/zarf ] && [ "$$(build/zarf version)" = "$(ZARF_VERSION)" ] ; then exit 0; fi && \
+	echo "Downloading zarf" && \
+	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf && \
 	chmod +x build/zarf
 
 .PHONY: build/uds
-.ONESHELL:
 build/uds: | build ## Download uds-cli to the build dir
-	if [ -f build/uds ] && [ "$$(build/uds version)" = "$(UDS_CLI_VERSION)" ] ; then exit 0; fi
-	echo "Downloading uds-cli"
-	curl -sL https://github.com/defenseunicorns/uds-cli/releases/download/$(UDS_CLI_VERSION)/uds-cli_$(UDS_CLI_VERSION)_$(UNAME_S)_$(ARCH) -o build/uds
+	if [ -f build/uds ] && [ "$$(build/uds version)" = "$(UDS_CLI_VERSION)" ] ; then exit 0; fi && \
+	echo "Downloading uds-cli" && \
+	curl -sL https://github.com/defenseunicorns/uds-cli/releases/download/$(UDS_CLI_VERSION)/uds-cli_$(UDS_CLI_VERSION)_$(UNAME_S)_$(ARCH) -o build/uds && \
 	chmod +x build/uds
 
 build/software-factory-namespaces: | build ## Build namespaces package
-	build/zarf package create namespaces/ --confirm --output-directory build
+	cd build && ./zarf package create ../namespaces/ --confirm --output-directory .
 
 build/uds-bundle-software-factory: | build ## Build the software factory
-	build/uds bundle create . --confirm
+	cd build && ./uds bundle create ../ --confirm
 	mv uds-bundle-software-factory-demo-*.tar.zst build/
 
 ########################################################################
@@ -176,7 +174,7 @@ build/uds-bundle-software-factory: | build ## Build the software factory
 ########################################################################
 
 deploy: ## Deploy the software factory package
-	cd ./build && ./uds bundle deploy uds-bundle-software-factory-demo-*.tar.zst --confirm
+	cd ./build && ./uds bundle deploy uds-bundle-software-factory-demo-*.tar.zst --confirm -l trace
 
 ########################################################################
 # Macro Section
