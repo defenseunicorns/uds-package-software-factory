@@ -124,8 +124,28 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/zarf tools registry login ghcr.io -u %v -p %v`, ghcrUsername, ghcrPassword))
 		require.NoError(t, err, output)
 
-		// Create cluster build and deploy
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make all`)
+		// Build
+		output, err = platform.RunSSHCommandAsSudo(`echo "::group::Build"`)
+		require.NoError(t, err, output)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/all`)
+		require.NoError(t, err, output)
+		output, err = platform.RunSSHCommandAsSudo(`echo "::endgroup::"`)
+		require.NoError(t, err, output)
+
+		// Cluster
+		output, err = platform.RunSSHCommandAsSudo(`echo "::group::Cluster"`)
+		require.NoError(t, err, output)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make cluster/reset`)
+		require.NoError(t, err, output)
+		output, err = platform.RunSSHCommandAsSudo(`echo "::endgroup::"`)
+		require.NoError(t, err, output)
+
+		// Deploy
+		output, err = platform.RunSSHCommandAsSudo(`echo "::group::Deploy"`)
+		require.NoError(t, err, output)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make deploy`)
+		require.NoError(t, err, output)
+		output, err = platform.RunSSHCommandAsSudo(`echo "::endgroup::"`)
 		require.NoError(t, err, output)
 
 	})
