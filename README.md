@@ -6,12 +6,13 @@ This is the early stages of a UDS Bundle we call the UDS Software Factory. This 
 
 ## Zarf Packages and UDS Capabilities contained in this UDS Bundle
 
-- [X] [Zarf Init Package](ghcr.io/defenseunicorns/packages/init)
-- [X] [Defense Unicorns Big Bang Distro (DUBBD) for k3d](https://github.com/defenseunicorns/uds-package-dubbd)
-- [X] [Gitlab](https://github.com/defenseunicorns/uds-capability-gitlab)
-- [X] [Gitlab-Runner](https://github.com/defenseunicorns/uds-capability-gitlab-runner)
-- [X] [SonarQube](https://github.com/defenseunicorns/uds-capability-sonarqube)
-- [ ] More UDS Capabilities under construction
+| Capability | Maturity |
+|------------|----------|
+| [Zarf Init Package](ghcr.io/defenseunicorns/packages/init) | Beta |
+| [Defense Unicorns Big Bang Distro](https://github.com/defenseunicorns/uds-package-dubbd) | Beta |
+| [Gitlab](https://github.com/defenseunicorns/uds-capability-gitlab) | Experimental |
+| [Gitlab-Runner](https://github.com/defenseunicorns/uds-capability-gitlab-runner) | Experimental |
+| [SonarQube](https://github.com/defenseunicorns/uds-capability-sonarqube) | Experimental |
 
 ## Prerequisites
 
@@ -19,4 +20,3 @@ This is the early stages of a UDS Bundle we call the UDS Software Factory. This 
 
 - 1.26
 - Compute power that is comparable to the **[m6id.8xlarge](https://aws.amazon.com/ec2/instance-types/#:~:text=Up%20to%2010-,m6id.8xlarge,-32)** AWS instance type used in our E2E tests.
-
