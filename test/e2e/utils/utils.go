@@ -125,7 +125,7 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		require.NoError(t, err, output)
 
 		// Create cluster build and deploy
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make cluster/full`)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make all`)
 		require.NoError(t, err, output)
 
 	})
