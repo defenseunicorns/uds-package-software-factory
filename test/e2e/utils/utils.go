@@ -112,6 +112,10 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/zarf`)
 		require.NoError(t, err, output)
 
+		// Add the zarf binary to the path
+		output, err = platform.RunSSHCommandAsSudo(`cp build/zarf /usr/local/bin/zarf`)
+		require.NoError(t, err, output)
+
 		// Copy zarf-config.yaml to the build folder
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/zarf-config.yaml build/zarf-config.yaml`)
 		require.NoError(t, err, output)
