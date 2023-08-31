@@ -113,7 +113,7 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		require.NoError(t, err, output)
 
 		// Add the zarf binary to the path
-		output, err = platform.RunSSHCommandAsSudo(`cp build/zarf /usr/local/bin/zarf`)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp build/zarf /usr/local/bin/zarf`)
 		require.NoError(t, err, output)
 
 		// Copy zarf-config.yaml to the build folder
