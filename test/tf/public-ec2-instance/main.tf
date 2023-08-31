@@ -72,6 +72,9 @@ resource "aws_instance" "public" {
 
   root_block_device {
     volume_size = 400
+    volume_type = gp3
+    iops = 16000
+    throughput = 500
   }
 
   user_data = <<_EOF_
