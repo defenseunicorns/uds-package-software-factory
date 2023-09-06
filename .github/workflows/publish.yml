@@ -24,14 +24,14 @@ jobs:
           path: "~/.zarf-cache"
           key: zarf-cache
 
-      - name: Install zarf
+      - name: Install uds-cli
         uses: supplypike/setup-bin@v3
         with:
-          # renovate: zarf-uri datasource=github-tags depName=defenseunicorns/zarf
-          uri: 'https://github.com/defenseunicorns/zarf/releases/download/v0.29.1/zarf_v0.29.1_Linux_amd64'
-          name: 'zarf'
-          # renovate: datasource=github-tags depName=defenseunicorns/zarf versioning=semver
-          version: 'v0.29.1'
+          # renovate: uds-cli-uri datasource=github-tags depName=defenseunicorns/uds-cli
+          uri: 'https://github.com/defenseunicorns/uds-cli/releases/download/v0.0.3-alpha/uds-cli_v0.0.3-alpha_Linux_amd64 '
+          name: 'uds'
+          # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
+          version: 'v0.0.3-alpha'
 
       - name: Login to GHCR
         uses: docker/login-action@v2
@@ -47,8 +47,5 @@ jobs:
           username: ${{ secrets.REGISTRY1_USERNAME }}
           password: ${{ secrets.REGISTRY1_PASSWORD }}
 
-      - name: Build software factory package
-        run: zarf package create --confirm --no-progress
-
-      - name: Publish software factory package
-        run: zarf package publish zarf-package-software-factory-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-package --no-progress
+      - name: Build software factory bundle
+        run: uds bundle create --confirm --no-progress --output oci://ghcr.io/defenseunicorns/uds-bundle
