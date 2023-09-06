@@ -4,6 +4,10 @@
 
 This is the early stages of a UDS Bundle we call the UDS Software Factory. This UDS Bundle brings together a collection of necessary Zarf packages as well as UDS Capabilities and the development version of their dependency packages. The development dependency packages are only meant to satisfy the UDS Capability's dependencies for demonstration purposes. **This UDS Bundle is not intended for a production environment**.
 
+## Known Issues
+
+- [Zarf](https://zarf.dev/) must be installed and on your path for the bundle to deploy successfully. This is due to how actions that call `./zarf` work currently. Issue is [here](https://github.com/defenseunicorns/uds-cli/issues/45)
+
 ## Zarf Packages and UDS Capabilities contained in this UDS Bundle
 
 | Capability | Maturity |
