@@ -15,6 +15,9 @@ namespaces:
     labels:
       istio-injection: enabled
       zarf.dev/agent: ignore
+  - name: gitlab-runner
+    labels:
+      istio-injection: enabled
   - name: sonarqube
     labels:
       istio-injection: enabled

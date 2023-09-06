@@ -1,5 +1,0 @@
-package:
-  create:
-    set:
-# renovate: datasource=docker depName=ghcr.io/defenseunicorns/packages/dubbd-k3d extractVersion=^(?<version>\d+\.\d+\.\d+)
-      min_dubbd_version: "0.5.0"

@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
 kind: ZarfPackageConfig
 metadata:
-  name: swf-namespaces
-  description: "package used to deploy needed namespaces"
-  version: "0.0.1"
+  name: software-factory-namespaces
+  description: "Required namespaces for all capabilities of software factory"
+  version: "1.0.0"
   architecture: amd64
 
 components:

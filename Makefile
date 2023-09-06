@@ -1,7 +1,9 @@
 # The version of Zarf to use. To keep this repo as portable as possible the Zarf binary will be downloaded and added to
 # the build folder.
 # renovate: datasource=github-tags depName=defenseunicorns/zarf
-ZARF_VERSION := v0.28.4
+UDS_CLI_VERSION := v0.0.3-alpha
+
+ZARF_VERSION := v0.29.1
 
 # The version of the build harness container to use
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness
@@ -114,13 +116,13 @@ test-ssh: ## Run this if you set SKIP_TEARDOWN=1 and want to SSH into the still-
 # Cluster Section
 ########################################################################
 
-cluster/full: cluster/destroy cluster/create build/all deploy/all ## This will destroy any existing cluster, create a new one, then build and deploy all
+cluster/reset: cluster/destroy cluster/create ## This will destroy any existing cluster and then create a new one
 
 cluster/create: ## Create a k3d cluster with metallb installed
-	k3d cluster create k3d-test-cluster --config utils/k3d/k3d-config.yaml -v /etc/machine-id:/etc/machine-id@server:*
+	K3D_FIX_MOUNTS=1 k3d cluster create k3d-test-cluster --config utils/k3d/k3d-config.yaml
 	k3d kubeconfig merge k3d-test-cluster -o /home/${USER}/cluster-kubeconfig.yaml
 	echo "Installing Calico..."
-	kubectl apply --wait=true -f https://k3d.io/v5.5.2/usage/advanced/calico.yaml 2>&1 >/dev/null
+	kubectl apply --wait=true -f utils/calico/calico.yaml 2>&1 >/dev/null
 	echo "Waiting for Calico to be ready..."
 	kubectl rollout status deployment/calico-kube-controllers -n kube-system --watch --timeout=90s 2>&1 >/dev/null
 	kubectl rollout status daemonset/calico-node -n kube-system --watch --timeout=90s 2>&1 >/dev/null
@@ -136,7 +138,8 @@ cluster/destroy: ## Destroy the k3d cluster
 # Build Section
 ########################################################################
 
-build/all: build build/zarf build/zarf-init.sha256 build/dubbd-pull-k3d.sha256 build/test-pkg-deps build/uds-package-software-factory ##
+.PHONY: build/all
+build/all: build build/zarf build/uds build/software-factory-namespaces build/uds-bundle-software-factory ## Build everything
 
 build: ## Create build directory
 	mkdir -p build
@@ -145,52 +148,40 @@ build: ## Create build directory
 clean: ## Clean up build files
 	rm -rf ./build
 
+.PHONY: build/zarf
 build/zarf: | build ## Download the Zarf to the build dir
-	echo "Downloading zarf"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf
+	if [ -f build/zarf ] && [ "$$(build/zarf version)" = "$(ZARF_VERSION)" ] ; then exit 0; fi && \
+	echo "Downloading zarf" && \
+	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf_$(ZARF_VERSION)_$(UNAME_S)_$(ARCH) -o build/zarf && \
 	chmod +x build/zarf
 
-build/zarf-init.sha256: | build ## Download the init package
-	echo "Downloading zarf-init-amd64-$(ZARF_VERSION).tar.zst"
-	curl -sL https://github.com/defenseunicorns/zarf/releases/download/$(ZARF_VERSION)/zarf-init-amd64-$(ZARF_VERSION).tar.zst -o build/zarf-init-amd64-$(ZARF_VERSION).tar.zst
-	echo "Creating shasum of the init package"
-	shasum -a 256 build/zarf-init-amd64-$(ZARF_VERSION).tar.zst | awk '{print $$1}' > build/zarf-init.sha256
+.PHONY: build/uds
+build/uds: | build ## Download uds-cli to the build dir
+	if [ -f build/uds ] && [ "$$(build/uds version)" = "$(UDS_CLI_VERSION)" ] ; then exit 0; fi && \
+	echo "Downloading uds-cli" && \
+	curl -sL https://github.com/defenseunicorns/uds-cli/releases/download/$(UDS_CLI_VERSION)/uds-cli_$(UDS_CLI_VERSION)_$(UNAME_S)_$(ARCH) -o build/uds && \
+	chmod +x build/uds
 
-build/dubbd-pull-k3d.sha256: | build ## Download dubbd k3d oci package
-	./build/zarf package pull oci://ghcr.io/defenseunicorns/packages/dubbd-k3d:$(DUBBD_K3D_VERSION)-amd64 --oci-concurrency 9 --output-directory build
-	echo "Creating shasum of the dubbd-k3d package"
-	shasum -a 256 build/zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst | awk '{print $$1}' > build/dubbd-pull-k3d.sha256
+build/software-factory-namespaces: | build ## Build namespaces package
+	cd build && ./zarf package create ../namespaces/ --confirm --output-directory .
 
-build/test-pkg-deps: | build ## Build package dependencies for testing
-	build/zarf package create utils/pkg-deps/namespaces/ --skip-sbom --confirm --output-directory build
-	build/zarf package create utils/pkg-deps/gitlab/postgres/ --skip-sbom --confirm --output-directory build
-	build/zarf package create utils/pkg-deps/gitlab/redis/ --skip-sbom --confirm --output-directory build
-	build/zarf package create utils/pkg-deps/gitlab/minio/ --skip-sbom --confirm --output-directory build
-	build/zarf package create utils/pkg-deps/gitlab-runner/ --skip-sbom --confirm --output-directory build
-	build/zarf package create utils/pkg-deps/sonarqube/postgres/ --skip-sbom --confirm --output-directory build
-
-build/uds-package-software-factory: | build ## Build the software factory
-	build/zarf package create . --skip-sbom --confirm --output-directory build
+build/uds-bundle-software-factory: | build ## Build the software factory
+	cd build && ./uds bundle create ../ --confirm
+	mv uds-bundle-software-factory-demo-*.tar.zst build/
 
 ########################################################################
 # Deploy Section
 ########################################################################
 
-deploy/all: deploy/init deploy/dubbd-k3d deploy/test-pkg-deps deploy/uds-package-software-factory ##
+deploy: ## Deploy the software factory package
+	cd ./build && ./uds bundle deploy uds-bundle-software-factory-demo-*.tar.zst --confirm
 
-deploy/init: ## Deploy the zarf init package
-	./build/zarf init -a amd64 --confirm --components=git-server
+########################################################################
+# Macro Section
+########################################################################
 
-deploy/dubbd-k3d: ## Deploy the k3d flavor of DUBBD
-	cd ./build && ./zarf package deploy zarf-package-dubbd-k3d-amd64-$(DUBBD_K3D_VERSION).tar.zst --confirm
+.PHONY: all
+all: build/all cluster/reset deploy ## Build and deploy the software factory
 
-deploy/test-pkg-deps: ## Deploy the package dependencies needed for testing the software factory
-	cd ./build && ./zarf package deploy zarf-package-swf-namespaces-* --confirm
-	cd ./build && ./zarf package deploy zarf-package-gitlab-postgres-* --confirm
-	cd ./build && ./zarf package deploy zarf-package-gitlab-redis-* --confirm
-	cd ./build && ./zarf package deploy zarf-package-gitlab-minio-* --confirm
-	cd ./build && ./zarf package deploy zarf-package-gitlab-runner-* --confirm
-	cd ./build && ./zarf package deploy zarf-package-sonarqube-postgres-* --confirm
-
-deploy/uds-package-software-factory: ## Deploy the software factory package
-	cd ./build && ./zarf package deploy zarf-package-software-factory-*.tar.zst --confirm
+.PHONY: rebuild
+rebuild: clean build/all

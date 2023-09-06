@@ -112,8 +112,16 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/zarf`)
 		require.NoError(t, err, output)
 
-		// Copy zarf-config.toml to the build folder
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/zarf-config.toml build/zarf-config.toml`)
+		// Add the zarf binary to the path
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp build/zarf /usr/local/bin/zarf`)
+		require.NoError(t, err, output)
+
+		// Copy zarf-config.yaml to the build folder
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/zarf-config.yaml build/zarf-config.yaml`)
+		require.NoError(t, err, output)
+
+		// Copy uds-config.yaml to the build folder
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/uds-config.yaml build/uds-config.yaml`)
 		require.NoError(t, err, output)
 
 		// Log into registry1.dso.mil
@@ -124,8 +132,16 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/zarf tools registry login ghcr.io -u %v -p %v`, ghcrUsername, ghcrPassword))
 		require.NoError(t, err, output)
 
-		// Create cluster build and deploy
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make cluster/full`)
+		// Build
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/all`)
+		require.NoError(t, err, output)
+
+		// Cluster
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make cluster/reset`)
+		require.NoError(t, err, output)
+
+		// Deploy
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make deploy`)
 		require.NoError(t, err, output)
 
 	})
