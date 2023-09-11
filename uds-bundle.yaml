@@ -17,7 +17,7 @@ zarf-packages:
   # Defense Unicorns Big Bang Distro
   - name: dubbd-k3d
     repository: ghcr.io/defenseunicorns/packages/dubbd-k3d
-    ref: 0.7.0
+    ref: 0.8.1
 
   # Namespace pre-reqs for swf capabilities
   - name: software-factory-namespaces
@@ -39,7 +39,7 @@ zarf-packages:
 
   - name: gitlab
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab
-    ref: 0.0.6
+    ref: 0.0.8
 
   # Gitlab Runner
   - name: gitlab-runner-rbac
@@ -48,7 +48,7 @@ zarf-packages:
 
   - name: gitlab-runner
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner
-    ref: 0.0.5
+    ref: 0.0.7
 
   # Sonarqube
   - name: sonarqube-postgres
@@ -57,4 +57,4 @@ zarf-packages:
 
   - name: sonarqube
     repository: ghcr.io/defenseunicorns/uds-capability/sonarqube
-    ref: 0.0.4
+    ref: 0.0.6
