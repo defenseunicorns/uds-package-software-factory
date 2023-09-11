@@ -34,6 +34,15 @@ jobs:
           sudo docker image prune --all --force
           df -h
 
+      - name: Install zarf
+        uses: supplypike/setup-bin@v3
+        with:
+          # renovate: zarf-uri datasource=github-tags depName=defenseunicorns/zarf
+          uri: 'https://github.com/defenseunicorns/zarf/releases/download/v0.29.1/zarf_v0.29.1_Linux_amd64'
+          name: 'zarf'
+          # renovate: datasource=github-tags depName=defenseunicorns/zarf versioning=semver
+          version: 'v0.29.1'
+
       - name: Install uds-cli
         uses: supplypike/setup-bin@v3
         with:
@@ -56,6 +65,11 @@ jobs:
           registry: registry1.dso.mil
           username: ${{ secrets.REGISTRY1_USERNAME }}
           password: ${{ secrets.REGISTRY1_PASSWORD }}
+
+      - name: Build Software Factory Namespaces zarf package
+        run: |
+          mkdir -p build
+          zarf package create namespaces/ --confirm --no-progress --output-directory build
 
       - name: Build software factory bundle
         run: uds bundle create --confirm --no-progress
