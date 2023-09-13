@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: software-factory-idam-realm
+  description: "Brings realm for keycloak to import"
+  version: "1.0.0"
+  architecture: amd64
+
+components:
+  - name: realm-file
+    required: true
+    files:
+      - source: files/baby-yoda.json
+        target: baby-yoda.json
+
+  - name: exported-variables
+    required: false
+    actions:
+      onDeploy:
+        after:
+          # Set REALM_IMPORT_FILE to the realm we want
+          - cmd: echo baby-yoda.json
+            setVariables:
+              - name: REALM_IMPORT_FILE

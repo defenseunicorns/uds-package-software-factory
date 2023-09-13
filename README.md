@@ -14,9 +14,9 @@ This is the early stages of a UDS Bundle we call the UDS Software Factory. This 
 |------------|----------|
 | [Zarf Init Package](ghcr.io/defenseunicorns/packages/init) | Beta |
 | [Defense Unicorns Big Bang Distro](https://github.com/defenseunicorns/uds-package-dubbd) | Beta |
-| [Gitlab](https://github.com/defenseunicorns/uds-capability-gitlab) | Experimental |
-| [Gitlab-Runner](https://github.com/defenseunicorns/uds-capability-gitlab-runner) | Experimental |
-| [SonarQube](https://github.com/defenseunicorns/uds-capability-sonarqube) | Experimental |
+| [Gitlab](https://github.com/defenseunicorns/uds-capability-gitlab) | Alpha |
+| [Gitlab-Runner](https://github.com/defenseunicorns/uds-capability-gitlab-runner) | Alpha |
+| [SonarQube](https://github.com/defenseunicorns/uds-capability-sonarqube) | Alpha |
 
 ## Prerequisites
 

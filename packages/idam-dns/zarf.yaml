@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: software-factory-idam-dns
+  description: "Creates internal DNS entries for auth callbacks"
+  version: "1.0.0"
+  architecture: amd64
+
+components:
+  - name: dns-script
+    required: true
+    files:
+      - source: files/coredns-add-hostname.sh
+        target: coredns-add-hostname.sh
+        executable: true
+
+  - name: create-internal-dns-entries
+    required: false
+    actions:
+      onDeploy:
+        after:
+          - cmd: ./coredns-add-hostname.sh
