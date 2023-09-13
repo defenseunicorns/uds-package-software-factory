@@ -6,6 +6,14 @@ metadata:
   version: "1.0.0"
   architecture: amd64
 
+variables:
+  - name: IDENTITY_PROVIDER_CLIENT_SECRET
+    default: ""
+  - name: IDENTITY_PROVIDER_NAME
+    default: "google"
+  - name: IDENTITY_PROVIDER_CLIENT_ID
+    default: ""
+
 components:
   - name: realm-file
     required: true
