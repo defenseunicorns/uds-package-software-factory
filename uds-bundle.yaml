@@ -25,7 +25,7 @@ zarf-packages:
     ref: 1.0.0
 
   # Change the realm file keycloak imports from
-  - name: software-factory-idam-deps
+  - name: software-factory-idam-realm
     path: build
     ref: 1.0.0
     optional-components:
@@ -47,7 +47,7 @@ zarf-packages:
     ref: 0.1.9
     imports:
       - name: REALM_IMPORT_FILE
-        package: software-factory-idam-deps
+        package: software-factory-idam-realm
 
   # Gitlab
   - name: gitlab-redis
@@ -90,7 +90,7 @@ zarf-packages:
     ref: 0.0.6
 
   # Add all virtualservices as internal dns entries for auth callbacks
-  - name: software-factory-idam-deps
+  - name: software-factory-idam-dns
     path: build
     ref: 1.0.0
     optional-components:

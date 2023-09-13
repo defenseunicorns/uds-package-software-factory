@@ -1,35 +1,24 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
 kind: ZarfPackageConfig
 metadata:
-  name: software-factory-idam-deps
-  description: "Imports realm for keycloak to import and creates internal DNS entries to auth callbacks"
+  name: software-factory-idam-realm
+  description: "Brings realm for keycloak to import"
   version: "1.0.0"
   architecture: amd64
 
 components:
-  - name: realm-and-dns-script
+  - name: realm-file
     required: true
     files:
       - source: files/baby-yoda.json
         target: baby-yoda.json
-      - source: files/coredns-add-hostname.sh
-        target: coredns-add-hostname.sh
-        executable: true
-
-  - name: create-internal-dns-entries
-    required: false
-    actions:
-      onDeploy:
-        after:
-          - cmd: ./coredns-add-hostname.sh
 
   - name: exported-variables
     required: false
     actions:
       onDeploy:
         after:
-          # Set generic IDAM_ENABLED to true for export
+          # Set REALM_IMPORT_FILE to the realm we want
           - cmd: echo baby-yoda.json
             setVariables:
               - name: REALM_IMPORT_FILE
-
