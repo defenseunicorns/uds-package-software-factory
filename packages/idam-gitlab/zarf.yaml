@@ -45,7 +45,7 @@ components:
             setVariables:
               - name: IDAM_ALLOWED_SSOS
           # Set the IDAM_PROVIDERS variable for the GitLab auth provider
-          - cmd: 'echo -e "- secret: gitlab-sso-provider\n  key: gitlab-sso.json"'
+          - cmd: 'printf "%b" "- secret: gitlab-sso-provider\n  key: gitlab-sso.json"'
             setVariables:
               - name: IDAM_PROVIDERS
 
