@@ -1,16 +1,16 @@
 # The version of Zarf to use. To keep this repo as portable as possible the Zarf binary will be downloaded and added to
 # the build folder.
 # renovate: datasource=github-tags depName=defenseunicorns/zarf
-UDS_CLI_VERSION := v0.0.4-alpha
+UDS_CLI_VERSION := v0.0.5-alpha
 
-ZARF_VERSION := v0.29.1
+ZARF_VERSION := v0.29.2
 
 # The version of the build harness container to use
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness
 # renovate: datasource=docker depName=ghcr.io/defenseunicorns/build-harness/build-harness
 BUILD_HARNESS_VERSION := 1.10.2
 # renovate: datasource=docker depName=ghcr.io/defenseunicorns/packages/dubbd-k3d extractVersion=^(?<version>\d+\.\d+\.\d+)
-DUBBD_K3D_VERSION := 0.8.1
+DUBBD_K3D_VERSION := 0.9.0
 
 # Figure out which Zarf binary we should use based on the operating system we are on
 ZARF_BIN := zarf

@@ -43,5 +43,9 @@ components:
           # Put PROVIDER_NAME in correct format for export
           - cmd: echo "['${ZARF_VAR_PROVIDER_NAME}']"
             setVariables:
-              - name: IDAM_PROVIDER
+              - name: IDAM_ALLOWED_SSOS
+          # Set the IDAM_PROVIDERS variable for the GitLab auth provider
+          - cmd: 'echo -e "- secret: gitlab-sso-provider\n  key: gitlab-sso.json"'
+            setVariables:
+              - name: IDAM_PROVIDERS
 

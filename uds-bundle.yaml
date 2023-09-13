@@ -1,9 +1,9 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/uds-cli/v0.0.4-alpha/uds.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/uds-cli/v0.0.5-alpha/uds.schema.json
 kind: UDSBundle
 metadata:
   name: software-factory-demo
   description: A UDS bundle for deploying a software factory to k3d for demonstration purposes NOT FOR PRODUCTION
-  version: 0.0.1
+  version: 0.0.2
   architecture: amd64
 
 zarf-packages:
@@ -39,7 +39,8 @@ zarf-packages:
     ref: 1.0.0
     exports:
       - name: IDAM_ENABLED
-      - name: IDAM_PROVIDER
+      - name: IDAM_ALLOWED_SSOS
+      - name: IDAM_PROVIDERS
 
   # Identity and Access Management
   - name: uds-idam
@@ -63,12 +64,14 @@ zarf-packages:
     ref: 0.0.1
 
   - name: gitlab
-    repository: ghcr.io/michael-kruggel/gitlab
+    repository: ghcr.io/defenseunicorns/uds-capability/gitlab
     ref: 0.0.9
     imports:
       - name: IDAM_ENABLED
         package: software-factory-idam-gitlab
-      - name: IDAM_PROVIDER
+      - name: IDAM_PROVIDERS
+        package: software-factory-idam-gitlab
+      - name: IDAM_ALLOWED_SSOS
         package: software-factory-idam-gitlab
 
   # Gitlab Runner
