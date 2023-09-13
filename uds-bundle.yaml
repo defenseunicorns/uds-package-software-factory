@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/uds-cli/v0.0.3-alpha/uds.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/uds-cli/v0.0.4-alpha/uds.schema.json
 kind: UDSBundle
 metadata:
   name: software-factory-demo
@@ -24,6 +24,31 @@ zarf-packages:
     path: build
     ref: 1.0.0
 
+  # Change the realm file keycloak imports from
+  - name: software-factory-idam-deps
+    path: build
+    ref: 1.0.0
+    optional-components:
+      - exported-variables
+    exports:
+      - name: REALM_IMPORT_FILE
+
+  # GitLab SSO secret and variables
+  - name: software-factory-idam-gitlab
+    path: build
+    ref: 1.0.0
+    exports:
+      - name: IDAM_ENABLED
+      - name: IDAM_PROVIDER
+
+  # Identity and Access Management
+  - name: uds-idam
+    repository: ghcr.io/defenseunicorns/uds-capability/uds-idam
+    ref: 0.1.9
+    imports:
+      - name: REALM_IMPORT_FILE
+        package: software-factory-idam-deps
+
   # Gitlab
   - name: gitlab-redis
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-redis
@@ -38,8 +63,13 @@ zarf-packages:
     ref: 0.0.1
 
   - name: gitlab
-    repository: ghcr.io/defenseunicorns/uds-capability/gitlab
-    ref: 0.0.8
+    repository: ghcr.io/michael-kruggel/gitlab
+    ref: 0.0.9
+    imports:
+      - name: IDAM_ENABLED
+        package: software-factory-idam-gitlab
+      - name: IDAM_PROVIDER
+        package: software-factory-idam-gitlab
 
   # Gitlab Runner
   - name: gitlab-runner-rbac
@@ -58,3 +88,10 @@ zarf-packages:
   - name: sonarqube
     repository: ghcr.io/defenseunicorns/uds-capability/sonarqube
     ref: 0.0.6
+
+  # Add all virtualservices as internal dns entries for auth callbacks
+  - name: software-factory-idam-deps
+    path: build
+    ref: 1.0.0
+    optional-components:
+      - create-internal-dns-entries

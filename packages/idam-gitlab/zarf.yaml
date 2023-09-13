@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: software-factory-idam-gitlab
+  description: "The IDAM/SSO manifest and variables for the GitLab Capability"
+  version: "1.0.0"
+  architecture: amd64
+
+variables:
+  - name: GITLAB_SSO_JSON
+    default: gitlab-sso-demo.json
+    prompt: false
+    type: file
+    autoIndent: true
+
+components:
+  - name: default-sso-config
+    required: true
+    files:
+      - source: gitlab-sso-demo.json
+        target: gitlab-sso-demo.json
+
+  - name: sso-manifest
+    required: true
+    manifests:
+      - name: idam-gitlab
+        files:
+          - secret.yaml
+
+  - name: exported-variables
+    required: true
+    actions:
+      onDeploy:
+        after:
+          # Set generic IDAM_ENABLED to true for export
+          - cmd: echo true
+            setVariables:
+              - name: IDAM_ENABLED
+          # Get name of omniauth provider from json file
+          - cmd: cat gitlab-sso-demo.json | grep '"name"' | head -n1 | cut -d '"' -f4
+            setVariables:
+              - name: PROVIDER_NAME
+          # Put PROVIDER_NAME in correct format for export
+          - cmd: echo "['${ZARF_VAR_PROVIDER_NAME}']"
+            setVariables:
+              - name: IDAM_PROVIDER
+
