@@ -8,8 +8,6 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
 
 jobs:
   build-and-publish-package:
@@ -66,10 +64,13 @@ jobs:
           username: ${{ secrets.REGISTRY1_USERNAME }}
           password: ${{ secrets.REGISTRY1_PASSWORD }}
 
-      - name: Build Software Factory Namespaces zarf package
+      - name: Build Software Factory Dependencies Packages
         run: |
           mkdir -p build
-          zarf package create namespaces/ --confirm --no-progress --output-directory build
+          zarf package create packages/idam-dns    --confirm --no-progress --output-directory build
+          zarf package create packages/idam-gitlab --confirm --no-progress --output-directory build
+          zarf package create packages/idam-realm  --confirm --no-progress --output-directory build
+          zarf package create packages/namespaces  --confirm --no-progress --output-directory build
 
       - name: Build software factory bundle
         run: uds bundle create --confirm --no-progress
