@@ -24,3 +24,7 @@ This is the early stages of a UDS Bundle we call the UDS Software Factory. This 
 
 - 1.26
 - Compute power that is comparable to the **[m6id.8xlarge](https://aws.amazon.com/ec2/instance-types/#:~:text=Up%20to%2010-,m6id.8xlarge,-32)** AWS instance type used in our E2E tests.
+
+## Documentation
+
+[Identity and Access Management Configuration](doc/idam.md)
