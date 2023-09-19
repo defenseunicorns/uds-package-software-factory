@@ -43,18 +43,14 @@ components:
               - name: SONARQUBE_IDAM_SAML_CERT
           - cmd: ./zarf tools kubectl delete pod saml-cert -n keycloak --force=true
           # Get the IDAM attribute to map login to
-          - cmd: echo Username
+          - cmd: echo login
             setVariables:
               - name: SONARQUBE_IDAM_ATTR_LOGIN
           # Get the IDAM attribute to map name to
-          - cmd: echo username
+          - cmd: echo name
             setVariables:
               - name: SONARQUBE_IDAM_ATTR_NAME
           # Get the IDAM attribute to map email to
           - cmd: echo email
             setVariables:
               - name: SONARQUBE_IDAM_PROVIDER_EMAIL
-          # Get the IDAM attribute to map groups to (optional)
-          - cmd: echo groups
-            setVariables:
-              - name: SONARQUBE_IDAM_PROVIDER_GROUP

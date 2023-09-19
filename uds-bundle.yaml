@@ -3,7 +3,7 @@ kind: UDSBundle
 metadata:
   name: software-factory-demo
   description: A UDS bundle for deploying a software factory to k3d for demonstration purposes NOT FOR PRODUCTION
-  version: 0.0.2
+  version: 0.0.3
   architecture: amd64
 
 zarf-packages:
@@ -51,10 +51,10 @@ zarf-packages:
       - name: SONARQUBE_IDAM_CLIENT_ID
       - name: SONARQUBE_IDAM_PROVIDER_NAME
       - name: SONARQUBE_IDAM_REALM_URL
+      - name: SONARQUBE_IDAM_SAML_CERT
       - name: SONARQUBE_IDAM_ATTR_LOGIN
       - name: SONARQUBE_IDAM_ATTR_NAME
       - name: SONARQUBE_IDAM_PROVIDER_EMAIL
-      - name: SONARQUBE_IDAM_PROVIDER_GROUP
 
   # Identity and Access Management
   - name: uds-idam
@@ -114,13 +114,13 @@ zarf-packages:
         package: software-factory-idam-sonarqube
       - name: SONARQUBE_IDAM_REALM_URL
         package: software-factory-idam-sonarqube
+      - name: SONARQUBE_IDAM_SAML_CERT
+        package: software-factory-idam-sonarqube
       - name: SONARQUBE_IDAM_ATTR_LOGIN
         package: software-factory-idam-sonarqube
       - name: SONARQUBE_IDAM_ATTR_NAME
         package: software-factory-idam-sonarqube
       - name: SONARQUBE_IDAM_PROVIDER_EMAIL
-        package: software-factory-idam-sonarqube
-      - name: SONARQUBE_IDAM_PROVIDER_GROUP
         package: software-factory-idam-sonarqube
 
   # Add all virtualservices as internal dns entries for auth callbacks
