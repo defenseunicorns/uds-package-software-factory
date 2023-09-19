@@ -32,10 +32,10 @@ components:
     actions:
       onDeploy:
         after:
-          # Set generic IDAM_ENABLED to true for export
+          # Set GITLAB_IDAM_ENABLED to true for export
           - cmd: echo true
             setVariables:
-              - name: IDAM_ENABLED
+              - name: GITLAB_IDAM_ENABLED
           # Get name of omniauth provider from json file
           - cmd: cat gitlab-sso-demo.json | grep '"name"' | head -n1 | cut -d '"' -f4
             setVariables:
@@ -43,9 +43,9 @@ components:
           # Put PROVIDER_NAME in correct format for export
           - cmd: echo "['${ZARF_VAR_PROVIDER_NAME}']"
             setVariables:
-              - name: IDAM_ALLOWED_SSOS
+              - name: GITLAB_IDAM_ALLOWED_SSOS
           # Set the IDAM_PROVIDERS variable for the GitLab auth provider
           - cmd: 'printf "%b" "- secret: gitlab-sso-provider\n  key: gitlab-sso.json"'
             setVariables:
-              - name: IDAM_PROVIDERS
+              - name: GITLAB_IDAM_PROVIDERS
 
