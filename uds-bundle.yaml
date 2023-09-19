@@ -33,6 +33,14 @@ zarf-packages:
     exports:
       - name: REALM_IMPORT_FILE
 
+  # Identity and Access Management
+  - name: uds-idam
+    repository: ghcr.io/defenseunicorns/uds-capability/uds-idam
+    ref: 0.1.9
+    imports:
+      - name: REALM_IMPORT_FILE
+        package: software-factory-idam-realm
+
   # GitLab SSO secret and variables
   - name: software-factory-idam-gitlab
     path: build
@@ -55,14 +63,6 @@ zarf-packages:
       - name: SONARQUBE_IDAM_ATTR_LOGIN
       - name: SONARQUBE_IDAM_ATTR_NAME
       - name: SONARQUBE_IDAM_PROVIDER_EMAIL
-
-  # Identity and Access Management
-  - name: uds-idam
-    repository: ghcr.io/defenseunicorns/uds-capability/uds-idam
-    ref: 0.1.9
-    imports:
-      - name: REALM_IMPORT_FILE
-        package: software-factory-idam-realm
 
   # Gitlab
   - name: gitlab-redis
