@@ -2,6 +2,9 @@ name: Get Latest SWF Package Version
 description: Fetches the latest version of the specified SWF package
 
 inputs:
+  github-token:
+    description: Name of the SWF package
+    required: true
   package-name:
     description: Name of the SWF package
     required: true
@@ -35,7 +38,7 @@ runs:
             exit 1
         fi
 
-        RESPONSE="$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/orgs/defenseunicorns/packages/container/$PACKAGE_NAME/versions)"
+        RESPONSE="$(curl -s -H "Authorization: Bearer ${{ inputs.github-token }}" https://api.github.com/orgs/defenseunicorns/packages/container/$PACKAGE_NAME/versions)"
 
         LATEST_PACKAGE_VERSION="$(echo "$RESPONSE" | jq -r '.[0].metadata.container.tags[0]')"
 

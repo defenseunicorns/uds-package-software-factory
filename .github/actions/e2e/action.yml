@@ -57,6 +57,7 @@ runs:
       id: latest-package-version
       uses: ./.github/actions/latest-package-version
       with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         package-name: uds-package/software-factory-demo
     - name: Init gopath cache
       uses: actions/cache@v3
