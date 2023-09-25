@@ -30,6 +30,9 @@ inputs:
   registry1-password:
     description: The Registry1 container registry password to use
     required: true
+  latest-version:
+    description: The latest verions of the SWF
+    required: true
 
 runs:
   using: composite
@@ -49,7 +52,6 @@ runs:
         GITHUB_TARGET_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         GITHUB_REF: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}
         GITHUB_OWNER: ${{ github.event.client_payload.github.payload.repository.owner.login || github.repository_owner }}
-
     - name: Init gopath cache
       uses: actions/cache@v3
       with:
