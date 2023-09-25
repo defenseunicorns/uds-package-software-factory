@@ -24,6 +24,9 @@ runs:
 
         PACKAGE_NAME="${{ inputs.package-name }}"
 
+        echo "${{ inputs.github-token }}"
+        echo "$PACKAGE_NAME"
+
         # Check if the package name contains '/'
         if [[ "$PACKAGE_NAME" =~ "/" ]]
         then
@@ -40,7 +43,11 @@ runs:
 
         RESPONSE="$(curl -s -H "Authorization: Bearer ${{ inputs.github-token }}" https://api.github.com/orgs/defenseunicorns/packages/container/$PACKAGE_NAME/versions)"
 
+        echo "$RESPONSE"
+
         LATEST_PACKAGE_VERSION="$(echo "$RESPONSE" | jq -r '.[0].metadata.container.tags[0]')"
+
+        echo "$LATEST_PACKAGE_VERSION"
 
         # Check if the latest package version tag contains 'skeleton'
         if [[ "$LATEST_PACKAGE_VERSION" =~ "skeleton" ]]
