@@ -38,7 +38,7 @@ jobs:
         id: latest-package-version
         uses: ./.github/actions/latest-package-version
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           package-name: uds-package/software-factory-demo
       - name: Parse Args
         id: parse

@@ -2,7 +2,7 @@ name: Get Latest SWF Package Version
 description: Fetches the latest version of the specified SWF package
 
 inputs:
-  github-token:
+  token:
     description: GitHub token to authenticate to the GitHub REST API
     required: true
   package-name:
@@ -22,7 +22,7 @@ runs:
       run: |
         #!/bin/bash
 
-        github_token="${{ inputs.github-token }}"
+        token="${{ inputs.token }}"
 
         package_name="${{ inputs.package-name }}"
 
@@ -33,7 +33,7 @@ runs:
             package_name="${package_name//\//%2F}"
         fi
 
-        response="$(curl -s -H "Authorization: Bearer $github_token" \
+        response="$(curl -s -H "Authorization: Bearer $token" \
           https://api.github.com/orgs/defenseunicorns/packages/container/${package_name}/versions)"
 
         if [[ "$response" =~ "Package not found" ]]
