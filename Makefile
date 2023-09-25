@@ -93,6 +93,7 @@ test: ## Run all automated tests. Requires access to an AWS account. Costs money
 	-e REGISTRY1_PASSWORD \
 	-e GHCR_USERNAME \
 	-e GHCR_PASSWORD \
+	-e LATEST_VERSION \
 	-e AWS_REGION \
 	-e AWS_DEFAULT_REGION \
 	-e AWS_ACCESS_KEY_ID \
