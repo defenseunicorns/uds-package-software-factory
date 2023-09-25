@@ -37,6 +37,13 @@ inputs:
 runs:
   using: composite
   steps:
+    # Run this step first so we can fail fast in case an invalid package name is provided
+    - name: Get latest package version to upgrade from
+      id: latest-package-version
+      uses: ./.github/actions/latest-package-version
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        package-name: uds-package/software-factory-demo
     # Update GitHub status for pending pipeline run
     - name: "Update GitHub Status for pending"
       if: github.event_name == 'repository_dispatch'
@@ -111,7 +118,7 @@ runs:
         REGISTRY1_PASSWORD: ${{ inputs.registry1-password }}
         GHCR_USERNAME: ${{ inputs.ghcr-username }}
         GHCR_PASSWORD: ${{ inputs.ghcr-password }}
-        LATEST_VERSION: ${{ inputs.latest-version }}
+        LATEST_VERSION: ${{ steps.latest-package-version.outputs.latest-package-version}}
         REPO_URL: https://github.com/${{ github.repository }}.git
         GIT_BRANCH: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}
       run: |
