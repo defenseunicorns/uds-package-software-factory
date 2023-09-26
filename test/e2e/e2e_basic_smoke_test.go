@@ -3,8 +3,8 @@ package test_test
 import (
 	"testing"
 
-	"github.com/defenseunicorns/uds-package-software-factory/test/upgrade/types"
-	"github.com/defenseunicorns/uds-package-software-factory/test/upgrade/utils"
+	"github.com/defenseunicorns/uds-package-software-factory/test/e2e/types"
+	"github.com/defenseunicorns/uds-package-software-factory/test/e2e/utils"
 	teststructure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/require"
 )

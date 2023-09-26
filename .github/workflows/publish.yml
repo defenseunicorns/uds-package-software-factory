@@ -32,7 +32,7 @@ jobs:
           CURRENT_VERSION=${CURRENT_VERSION//-amd64/}
           echo "Current version: ${CURRENT_VERSION}"
           NEWER_VERSION=$(echo -e "${CURRENT_VERSION}\n${NEW_VERSION}" | sort -V | tail -n1)
-          # Fail if newer version is not upstream version
+          # Fail if newer tag version is the same as upstream tag version
           if [[ "${NEWER_VERSION}" == "${CURRENT_VERSION}" ]]; then
             echo "Bundle version was not updated"
             exit 1
