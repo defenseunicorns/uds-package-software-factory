@@ -75,8 +75,8 @@ fix-cache-permissions: ## Fixes the permissions on the pre-commit cache
 # Test Section
 ########################################################################
 
-.PHONY: test-clean-install
-test-clean-install: ## Run all automated tests. Requires access to an AWS account. Costs money. Requires env vars "REPO_URL", "GIT_BRANCH", "REGISTRY1_USERNAME", "REGISTRY1_PASSWORD", "GHCR_USERNAME", "GHCR_PASSWORD" and standard AWS env vars.
+.PHONY: test-clean_install
+test-clean_install: ## Run all automated tests. Requires access to an AWS account. Costs money. Requires env vars "REPO_URL", "GIT_BRANCH", "REGISTRY1_USERNAME", "REGISTRY1_PASSWORD", "GHCR_USERNAME", "GHCR_PASSWORD" and standard AWS env vars.
 	mkdir -p .cache/go
 	mkdir -p .cache/go-build
 	echo "Running automated tests. This will take several minutes. At times it does not log anything to the console. If you interrupt the test run you will need to log into AWS console and manually delete any orphaned infrastructure."
@@ -84,7 +84,7 @@ test-clean-install: ## Run all automated tests. Requires access to an AWS accoun
 	-v "${PWD}:/app" \
 	-v "${PWD}/.cache/go:/root/go" \
 	-v "${PWD}/.cache/go-build:/root/.cache/go-build" \
-	--workdir "/app/test/clean-install" \
+	--workdir "/app/test/clean_install" \
 	-e GOPATH=/root/go \
 	-e GOCACHE=/root/.cache/go-build \
 	-e REPO_URL \

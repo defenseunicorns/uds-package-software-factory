@@ -1,4 +1,4 @@
-// Package utils contains helper functions for the clean-install tests
+// Package utils contains helper functions for the clean_install tests
 package utils
 
 import (
@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	customteststructure "github.com/defenseunicorns/uds-package-software-factory/test/clean-install/terratest/teststructure"
-	"github.com/defenseunicorns/uds-package-software-factory/test/clean-install/types"
+	customteststructure "github.com/defenseunicorns/uds-package-software-factory/test/clean_install/terratest/teststructure"
+	"github.com/defenseunicorns/uds-package-software-factory/test/clean_install/types"
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/retry"
@@ -42,7 +42,7 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 	awsAvailabilityZone := getAwsAvailabilityZone(awsRegion)
 	namespace := "uds-swf"
 	stage := "terratest"
-	name := fmt.Sprintf("clean-install-%s", random.UniqueId())
+	name := fmt.Sprintf("clean_install-%s", random.UniqueId())
 	instanceType := "m6i.8xlarge"
 	teststructure.RunTestStage(t, "SETUP", func() {
 		keyPairName := fmt.Sprintf("%s-%s-%s", namespace, stage, name)
@@ -117,11 +117,11 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		require.NoError(t, err, output)
 
 		// Copy zarf-config.yaml to the build folder
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/clean-install/zarf-config.yaml build/zarf-config.yaml`)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/clean_install/zarf-config.yaml build/zarf-config.yaml`)
 		require.NoError(t, err, output)
 
 		// Copy uds-config.yaml to the build folder
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/clean-install/uds-config.yaml build/uds-config.yaml`)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/clean_install/uds-config.yaml build/uds-config.yaml`)
 		require.NoError(t, err, output)
 
 		// Log into registry1.dso.mil

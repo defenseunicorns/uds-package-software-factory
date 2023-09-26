@@ -3,8 +3,8 @@ package test_test
 import (
 	"testing"
 
-	"github.com/defenseunicorns/uds-package-software-factory/test/clean-install/types"
-	"github.com/defenseunicorns/uds-package-software-factory/test/clean-install/utils"
+	"github.com/defenseunicorns/uds-package-software-factory/test/clean_install/types"
+	"github.com/defenseunicorns/uds-package-software-factory/test/clean_install/utils"
 	teststructure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/require"
 )

@@ -1,4 +1,4 @@
-// Package types contains the types that are used in the clean-install tests
+// Package types contains the types that are used in the clean_install tests
 package types
 
 import (
