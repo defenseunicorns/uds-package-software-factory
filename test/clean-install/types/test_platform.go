@@ -1,4 +1,4 @@
-// Package types contains the types that are used in the e2e tests
+// Package types contains the types that are used in the clean-install tests
 package types
 
 import (

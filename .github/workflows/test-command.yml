@@ -25,7 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       run-ping: ${{ steps.parse.outputs.run-ping }}
-      run-e2e: ${{ steps.parse.outputs.run-e2e }}
+      run-clean-install: ${{ steps.parse.outputs.run-clean-install }}
+      run-upgrade: ${{ steps.parse.outputs.run-upgrade}}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -70,11 +71,36 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
 
-  # Run the E2E tests
-  e2e:
+  # Run the Clean-Install tests
+  clean-install:
     runs-on: ubuntu-latest
     needs: parse
-    if: needs.parse.outputs.run-e2e == 'true'
+    if: needs.parse.outputs.run-clean-install == 'true'
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.event.client_payload.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}
+      - name: Run Clean Install Tests
+        uses: ./.github/actions/clean-install
+        with:
+          token: ${{ secrets.PAT }}
+          role-to-assume: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME }}
+          region: ${{ vars.AWS_REGION }}
+          github-context: "test / clean-install (${{github.event_name}})"
+          aws-availability-zone: ${{ vars.AWS_AVAILABILITY_ZONE }}
+          ghcr-username: ${{ github.actor }}
+          ghcr-password: ${{ secrets.GITHUB_TOKEN }}
+          registry1-username: ${{ secrets.REGISTRY1_USERNAME }}
+          registry1-password: ${{ secrets.REGISTRY1_PASSWORD }}
+
+  # Run the Upgrade tests
+  upgrade:
+    runs-on: ubuntu-latest
+    needs: parse
+    if: needs.parse.outputs.run-upgrade == 'true'
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -89,13 +115,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           package-name: uds-package/software-factory-demo
-      - name: Run E2E Tests
-        uses: ./.github/actions/e2e
+      - name: Run Upgrade Tests
+        uses: ./.github/actions/upgrade
         with:
           token: ${{ secrets.PAT }}
           role-to-assume: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME }}
           region: ${{ vars.AWS_REGION }}
-          github-context: "test / e2e (${{github.event_name}})"
+          github-context: "test / upgrade (${{github.event_name}})"
           aws-availability-zone: ${{ vars.AWS_AVAILABILITY_ZONE }}
           ghcr-username: ${{ github.actor }}
           ghcr-password: ${{ secrets.GITHUB_TOKEN }}

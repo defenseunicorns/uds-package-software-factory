@@ -1,6 +1,6 @@
-name: Run E2E Tests
+name: Run Upgrade Tests
 
-description: Run E2E Tests
+description: Run Upgrade Tests
 
 inputs:
   token:
@@ -102,7 +102,7 @@ runs:
         # 21600 seconds == 6 hours
         role-duration-seconds: 21600
 
-    - name: "Run E2E tests"
+    - name: "Run Upgrade tests"
       shell: bash -e -o pipefail {0}
       env:
         AWS_AVAILABILITY_ZONE: ${{ inputs.aws-availability-zone }}
@@ -115,7 +115,7 @@ runs:
         REPO_URL: https://github.com/${{ github.repository }}.git
         GIT_BRANCH: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}
       run: |
-        make test fix-cache-permissions
+        make test-upgrade fix-cache-permissions
 
     # Update GitHub status for successful pipeline run
     - name: "Update GitHub Status for success"

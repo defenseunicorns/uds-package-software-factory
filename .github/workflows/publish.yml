@@ -14,15 +14,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v39
+
       - uses: actions/checkout@v3
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
 
       - name: Init zarf cache
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         uses: actions/cache@v3
         with:
           path: "~/.zarf-cache"
           key: zarf-cache
 
       - name: Free GH runner build space
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         run: |
           df -h
           sudo rm -rf /usr/share/dotnet
@@ -33,6 +44,7 @@ jobs:
           df -h
 
       - name: Install zarf
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         uses: supplypike/setup-bin@v3
         with:
           # renovate: zarf-uri datasource=github-tags depName=defenseunicorns/zarf
@@ -42,6 +54,7 @@ jobs:
           version: 'v0.29.1'
 
       - name: Install uds-cli
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         uses: supplypike/setup-bin@v3
         with:
           # renovate: uds-cli-uri datasource=github-tags depName=defenseunicorns/uds-cli
@@ -51,6 +64,7 @@ jobs:
           version: 'v0.0.4-alpha'
 
       - name: Login to GHCR
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -58,6 +72,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to registry1
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         uses: docker/login-action@v2
         with:
           registry: registry1.dso.mil
@@ -65,6 +80,7 @@ jobs:
           password: ${{ secrets.REGISTRY1_PASSWORD }}
 
       - name: Build Software Factory Dependencies Packages
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         run: |
           mkdir -p build
           zarf package create packages/idam-dns       --confirm --no-progress --output-directory build
@@ -74,7 +90,9 @@ jobs:
           zarf package create packages/namespaces     --confirm --no-progress --output-directory build
 
       - name: Build software factory bundle
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         run: uds bundle create --confirm --no-progress
 
       - name: Publish software factory bundle
+        if: contains(steps.changed-files.outputs.modified_files, 'uds-bundle.yaml')
         run: uds bundle publish uds-bundle-software-factory-demo-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-package --no-progress

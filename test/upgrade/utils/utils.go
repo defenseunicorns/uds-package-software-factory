@@ -1,4 +1,4 @@
-// Package utils contains helper functions for the e2e tests
+// Package utils contains helper functions for the upgrade tests
 package utils
 
 import (
@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	customteststructure "github.com/defenseunicorns/uds-package-software-factory/test/e2e/terratest/teststructure"
-	"github.com/defenseunicorns/uds-package-software-factory/test/e2e/types"
+	customteststructure "github.com/defenseunicorns/uds-package-software-factory/test/upgrade/terratest/teststructure"
+	"github.com/defenseunicorns/uds-package-software-factory/test/upgrade/types"
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/retry"
@@ -44,7 +44,7 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 	awsAvailabilityZone := getAwsAvailabilityZone(awsRegion)
 	namespace := "uds-swf"
 	stage := "terratest"
-	name := fmt.Sprintf("e2e-%s", random.UniqueId())
+	name := fmt.Sprintf("upgrade-%s", random.UniqueId())
 	instanceType := "m6i.8xlarge"
 	teststructure.RunTestStage(t, "SETUP", func() {
 		keyPairName := fmt.Sprintf("%s-%s-%s", namespace, stage, name)
@@ -119,11 +119,11 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		require.NoError(t, err, output)
 
 		// Copy zarf-config.yaml to the build folder
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/zarf-config.yaml build/zarf-config.yaml`)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/upgrade/zarf-config.yaml build/zarf-config.yaml`)
 		require.NoError(t, err, output)
 
 		// Copy uds-config.yaml to the build folder
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/e2e/uds-config.yaml build/uds-config.yaml`)
+		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && cp test/upgrade/uds-config.yaml build/uds-config.yaml`)
 		require.NoError(t, err, output)
 
 		// Log into registry1.dso.mil
