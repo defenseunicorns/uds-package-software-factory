@@ -143,7 +143,7 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		require.NoError(t, err, output)
 
 		// Deploy current SWF version
-		output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/uds uds bundle deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:%s --confirm`, latestversion))
+		output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/uds bundle deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:%s --confirm`, latestversion))
 		require.NoError(t, err, output)
 
 		// Upgrade to branch SWF version
