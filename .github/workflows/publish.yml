@@ -27,7 +27,7 @@ jobs:
       - name: Compare latest version with current
         run: |
           NEW_VERSION="$(cat uds-bundle.yaml | grep version | cut -d ':' -f2 | tr -d " ")"
-          CURRENT_VERSION="${{ steps.latest-package-version.outputs.latest-package-version}}"
+          CURRENT_VERSION="${{ steps.latest-package-version.outputs.latest-package-version }}"
           CURRENT_VERSION=${CURRENT_VERSION//v/}
           CURRENT_VERSION=${CURRENT_VERSION//-amd64/}
           echo "Current version: ${CURRENT_VERSION}"

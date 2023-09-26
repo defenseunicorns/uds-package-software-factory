@@ -130,4 +130,4 @@ jobs:
           ghcr-password: ${{ secrets.GITHUB_TOKEN }}
           registry1-username: ${{ secrets.REGISTRY1_USERNAME }}
           registry1-password: ${{ secrets.REGISTRY1_PASSWORD }}
-          latest-version: ${{ steps.latest-package-version.outputs.latest-package-version}}
+          latest-version: ${{ steps.latest-package-version.outputs.latest-package-version }}
