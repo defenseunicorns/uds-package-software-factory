@@ -39,7 +39,9 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 	require.NoError(t, err)
 	ghcrPassword, err := getEnvVar("GHCR_PASSWORD")
 	require.NoError(t, err)
-	latestversion, err := getEnvVar("LATEST_VERSION")
+	latestVersion, err := getEnvVar("LATEST_VERSION")
+	require.NoError(t, err)
+	isUpgrade, err := getEnvVar("UPGRADE")
 	require.NoError(t, err)
 	awsAvailabilityZone := getAwsAvailabilityZone(awsRegion)
 	namespace := "uds-swf"
@@ -142,9 +144,11 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make cluster/reset`)
 		require.NoError(t, err, output)
 
-		// Deploy current SWF version
-		output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/uds bundle deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:%s --confirm --no-progress`, latestversion))
-		require.NoError(t, err, output)
+		if isUpgrade == "yes" {
+			// Deploy current SWF version
+			output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/uds bundle deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:%s --confirm --no-progress`, latestVersion))
+			require.NoError(t, err, output)
+		}
 
 		// Upgrade to branch SWF version
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make deploy`)
