@@ -1,8 +1,13 @@
 name: build-and-publish
 
-concurrency:
-    cancel-in-progress: true
-    group: build-and-publish
+permissions:
+  id-token: write
+  contents: read
+
+defaults:
+  run:
+    # We need -e -o pipefail for consistency with GitHub Actions' default behavior
+    shell: bash -e -o pipefail {0}
 
 on:
   push:
@@ -10,12 +15,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-publish-package:
+  build-test-and-publish-bundle:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref_name }}
+    
       # Run this step first so we can fail fast in case an invalid package name is provided
       - name: Get latest package version
         id: latest-package-version
@@ -101,5 +110,21 @@ jobs:
       - name: Build software factory bundle
         run: uds bundle create --confirm --no-progress
 
-      - name: Publish software factory bundle
-        run: uds bundle publish uds-bundle-software-factory-demo-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-package --no-progress
+      - name: Run clean install test on created artifact
+        uses: ./.github/actions/e2e
+        with:
+          upgrade: "no"
+          token: ${{ secrets.PAT }}
+          role-to-assume: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME }}
+          region: ${{ vars.AWS_REGION }}
+          github-context: "test / e2e (${{github.event_name}})"
+          aws-availability-zone: ${{ vars.AWS_AVAILABILITY_ZONE }}
+          ghcr-username: ${{ github.actor }}
+          ghcr-password: ${{ secrets.GITHUB_TOKEN }}
+          registry1-username: ${{ secrets.REGISTRY1_USERNAME }}
+          registry1-password: ${{ secrets.REGISTRY1_PASSWORD }}
+          latest-version: ""
+          copy-bundle: "yes"
+
+      # - name: Publish software factory bundle
+      #   run: uds bundle publish uds-bundle-software-factory-demo-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-package --no-progress

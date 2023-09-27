@@ -4,6 +4,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -42,6 +43,8 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 	latestVersion, err := getEnvVar("LATEST_VERSION")
 	require.NoError(t, err)
 	isUpgrade, err := getEnvVar("UPGRADE")
+	require.NoError(t, err)
+	copyBundle, err := getEnvVar("COPY_BUNDLE")
 	require.NoError(t, err)
 	awsAvailabilityZone := getAwsAvailabilityZone(awsRegion)
 	namespace := "uds-swf"
@@ -136,13 +139,28 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 		output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/zarf tools registry login ghcr.io -u %v -p %v`, ghcrUsername, ghcrPassword))
 		require.NoError(t, err, output)
 
-		// Build
-		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/all`)
-		require.NoError(t, err, output)
-
 		// Cluster
+		// TODO make async @Corang
 		output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make cluster/reset`)
 		require.NoError(t, err, output)
+
+		if copyBundle == "yes" {
+			// Copy bundle
+			filenames, err := filepath.Glob("build/uds-bundle-software-factory-demo-amd64-*.tar.zst")
+			require.NoError(t, err)
+
+			md5sum, err := platform.CopyFileOverScp(filenames[0], "~/app/build", os.FileMode(0644))
+			require.NoError(t, err)
+
+			// Recombine bundle files
+			output, err = platform.RunSSHCommand(`cd ~/app/build && test/e2e/recombine.sh ` + md5sum)
+			require.NoError(t, err, output)
+
+		} else {
+			// Build
+			output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/all`)
+			require.NoError(t, err, output)
+		}
 
 		if isUpgrade == "yes" {
 			// Deploy current SWF version

@@ -36,6 +36,9 @@ inputs:
   upgrade:
     description: Whether or not to test an upgrade
     required: true
+  copy-bundle:
+    description: Should we copy the bundle from the runner
+    required: true
 
 runs:
   using: composite
@@ -115,6 +118,7 @@ runs:
         GHCR_USERNAME: ${{ inputs.ghcr-username }}
         GHCR_PASSWORD: ${{ inputs.ghcr-password }}
         UPGRADE: ${{ inputs.upgrade }}
+        COPY_BUNDLE: ${{ inputs.copy-bundle }}
         LATEST_VERSION: ${{ inputs.latest-version }}
         REPO_URL: https://github.com/${{ github.repository }}.git
         GIT_BRANCH: ${{ github.event.client_payload.pull_request.head.ref || github.ref_name }}

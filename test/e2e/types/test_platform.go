@@ -2,11 +2,15 @@
 package types
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -70,6 +74,62 @@ func (platform *TestPlatform) RunSSHCommandAsSudo(command string) (string, error
 	return platform.runSSHCommandWithOptionalSudo(command, true)
 }
 
+// CopyFileOverScp provides a way to copy large files over scp by splitting them into chunks, returning the md5 hash of the file.
+//
+// The pieces of the file will be named split_src_0, split_src_1, etc.
+func (platform *TestPlatform) CopyFileOverScp(src string, destFolder string, mode os.FileMode) (string, error) {
+	terraformOptions := teststructure.LoadTerraformOptions(platform.T, platform.TestFolder)
+	keyPair := teststructure.LoadEc2KeyPair(platform.T, platform.TestFolder)
+	host := ssh.Host{
+		Hostname:    terraform.Output(platform.T, terraformOptions, "public_instance_ip"),
+		SshKeyPair:  keyPair.KeyPair,
+		SshUserName: "ubuntu",
+	}
+
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return "", fmt.Errorf("unable to open src file: %w", err)
+	}
+	defer srcFile.Close()
+
+	hash := md5.New()
+
+	fmt.Println("Computing hash of source file")
+	if _, err := io.Copy(hash, srcFile); err != nil {
+		return "", fmt.Errorf("unable to compute hash: %w", err)
+	}
+
+	hashString := hex.EncodeToString(hash.Sum(nil))
+
+	srcFileInfo, _ := srcFile.Stat()
+
+	srcFileSize := srcFileInfo.Size()
+
+	const fileChunk = 1 * (1 << 30) // 1 GB
+
+	totalPartsNum := uint64(math.Ceil(float64(srcFileSize) / float64(fileChunk)))
+
+	for i := uint64(0); i < totalPartsNum; i++ {
+
+		fmt.Printf("Splitting file number %d\n", i)
+
+		partSize := int(math.Min(fileChunk, float64(srcFileSize-int64(i*fileChunk))))
+		partBuffer := make([]byte, partSize)
+
+		srcFile.Read(partBuffer)
+
+		// write to disk
+		fileName := "split_src_" + strconv.FormatUint(i, 10)
+
+		contentsAsString := string(partBuffer[:])
+
+		fmt.Printf("Copying file %d to remote host\n", i)
+
+		ssh.ScpFileToE(platform.T, host, mode, destFolder+"/"+fileName, contentsAsString)
+	}
+	return hashString, nil
+}
+
 func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSudo bool) (string, error) {
 	precommand := "bash -c"
 	if asSudo {
@@ -82,30 +142,48 @@ func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSu
 		SshKeyPair:  keyPair.KeyPair,
 		SshUserName: "ubuntu",
 	}
-	var output string
-	var err error
+	var origOutput string
+	var origErr error
 	count := 0
-	done := false
+	const teeSuffix = ` | tee -a /tmp/terratest-ssh.log`
 	// Try up to 3 times to do the command, to avoid "i/o timeout" errors which are transient
-	for !done && count < 3 {
+	for count < 3 {
 		count++
-		output, err = ssh.CheckSshCommandE(platform.T, host, fmt.Sprintf(`%v '%v'`, precommand, command))
-		if err != nil {
-			if strings.Contains(err.Error(), "i/o timeout") {
-				// There was an error, but it was an i/o timeout, so wait a few seconds and try again
-				logger.Default.Logf(platform.T, "i/o timeout error, trying again")
-				logger.Default.Logf(platform.T, output)
-				time.Sleep(3 * time.Second)
-				continue
-			} else {
-				logger.Default.Logf(platform.T, output)
-				return "nil", fmt.Errorf("ssh command failed: %w", err)
+		errorChan := make(chan error)
+		go func() {
+			defer close(errorChan)
+			origOutput, origErr = ssh.CheckSshCommandE(platform.T, host, fmt.Sprintf(`%v '%v'`, precommand, command)+teeSuffix)
+			errorChan <- origErr
+		}()
+
+	outputWaitLoop:
+		for {
+			select {
+			case err := <-errorChan:
+				if err != nil {
+					break outputWaitLoop
+				} else {
+					return origOutput, nil
+				}
+			case <-time.After(1 * time.Second):
+				output, err := ssh.CheckSshCommandE(platform.T, host, `cat /tmp/terratest-ssh.log && printf "" > /tmp/terratest-ssh.log`)
+				if err != nil {
+					logger.Default.Logf(platform.T, "error reading log file: %v", err)
+				} else {
+					logger.Default.Logf(platform.T, output)
+				}
 			}
 		}
-		done = true
+		if strings.Contains(origErr.Error(), "i/o timeout") {
+			// There was an error, but it was an i/o timeout, so wait a few seconds and try again
+			logger.Default.Logf(platform.T, "i/o timeout error, trying again")
+			time.Sleep(3 * time.Second)
+			continue
+		} else {
+			return "nil", fmt.Errorf("ssh command failed: %w", origErr)
+		}
 	}
-	logger.Default.Logf(platform.T, output)
-	return output, nil
+	return origOutput, nil
 }
 
 // Teardown brings down the Terraform infrastructure that was created.

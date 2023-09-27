@@ -97,6 +97,7 @@ jobs:
           registry1-username: ${{ secrets.REGISTRY1_USERNAME }}
           registry1-password: ${{ secrets.REGISTRY1_PASSWORD }}
           latest-version: ""
+          copy-bundle: "no"
 
   # Run the Upgrade tests
   upgrade:
@@ -131,3 +132,4 @@ jobs:
           registry1-username: ${{ secrets.REGISTRY1_USERNAME }}
           registry1-password: ${{ secrets.REGISTRY1_PASSWORD }}
           latest-version: ${{ steps.latest-package-version.outputs.latest-package-version }}
+          copy-bundle: "no"
