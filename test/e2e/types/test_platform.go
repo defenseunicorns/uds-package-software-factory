@@ -105,7 +105,7 @@ func (platform *TestPlatform) CopyFileOverScp(src string, destFolder string, mod
 
 	srcFileSize := srcFileInfo.Size()
 
-	const fileChunk = 1 * (1 << 30) // 1 GB
+	const fileChunk = 1 * (1 << 29) // ~ 500 MB
 
 	totalPartsNum := uint64(math.Ceil(float64(srcFileSize) / float64(fileChunk)))
 
@@ -125,7 +125,10 @@ func (platform *TestPlatform) CopyFileOverScp(src string, destFolder string, mod
 
 		fmt.Printf("Copying file %d to remote host\n", i)
 
-		ssh.ScpFileToE(platform.T, host, mode, destFolder+"/"+fileName, contentsAsString)
+		err = ssh.ScpFileToE(platform.T, host, mode, destFolder+"/"+fileName, contentsAsString)
+		if err != nil {
+			return "", fmt.Errorf("unable to copy file: %w", err)
+		}
 	}
 	return hashString, nil
 }
@@ -143,29 +146,36 @@ func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSu
 		SshUserName: "ubuntu",
 	}
 	var origOutput string
-	var origErr error
 	count := 0
 	const teeSuffix = ` | tee -a /tmp/terratest-ssh.log`
 	// Try up to 3 times to do the command, to avoid "i/o timeout" errors which are transient
+attemptLoop:
 	for count < 3 {
 		count++
 		errorChan := make(chan error)
-		go func() {
+		go func(output *string) {
 			defer close(errorChan)
-			origOutput, origErr = ssh.CheckSshCommandE(platform.T, host, fmt.Sprintf(`%v '%v'`, precommand, command)+teeSuffix)
-			errorChan <- origErr
-		}()
+			stdout, err := ssh.CheckSshCommandE(platform.T, host, fmt.Sprintf(`%v '%v'`, precommand, command)+teeSuffix)
+			*output = stdout
+			errorChan <- err
+		}(&origOutput)
 
-	outputWaitLoop:
 		for {
 			select {
 			case err := <-errorChan:
 				if err != nil {
-					break outputWaitLoop
+					if strings.Contains(err.Error(), "i/o timeout") {
+						// There was an error, but it was an i/o timeout, so wait a few seconds and try again
+						logger.Default.Logf(platform.T, "i/o timeout error, trying again")
+						time.Sleep(3 * time.Second)
+						continue attemptLoop
+					} else {
+						return "nil", fmt.Errorf("ssh command failed: %w", err)
+					}
 				} else {
 					return origOutput, nil
 				}
-			case <-time.After(1 * time.Second):
+			case <-time.After(10 * time.Second):
 				output, err := ssh.CheckSshCommandE(platform.T, host, `cat /tmp/terratest-ssh.log && printf "" > /tmp/terratest-ssh.log`)
 				if err != nil {
 					logger.Default.Logf(platform.T, "error reading log file: %v", err)
@@ -173,14 +183,6 @@ func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSu
 					logger.Default.Logf(platform.T, output)
 				}
 			}
-		}
-		if strings.Contains(origErr.Error(), "i/o timeout") {
-			// There was an error, but it was an i/o timeout, so wait a few seconds and try again
-			logger.Default.Logf(platform.T, "i/o timeout error, trying again")
-			time.Sleep(3 * time.Second)
-			continue
-		} else {
-			return "nil", fmt.Errorf("ssh command failed: %w", origErr)
 		}
 	}
 	return origOutput, nil
