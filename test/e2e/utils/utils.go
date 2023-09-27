@@ -146,7 +146,7 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 
 		if copyBundle == "yes" {
 			// Copy bundle
-			filenames, err := filepath.Glob("build/uds-bundle-software-factory-demo-amd64-*.tar.zst")
+			filenames, err := filepath.Glob("/app/build/uds-bundle-software-factory-demo-amd64-*.tar.zst")
 			require.NoError(t, err)
 
 			md5sum, err := platform.CopyFileOverScp(filenames[0], "~/app/build", os.FileMode(0644))
