@@ -2,25 +2,25 @@
 package types
 
 import (
-	"crypto/md5"
-	"encoding/hex"
+	"context"
 	"errors"
 	"fmt"
 	"io"
-	"math"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
 
+	scp "github.com/bramvdbogaerde/go-scp"
+	"github.com/bramvdbogaerde/go-scp/auth"
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/ssh"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	teststructure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/require"
+	goSsh "golang.org/x/crypto/ssh"
 )
 
 // TestPlatform is the test "state" that allows for helper functions such as deferring the teardown step.
@@ -74,63 +74,38 @@ func (platform *TestPlatform) RunSSHCommandAsSudo(command string) (string, error
 	return platform.runSSHCommandWithOptionalSudo(command, true)
 }
 
-// CopyFileOverScp provides a way to copy large files over scp by splitting them into chunks, returning the md5 hash of the file.
-//
-// The pieces of the file will be named split_src_0, split_src_1, etc.
-func (platform *TestPlatform) CopyFileOverScp(src string, destFolder string, mode os.FileMode) (string, error) {
+// CopyFileOverScp provides a way to copy large files over scp
+func (platform *TestPlatform) CopyFileOverScp(src string, dest string, mode os.FileMode) error {
 	terraformOptions := teststructure.LoadTerraformOptions(platform.T, platform.TestFolder)
 	keyPair := teststructure.LoadEc2KeyPair(platform.T, platform.TestFolder)
-	host := ssh.Host{
-		Hostname:    terraform.Output(platform.T, terraformOptions, "public_instance_ip"),
-		SshKeyPair:  keyPair.KeyPair,
-		SshUserName: "ubuntu",
+
+	// Write private key to temp file
+	os.WriteFile(platform.TestFolder+"/private_key", []byte(keyPair.KeyPair.PrivateKey), 0644)
+
+	// Setup scp connection
+	clientConfig, _ := auth.PrivateKey("ubuntu", platform.TestFolder+"/private_key", goSsh.InsecureIgnoreHostKey())
+	client := scp.NewClient(terraform.Output(platform.T, terraformOptions, "public_instance_ip"), &clientConfig)
+
+	// Establish ssh connection
+	err := client.Connect()
+	if err != nil {
+		return fmt.Errorf("unable to connect to remote host: %w", err)
 	}
 
+	// Open file to copy
 	srcFile, err := os.Open(src)
 	if err != nil {
-		return "", fmt.Errorf("unable to open src file: %w", err)
+		return fmt.Errorf("unable to open src file: %w", err)
 	}
 	defer srcFile.Close()
+	defer client.Close()
 
-	hash := md5.New()
-
-	fmt.Println("Computing hash of source file")
-	if _, err := io.Copy(hash, srcFile); err != nil {
-		return "", fmt.Errorf("unable to compute hash: %w", err)
+	// Copy file to remote host
+	err = client.CopyFromFile(context.TODO(), *srcFile, dest, "0644")
+	if err != nil {
+		return fmt.Errorf("unable to copy file: %w", err)
 	}
-
-	hashString := hex.EncodeToString(hash.Sum(nil))
-
-	srcFileInfo, _ := srcFile.Stat()
-
-	srcFileSize := srcFileInfo.Size()
-
-	const fileChunk = 1 * (1 << 29) // ~ 500 MB
-
-	totalPartsNum := uint64(math.Ceil(float64(srcFileSize) / float64(fileChunk)))
-
-	for i := uint64(0); i < totalPartsNum; i++ {
-
-		fmt.Printf("Splitting file number %d\n", i)
-
-		partSize := int(math.Min(fileChunk, float64(srcFileSize-int64(i*fileChunk))))
-		partBuffer := make([]byte, partSize)
-
-		srcFile.Read(partBuffer)
-
-		// write to disk
-		fileName := "split_src_" + strconv.FormatUint(i, 10)
-
-		contentsAsString := string(partBuffer[:])
-
-		fmt.Printf("Copying file %d to remote host\n", i)
-
-		err = ssh.ScpFileToE(platform.T, host, mode, destFolder+"/"+fileName, contentsAsString)
-		if err != nil {
-			return "", fmt.Errorf("unable to copy file: %w", err)
-		}
-	}
-	return hashString, nil
+	return nil
 }
 
 func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSudo bool) (string, error) {
@@ -163,6 +138,7 @@ attemptLoop:
 		for {
 			select {
 			case err := <-errorChan:
+				readTeeFile(platform.T, host)
 				if err != nil {
 					if strings.Contains(err.Error(), "i/o timeout") {
 						// There was an error, but it was an i/o timeout, so wait a few seconds and try again
@@ -176,12 +152,7 @@ attemptLoop:
 					return origOutput, nil
 				}
 			case <-time.After(10 * time.Second):
-				output, err := ssh.CheckSshCommandE(platform.T, host, `cat /tmp/terratest-ssh.log && printf "" > /tmp/terratest-ssh.log`)
-				if err != nil {
-					logger.Default.Logf(platform.T, "error reading log file: %v", err)
-				} else {
-					logger.Default.Logf(platform.T, output)
-				}
+				readTeeFile(platform.T, host)
 			}
 		}
 	}
@@ -196,6 +167,15 @@ func (platform *TestPlatform) Teardown() {
 		terraform.Destroy(platform.T, terraformOptions)
 		aws.DeleteEC2KeyPair(platform.T, keyPair)
 	})
+}
+
+func readTeeFile(t *testing.T, host ssh.Host) {
+	output, err := ssh.CheckSshCommandE(t, host, `cat /tmp/terratest-ssh.log && printf "" > /tmp/terratest-ssh.log`)
+	if err != nil {
+		logger.Default.Logf(t, "error reading log file: %v", err)
+	} else {
+		logger.Default.Logf(t, output)
+	}
 }
 
 // copyFile copies a file from src to dst. If src and dst files exist, and are

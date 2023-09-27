@@ -149,12 +149,8 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 			filenames, err := filepath.Glob("/app/uds-bundle-software-factory-demo-amd64-*.tar.zst")
 			require.NoError(t, err)
 
-			md5sum, err := platform.CopyFileOverScp(filenames[0], "~/app/build", os.FileMode(0644))
+			err = platform.CopyFileOverScp(filenames[0], "~/app/build/uds-bundle-software-factory-demo-amd64.tar.zst", os.FileMode(0644))
 			require.NoError(t, err)
-
-			// Recombine bundle files
-			output, err = platform.RunSSHCommand(`cd ~/app/build && test/e2e/recombine.sh ` + md5sum)
-			require.NoError(t, err, output)
 
 		} else {
 			// Build
