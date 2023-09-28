@@ -78,19 +78,26 @@ func (platform *TestPlatform) RunSSHCommandAsSudo(command string) (string, error
 func (platform *TestPlatform) CopyFileOverScp(src string, dest string, mode os.FileMode) error {
 	terraformOptions := teststructure.LoadTerraformOptions(platform.T, platform.TestFolder)
 	keyPair := teststructure.LoadEc2KeyPair(platform.T, platform.TestFolder)
+	instanceIP := terraform.Output(platform.T, terraformOptions, "public_instance_ip")
 
 	// Write private key to temp file
 	os.WriteFile(platform.TestFolder+"/private_key", []byte(keyPair.KeyPair.PrivateKey), 0644)
 
 	// Setup scp connection
 	clientConfig, _ := auth.PrivateKey("ubuntu", platform.TestFolder+"/private_key", goSsh.InsecureIgnoreHostKey())
-	client := scp.NewClient(terraform.Output(platform.T, terraformOptions, "public_instance_ip")+":22", &clientConfig)
+	client := scp.NewClient(instanceIP+":22", &clientConfig)
+
+	logger.Default.Logf(platform.T, "Establishing ssh connection to %s", instanceIP)
 
 	// Establish ssh connection
 	err := client.Connect()
 	if err != nil {
 		return fmt.Errorf("unable to connect to remote host: %w", err)
 	}
+
+	logger.Default.Logf(platform.T, "Connection established to %s", instanceIP)
+
+	logger.Default.Logf(platform.T, "Opening file to copy: %s", src)
 
 	// Open file to copy
 	srcFile, err := os.Open(src)
@@ -100,11 +107,18 @@ func (platform *TestPlatform) CopyFileOverScp(src string, dest string, mode os.F
 	defer srcFile.Close()
 	defer client.Close()
 
+	logger.Default.Logf(platform.T, "File opened: %s", src)
+
+	logger.Default.Logf(platform.T, "Copying file to remote host: %s", dest)
+
 	// Copy file to remote host
 	err = client.CopyFromFile(context.TODO(), *srcFile, dest, "0644")
 	if err != nil {
 		return fmt.Errorf("unable to copy file: %w", err)
 	}
+
+	logger.Default.Logf(platform.T, "File copied to remote host: %s", dest)
+
 	return nil
 }
 
