@@ -170,6 +170,7 @@ attemptLoop:
 					return "", fmt.Errorf("ssh command failed: %w", sshErr)
 				}
 			case output := <-doneChan:
+				readTeeFile(platform, host, keyPair.KeyPair.PrivateKey, instanceIp)
 				return output, nil
 			case <-time.After(10 * time.Second):
 				readTeeFile(platform, host, keyPair.KeyPair.PrivateKey, instanceIp)
