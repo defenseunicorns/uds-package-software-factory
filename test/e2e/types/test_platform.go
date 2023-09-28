@@ -2,10 +2,12 @@
 package types
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -154,7 +156,7 @@ attemptLoop:
 		for {
 			select {
 			case sshErr := <-errorChan:
-				readTeeFile(platform.T, host)
+				readTeeFile(platform, host)
 				logger.Default.Logf(platform.T, "error running ssh command: %v", sshErr)
 				if strings.Contains(sshErr.Error(), "i/o timeout") {
 					// There was an error, but it was an i/o timeout, so wait a few seconds and try again
@@ -168,7 +170,7 @@ attemptLoop:
 			case output := <-doneChan:
 				return output, nil
 			case <-time.After(10 * time.Second):
-				readTeeFile(platform.T, host)
+				readTeeFile(platform, host)
 			}
 		}
 	}
@@ -185,13 +187,49 @@ func (platform *TestPlatform) Teardown() {
 	})
 }
 
-func readTeeFile(t *testing.T, host ssh.Host) {
-	output, err := ssh.CheckSshCommandE(t, host, `cat /tmp/terratest-ssh.log && printf "" > /tmp/terratest-ssh.log`)
+func readTeeFile(platform *TestPlatform, host ssh.Host) {
+	keyPair := teststructure.LoadEc2KeyPair(platform.T, platform.TestFolder)
+
+	key, err := goSsh.ParsePrivateKey([]byte(keyPair.KeyPair.PrivateKey))
 	if err != nil {
-		logger.Default.Logf(t, "error reading log file: %v", err)
-	} else {
-		logger.Default.Logf(t, output)
+		logger.Default.Logf(platform.T, "error parsing private key: %v", err)
+		return
 	}
+
+	terraformOptions := teststructure.LoadTerraformOptions(platform.T, platform.TestFolder)
+	instanceIP := terraform.Output(platform.T, terraformOptions, "public_instance_ip")
+
+	sshConfig := &goSsh.ClientConfig{
+		User:            "ubuntu",
+		HostKeyCallback: goSsh.InsecureIgnoreHostKey(),
+		Auth: []goSsh.AuthMethod{
+			goSsh.PublicKeys(key),
+		},
+	}
+
+	sshClient, err := goSsh.Dial("tcp", net.JoinHostPort(instanceIP, "22"), sshConfig)
+	if err != nil {
+		logger.Default.Logf(platform.T, "error dialing ssh: %v", err)
+		return
+	}
+
+	session, err := sshClient.NewSession()
+	if err != nil {
+		logger.Default.Logf(platform.T, "error creating ssh session: %v", err)
+		return
+	}
+	defer session.Close()
+
+	var b bytes.Buffer
+	session.Stdout = &b
+
+	err = session.Run(`cat /tmp/terratest-ssh.log && printf "" > /tmp/terratest-ssh.log`)
+	if err != nil {
+		logger.Default.Logf(platform.T, "error fetching logs: %v", err)
+		return
+	}
+
+	logger.Default.Logf(platform.T, b.String())
 }
 
 // copyFile copies a file from src to dst. If src and dst files exist, and are
