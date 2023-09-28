@@ -132,8 +132,9 @@ func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSu
 	precommand = fmt.Sprintf(`set -o pipefail && %v`, precommand)
 	terraformOptions := teststructure.LoadTerraformOptions(platform.T, platform.TestFolder)
 	keyPair := teststructure.LoadEc2KeyPair(platform.T, platform.TestFolder)
+	instanceIp := terraform.Output(platform.T, terraformOptions, "public_instance_ip")
 	host := ssh.Host{
-		Hostname:    terraform.Output(platform.T, terraformOptions, "public_instance_ip"),
+		Hostname:    instanceIp,
 		SshKeyPair:  keyPair.KeyPair,
 		SshUserName: "ubuntu",
 	}
@@ -157,7 +158,7 @@ attemptLoop:
 		for {
 			select {
 			case sshErr := <-errorChan:
-				readTeeFile(platform, host)
+				readTeeFile(platform, host, keyPair.KeyPair.PrivateKey, instanceIp)
 				logger.Default.Logf(platform.T, "error running ssh command: %v", sshErr)
 				if strings.Contains(sshErr.Error(), "i/o timeout") {
 					// There was an error, but it was an i/o timeout, so wait a few seconds and try again
@@ -171,7 +172,7 @@ attemptLoop:
 			case output := <-doneChan:
 				return output, nil
 			case <-time.After(10 * time.Second):
-				readTeeFile(platform, host)
+				readTeeFile(platform, host, keyPair.KeyPair.PrivateKey, instanceIp)
 			}
 		}
 	}
@@ -188,17 +189,12 @@ func (platform *TestPlatform) Teardown() {
 	})
 }
 
-func readTeeFile(platform *TestPlatform, host ssh.Host) {
-	keyPair := teststructure.LoadEc2KeyPair(platform.T, platform.TestFolder)
-
-	key, err := goSsh.ParsePrivateKey([]byte(keyPair.KeyPair.PrivateKey))
+func readTeeFile(platform *TestPlatform, host ssh.Host, privateKey string, instanceIP string) {
+	key, err := goSsh.ParsePrivateKey([]byte(privateKey))
 	if err != nil {
 		logger.Default.Logf(platform.T, "error parsing private key: %v", err)
 		return
 	}
-
-	terraformOptions := teststructure.LoadTerraformOptions(platform.T, platform.TestFolder)
-	instanceIP := terraform.Output(platform.T, terraformOptions, "public_instance_ip")
 
 	sshConfig := &goSsh.ClientConfig{
 		User:            "ubuntu",
