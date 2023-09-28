@@ -143,7 +143,6 @@ attemptLoop:
 		count++
 		errorChan := make(chan error)
 		go func(output *string) {
-			defer close(errorChan)
 			stdout, err := ssh.CheckSshCommandE(platform.T, host, fmt.Sprintf(`%v '%v'`, precommand, command)+teeSuffix)
 			*output = stdout
 			errorChan <- err
@@ -154,13 +153,15 @@ attemptLoop:
 			case err := <-errorChan:
 				readTeeFile(platform.T, host)
 				if err != nil {
+					logger.Default.Logf(platform.T, "error running ssh command: %v", err)
 					if strings.Contains(err.Error(), "i/o timeout") {
 						// There was an error, but it was an i/o timeout, so wait a few seconds and try again
 						logger.Default.Logf(platform.T, "i/o timeout error, trying again")
 						time.Sleep(3 * time.Second)
+						close(errorChan)
 						continue attemptLoop
 					} else {
-						return "nil", fmt.Errorf("ssh command failed: %w", err)
+						return "", fmt.Errorf("ssh command failed: %w", err)
 					}
 				} else {
 					return origOutput, nil
@@ -170,7 +171,7 @@ attemptLoop:
 			}
 		}
 	}
-	return origOutput, nil
+	return "", fmt.Errorf("ssh command failed: %w", errors.New("too many retries"))
 }
 
 // Teardown brings down the Terraform infrastructure that was created.
