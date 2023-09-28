@@ -125,10 +125,11 @@ func (platform *TestPlatform) CopyFileOverScp(src string, dest string, mode os.F
 }
 
 func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSudo bool) (string, error) {
-	precommand := "set -o pipefail && bash -c"
+	precommand := "bash -c"
 	if asSudo {
 		precommand = fmt.Sprintf(`sudo %v`, precommand)
 	}
+	precommand = fmt.Sprintf(`set -o pipefail && %v`, precommand)
 	terraformOptions := teststructure.LoadTerraformOptions(platform.T, platform.TestFolder)
 	keyPair := teststructure.LoadEc2KeyPair(platform.T, platform.TestFolder)
 	host := ssh.Host{
