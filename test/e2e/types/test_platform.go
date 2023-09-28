@@ -134,7 +134,6 @@ func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSu
 		SshKeyPair:  keyPair.KeyPair,
 		SshUserName: "ubuntu",
 	}
-	var origOutput string
 	count := 0
 	const teeSuffix = ` | tee -a /tmp/terratest-ssh.log`
 	// Try up to 3 times to do the command, to avoid "i/o timeout" errors which are transient
@@ -142,30 +141,32 @@ attemptLoop:
 	for count < 3 {
 		count++
 		errorChan := make(chan error)
-		go func(output *string) {
+		doneChan := make(chan string)
+		go func() {
 			stdout, err := ssh.CheckSshCommandE(platform.T, host, fmt.Sprintf(`%v '%v'`, precommand, command)+teeSuffix)
-			*output = stdout
-			errorChan <- err
-		}(&origOutput)
+			if err != nil {
+				errorChan <- err
+			} else {
+				doneChan <- stdout
+			}
+		}()
 
 		for {
 			select {
-			case err := <-errorChan:
+			case sshErr := <-errorChan:
 				readTeeFile(platform.T, host)
-				if err != nil {
-					logger.Default.Logf(platform.T, "error running ssh command: %v", err)
-					if strings.Contains(err.Error(), "i/o timeout") {
-						// There was an error, but it was an i/o timeout, so wait a few seconds and try again
-						logger.Default.Logf(platform.T, "i/o timeout error, trying again")
-						time.Sleep(3 * time.Second)
-						close(errorChan)
-						continue attemptLoop
-					} else {
-						return "", fmt.Errorf("ssh command failed: %w", err)
-					}
+				logger.Default.Logf(platform.T, "error running ssh command: %v", sshErr)
+				if strings.Contains(sshErr.Error(), "i/o timeout") {
+					// There was an error, but it was an i/o timeout, so wait a few seconds and try again
+					logger.Default.Logf(platform.T, "i/o timeout error, trying again")
+					time.Sleep(3 * time.Second)
+					close(errorChan)
+					continue attemptLoop
 				} else {
-					return origOutput, nil
+					return "", fmt.Errorf("ssh command failed: %w", sshErr)
 				}
+			case output := <-doneChan:
+				return output, nil
 			case <-time.After(10 * time.Second):
 				readTeeFile(platform.T, host)
 			}
