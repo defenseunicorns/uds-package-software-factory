@@ -155,6 +155,9 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 			output, err = platform.RunSSHCommandAsSudo(`mv /tmp/uds-bundle-software-factory-demo-amd64.tar.zst ~/app/build/uds-bundle-software-factory-demo-amd64.tar.zst`)
 			require.NoError(t, err, output)
 
+			output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/uds`)
+			require.NoError(t, err, output)
+
 		} else {
 			// Build
 			output, err = platform.RunSSHCommandAsSudo(`cd ~/app && make build/all`)
