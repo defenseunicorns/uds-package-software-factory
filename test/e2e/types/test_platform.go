@@ -147,7 +147,7 @@ attemptLoop:
 		errorChan := make(chan error)
 		doneChan := make(chan string)
 		go func() {
-			stdout, err := ssh.CheckSshCommandE(platform.T, host, fmt.Sprintf(`%v '%v'`, precommand, command)+teeSuffix)
+			stdout, err := ssh.CheckSshCommandE(platform.T, host, fmt.Sprintf(`%v '%v 2>&1'`, precommand, command)+teeSuffix)
 			if err != nil {
 				errorChan <- err
 			} else {
@@ -207,13 +207,13 @@ func readTeeFile(platform *TestPlatform, host ssh.Host, privateKey string, insta
 
 	sshClient, err := goSsh.Dial("tcp", net.JoinHostPort(instanceIP, "22"), sshConfig)
 	if err != nil {
-		logger.Default.Logf(platform.T, "error dialing ssh: %v", err)
+		fmt.Printf("error dialing ssh: %v", err)
 		return
 	}
 
 	session, err := sshClient.NewSession()
 	if err != nil {
-		logger.Default.Logf(platform.T, "error creating ssh session: %v", err)
+		fmt.Printf("error creating ssh session: %v", err)
 		return
 	}
 	defer session.Close()
@@ -223,11 +223,11 @@ func readTeeFile(platform *TestPlatform, host ssh.Host, privateKey string, insta
 
 	err = session.Run(`cat /tmp/terratest-ssh.log && printf "" > /tmp/terratest-ssh.log`)
 	if err != nil {
-		logger.Default.Logf(platform.T, "error fetching logs: %v", err)
+		fmt.Printf("error fetching logs: %v", err)
 		return
 	}
 
-	logger.Default.Logf(platform.T, b.String())
+	fmt.Print(b.String())
 }
 
 // copyFile copies a file from src to dst. If src and dst files exist, and are
