@@ -123,7 +123,7 @@ func (platform *TestPlatform) CopyFileOverScp(src string, dest string, mode os.F
 }
 
 func (platform *TestPlatform) runSSHCommandWithOptionalSudo(command string, asSudo bool) (string, error) {
-	precommand := "bash -c"
+	precommand := "set -o pipefail && bash -c"
 	if asSudo {
 		precommand = fmt.Sprintf(`sudo %v`, precommand)
 	}
