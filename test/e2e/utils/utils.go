@@ -152,7 +152,7 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 			err = platform.CopyFileOverScp(filenames[0], "/tmp/uds-bundle-software-factory-demo-amd64.tar.zst", os.FileMode(0644))
 			require.NoError(t, err)
 
-			output, err = platform.RunSSHCommandAsSudo(`mv /tmp/uds-bundle-software-factory-demo-amd64.tar.zst ~/app/build/`)
+			output, err = platform.RunSSHCommandAsSudo(`mv /tmp/uds-bundle-software-factory-demo-amd64.tar.zst ~/app/build/uds-bundle-software-factory-demo-amd64.tar.zst`)
 			require.NoError(t, err, output)
 
 		} else {
