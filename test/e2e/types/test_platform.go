@@ -84,7 +84,7 @@ func (platform *TestPlatform) CopyFileOverScp(src string, dest string, mode os.F
 
 	// Setup scp connection
 	clientConfig, _ := auth.PrivateKey("ubuntu", platform.TestFolder+"/private_key", goSsh.InsecureIgnoreHostKey())
-	client := scp.NewClient(terraform.Output(platform.T, terraformOptions, "public_instance_ip"), &clientConfig)
+	client := scp.NewClient(terraform.Output(platform.T, terraformOptions, "public_instance_ip")+":22", &clientConfig)
 
 	// Establish ssh connection
 	err := client.Connect()
