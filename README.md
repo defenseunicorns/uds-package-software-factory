@@ -2,7 +2,7 @@
 
 :construction: **This project is still early in its development.**
 
-This is a bundle created using [uds-cli](https://github.com/defenseunicorns/uds-cli). uds-cli is a tool to declaratively orchestrate zarf packages by combining them into a bundle.
+This is a bundle created using [uds-cli](https://github.com/defenseunicorns/uds-cli). uds-cli is a tool to declaratively orchestrate zarf packages by combining them into bundles.
 
 This is the early stages of a UDS Bundle we call the UDS Software Factory. This UDS Bundle brings together a collection of necessary Zarf packages as well as UDS Capabilities and the development version of their dependency packages. The development dependency packages are only meant to satisfy the UDS Capability's dependencies for demonstration purposes. **This UDS Bundle is not intended for a production environment**.
 
@@ -39,4 +39,4 @@ This is the early stages of a UDS Bundle we call the UDS Software Factory. This 
 
 - Ensure the machine you are using has a valid kubecontext and has access to a sufficiently large cluster
 - Ensure uds-cli is present on your machine by running `uds version` and verify it matches the version in the [makefile](https://github.com/defenseunicorns/uds-package-software-factory/blob/main/Makefile#L4)
-- Run `uds bundle deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:<swf-version> --confirm` and replace `<swf-version>` with the version of [SWF](https://github.com/defenseunicorns/uds-package-software-factory/pkgs/container/uds-package%2Fsoftware-factory-demo) you need
+- Run `uds bundle deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:<swf-version> --confirm` and replace `<swf-version>` with the [version of SWF](https://github.com/defenseunicorns/uds-package-software-factory/pkgs/container/uds-package%2Fsoftware-factory-demo) you need
