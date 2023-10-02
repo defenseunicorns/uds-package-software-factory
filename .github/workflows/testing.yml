@@ -1,0 +1,88 @@
+name: test-new-ci
+
+permissions:
+  id-token: write
+  contents: read
+
+defaults:
+  run:
+    # We need -e -o pipefail for consistency with GitHub Actions' default behavior
+    shell: bash -e -o pipefail {0}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-test-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Free GH runner build space
+        run: |
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+          df -h
+
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref_name }}
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to registry1
+        uses: docker/login-action@v2
+        with:
+          registry: registry1.dso.mil
+          username: ${{ secrets.REGISTRY1_USERNAME }}
+          password: ${{ secrets.REGISTRY1_PASSWORD }}
+
+      - name: Build bundle and all dependencies
+        run: |
+          make build/all
+
+      - name: Create k3d cluster
+        id: create-cluster
+        # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        with:
+          cluster-action: create
+          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME }}
+          aws-region: us-west-2
+          k3d-config: "utils/k3d/k3d-config.yaml"
+          instance-size: "m6i.8xlarge"
+
+      - name: Cluster Info Before
+        run: |
+          kubectl get nodes
+          kubectl get pods --all-namespaces
+
+      - name: Deploy bundle
+        run: |
+          make deploy
+
+      - name: Cluster Info After
+        run: |
+          kubectl get nodes
+          kubectl get pods --all-namespaces
+
+      - name: Run tests
+        run: |
+          kubectl rollout status deployment/gitlab-webservice-default -n gitlab --watch --timeout=1200s
+
+      - name: Teardown k3d cluster
+        if: always()
+        # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        with:
+          cluster-action: destroy
