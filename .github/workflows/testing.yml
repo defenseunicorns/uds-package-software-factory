@@ -17,6 +17,17 @@ jobs:
   build-test-and-publish:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Create k3d cluster
+        id: create-cluster
+        # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        with:
+          cluster-action: create
+          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
+          aws-region: us-west-2
+          k3d-config: "utils/k3d/k3d-config.yaml"
+          instance-size: "m6i.8xlarge"
       - name: Free GH runner build space
         run: |
           df -h
@@ -51,17 +62,6 @@ jobs:
       - name: Build bundle and all dependencies
         run: |
           make build/all
-
-      - name: Create k3d cluster
-        id: create-cluster
-        # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
-        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
-        with:
-          cluster-action: create
-          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME }}
-          aws-region: us-west-2
-          k3d-config: "utils/k3d/k3d-config.yaml"
-          instance-size: "m6i.8xlarge"
 
       - name: Cluster Info Before
         run: |
