@@ -71,6 +71,14 @@ run-pre-commit-hooks: ## Run all pre-commit hooks. Returns nonzero exit code if 
 fix-cache-permissions: ## Fixes the permissions on the pre-commit cache
 	docker run --rm -v "${PWD}:/app" --workdir "/app" -e "PRE_COMMIT_HOME=/app/.cache/pre-commit" $(BUILD_HARNESS_REPO):$(BUILD_HARNESS_VERSION) chmod -R a+rx .cache
 
+.PHONY: start-proxy
+start-proxy:
+	cd build && ../utils/start-proxy.sh
+
+.PHONY: stop-proxy
+stop-proxy:
+	cd build && ../utils/stop-proxy.sh
+
 ########################################################################
 # Test Section
 ########################################################################
@@ -119,20 +127,22 @@ test-ssh: ## Run this if you set SKIP_TEARDOWN=1 and want to SSH into the still-
 # Cluster Section
 ########################################################################
 
-cluster/reset: cluster/destroy cluster/create ## This will destroy any existing cluster and then create a new one
+cluster/reset: cluster/destroy cluster/create cluster/calico cluster/metallb ## This will destroy any existing cluster and then create a new one
 
-cluster/create: ## Create a k3d cluster with metallb installed
+cluster/create: ## Create a k3d cluster with no CNI
 	K3D_FIX_MOUNTS=1 k3d cluster create k3d-test-cluster --config utils/k3d/k3d-config.yaml
 	k3d kubeconfig merge k3d-test-cluster -o /home/${USER}/cluster-kubeconfig.yaml
+
+cluster/calico: ## Install calico
 	echo "Installing Calico..."
 	kubectl apply --wait=true -f utils/calico/calico.yaml 2>&1 >/dev/null
 	echo "Waiting for Calico to be ready..."
 	kubectl rollout status deployment/calico-kube-controllers -n kube-system --watch --timeout=90s 2>&1 >/dev/null
 	kubectl rollout status daemonset/calico-node -n kube-system --watch --timeout=90s 2>&1 >/dev/null
 	kubectl wait --for=condition=Ready pods --all --all-namespaces 2>&1 >/dev/null
-	echo
+
+cluster/metallb: ## Install metallb
 	utils/metallb/install.sh
-	echo "Cluster is ready!"
 
 cluster/destroy: ## Destroy the k3d cluster
 	k3d cluster delete k3d-test-cluster
