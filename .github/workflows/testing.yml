@@ -55,7 +55,7 @@ jobs:
       - name: Create k3d cluster
         id: create-cluster
         # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
-        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        uses: defenseunicorns/uds-aws-ci-k3d@f6186e90cf011ea0dcde1701ce94d3b8bafa033f
         with:
           cluster-action: create
           aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
