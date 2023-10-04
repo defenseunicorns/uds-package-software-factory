@@ -52,6 +52,16 @@ jobs:
         run: |
           make build/all
 
+      - name: cluster info
+        if: always()
+        run: |
+          build/zarf tools kubectl get pods -A -o wide
+          build/zarf tools kubectl describe pods -A
+          build/zarf tools kubectl get pvc -A
+          build/zarf tools kubectl describe pvc -A
+          build/zarf tools kubectl get pv -A
+          build/zarf tools kubectl describe pv -A
+
       - name: Create k3s cluster in AWS
         id: create-cluster
         uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
