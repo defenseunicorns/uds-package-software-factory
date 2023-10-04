@@ -199,7 +199,7 @@ build/uds-bundle-software-factory: | build ## Build the software factory
 ########################################################################
 
 deploy: ## Deploy the software factory package
-	cd ./build && ./uds bundle deploy uds-bundle-software-factory-demo-*.tar.zst --confirm -l trace
+	cd ./build && ./uds bundle deploy uds-bundle-software-factory-demo-*.tar.zst --confirm
 
 ########################################################################
 # Macro Section

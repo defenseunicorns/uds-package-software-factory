@@ -52,15 +52,9 @@ jobs:
         run: |
           make build/all
 
-      - name: cluster info
-        if: always()
+      - name: Add zarf to bin on path
         run: |
-          build/zarf tools kubectl get pods -A -o wide
-          build/zarf tools kubectl describe pods -A
-          build/zarf tools kubectl get pvc -A
-          build/zarf tools kubectl describe pvc -A
-          build/zarf tools kubectl get pv -A
-          build/zarf tools kubectl describe pv -A
+          sudo cp build/zarf /usr/local/bin/zarf
 
       - name: Create k3s cluster in AWS
         id: create-cluster
