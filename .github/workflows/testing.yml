@@ -52,24 +52,25 @@ jobs:
         run: |
           make build/all
 
-      - name: Create k3d cluster
+      - name: Create k3s cluster in AWS
         id: create-cluster
-        # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
-        uses: defenseunicorns/uds-aws-ci-k3d@f6186e90cf011ea0dcde1701ce94d3b8bafa033f
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
         with:
           cluster-action: create
           aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
           aws-region: us-west-2
-          k3d-config: "k3d-calico.yaml"
           instance-size: "m6i.8xlarge"
-
-      - name: Install calico
-        run: |
-          make cluster/calico
+          ami-prefix: "rc-uds-ci-k3d"
+          k3s: "true"
 
       - name: Deploy bundle
         run: |
           make deploy
+
+      - name: Setup LB hostnames
+        run: |
+          utils/metallb/dns.sh
+          sudo utils/metallb/hosts-write.sh
 
       - name: Run tests
         run: |
@@ -80,9 +81,11 @@ jobs:
           curl https://grafana.bigbang.dev
           make stop-proxy
 
-      - name: Teardown k3d cluster
+      - name: Teardown k3s cluster
         if: always()
         # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
         uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
         with:
           cluster-action: destroy
+          ami-prefix: "rc-uds-ci-k3d"
+          k3s: "true"
