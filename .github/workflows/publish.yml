@@ -25,30 +25,30 @@ jobs:
           repository: ${{ github.repository }}
           ref: ${{ github.ref_name }}
     
-      # # Run this step first so we can fail fast in case an invalid package name is provided
-      # - name: Get latest package version
-      #   id: latest-package-version
-      #   uses: ./.github/actions/latest-package-version
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     package-name: uds-package/software-factory-demo
+      # Run this step first so we can fail fast in case an invalid package name is provided
+      - name: Get latest package version
+        id: latest-package-version
+        uses: ./.github/actions/latest-package-version
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          package-name: uds-package/software-factory-demo
 
-      # - name: Compare latest version with current
-      #   run: |
-      #     NEW_VERSION="$(cat uds-bundle.yaml | grep version | cut -d ':' -f2 | tr -d " ")"
-      #     CURRENT_VERSION="${{ steps.latest-package-version.outputs.latest-package-version }}"
-      #     CURRENT_VERSION=${CURRENT_VERSION//v/}
-      #     CURRENT_VERSION=${CURRENT_VERSION//-amd64/}
-      #     echo "Current version: ${CURRENT_VERSION}"
-      #     NEWER_VERSION=$(echo -e "${CURRENT_VERSION}\n${NEW_VERSION}" | sort -V | tail -n1)
-      #     # Fail if newer tag version is the same as upstream tag version
-      #     if [[ "${NEWER_VERSION}" == "${CURRENT_VERSION}" ]]; then
-      #       echo "Bundle version was not updated"
-      #       exit 1
-      #     else
-      #       echo "Bundle version was updated"
-      #       exit 0
-      #     fi
+      - name: Compare latest version with current
+        run: |
+          NEW_VERSION="$(cat uds-bundle.yaml | grep version | cut -d ':' -f2 | tr -d " ")"
+          CURRENT_VERSION="${{ steps.latest-package-version.outputs.latest-package-version }}"
+          CURRENT_VERSION=${CURRENT_VERSION//v/}
+          CURRENT_VERSION=${CURRENT_VERSION//-amd64/}
+          echo "Current version: ${CURRENT_VERSION}"
+          NEWER_VERSION=$(echo -e "${CURRENT_VERSION}\n${NEW_VERSION}" | sort -V | tail -n1)
+          # Fail if newer tag version is the same as upstream tag version
+          if [[ "${NEWER_VERSION}" == "${CURRENT_VERSION}" ]]; then
+            echo "Bundle version was not updated"
+            exit 1
+          else
+            echo "Bundle version was updated"
+            exit 0
+          fi
 
       - name: Init zarf cache
         uses: actions/cache@v3
@@ -126,5 +126,5 @@ jobs:
           latest-version: ""
           copy-bundle: "yes"
 
-      # - name: Publish software factory bundle
-      #   run: uds bundle publish uds-bundle-software-factory-demo-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-package --no-progress
+      - name: Publish software factory bundle
+        run: uds bundle publish uds-bundle-software-factory-demo-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-package --no-progress
