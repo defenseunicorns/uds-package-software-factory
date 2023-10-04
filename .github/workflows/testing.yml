@@ -67,6 +67,16 @@ jobs:
           ami-prefix: "rc-uds-ci-k3d"
           k3s: "true"
 
+      - name: Copy kubeconfig to workspace
+        run: |
+          cp ~/.kube/config ./kubeconfig
+
+      - name: Publish kubeconfig for debug
+        uses: actions/upload-artifact@v2
+        with: 
+          name: kubeconfig
+          path: kubeconfig
+
       - name: Deploy bundle
         run: |
           make deploy
@@ -91,5 +101,3 @@ jobs:
         uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
         with:
           cluster-action: destroy
-          ami-prefix: "rc-uds-ci-k3d"
-          k3s: "true"
