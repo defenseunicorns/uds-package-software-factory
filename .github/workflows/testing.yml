@@ -81,9 +81,9 @@ jobs:
       - name: Run tests
         run: |
           kubectl rollout status deployment/gitlab-webservice-default -n gitlab --watch --timeout=1200s
-          curl https://keycloak.bigbang.dev
-          curl https://gitlab.bigbang.dev
-          curl https://grafana.bigbang.dev
+          curl https://keycloak.bigbang.dev -v
+          curl https://gitlab.bigbang.dev -v
+          curl https://grafana.bigbang.dev -v
 
       - name: Teardown k3s cluster
         if: always()
