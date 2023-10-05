@@ -64,15 +64,10 @@ jobs:
           ami-prefix: "rc-uds-ci-k3d"
           k3s: "true"
 
-      - name: Copy kubeconfig to workspace
+      - name: Print kubeconfig for debug
+        if: contains(github.event.head_commit.message, 'kube-debug')
         run: |
-          cp ~/.kube/config ./kubeconfig
-
-      - name: Publish kubeconfig for debug
-        uses: actions/upload-artifact@v2
-        with: 
-          name: kubeconfig
-          path: kubeconfig
+          cat ~/.kube/config
 
       - name: Deploy bundle
         run: |
