@@ -14,16 +14,41 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-test-and-publish-2:
+  create-cluster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create k3s cluster in AWS
+        id: create-cluster
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        with:
+          cluster-action: create
+          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
+          aws-region: us-west-2
+          instance-size: "m6i.8xlarge"
+          ami-prefix: "rc-uds-ci-k3d"
+          k3s: "true"
+
+      - name: Upload kubeconfig artifact
+        uses: actions/upload-artifact@v3
+        with: 
+          name: kubeconfig
+          path: ~/.kube/config
+
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Free GH runner build space
         run: |
           df -h
+          du -h /usr/share/dotnet
           sudo rm -rf /usr/share/dotnet
+          du -h /usr/local/lib/android
           sudo rm -rf /usr/local/lib/android
+          du -h /opt/ghc
           sudo rm -rf /opt/ghc
+          du -h /opt/hostedtoolcache/CodeQL
           sudo rm -rf /opt/hostedtoolcache/CodeQL
+          df -h
           sudo docker image prune --all --force
           df -h
 
@@ -33,13 +58,6 @@ jobs:
           token: ${{ secrets.PAT }}
           repository: ${{ github.repository }}
           ref: ${{ github.ref_name }}
-
-      - name: Login to GHCR
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to registry1
         uses: docker/login-action@v2
@@ -52,34 +70,60 @@ jobs:
         run: |
           make build/all
 
-      - name: Add zarf to bin on path
-        run: |
-          sudo cp build/zarf /usr/local/bin/zarf
-
-      - name: Create k3s cluster in AWS
-        id: create-cluster
-        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
-        with:
-          cluster-action: create
-          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
-          aws-region: us-west-2
-          instance-size: "m6i.8xlarge"
-          ami-prefix: "rc-uds-ci-k3d"
-          k3s: "true"
-
-      - name: Copy kubeconfig to workspace
-        run: |
-          cp ~/.kube/config ./kubeconfig
-
-      - name: Publish kubeconfig for debug
-        uses: actions/upload-artifact@v2
+      - name: Upload binaries
+        uses: actions/upload-artifact@v3
         with: 
+          name: binaries
+          path: |
+            build/zarf
+            build/uds
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v3
+        with: 
+          name: bundle
+          path: |
+            build/uds-bundle-software-factory-demo-amd64-*.tar.zst
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: ["create-cluster", "build"]
+    steps:
+      - name: Download kubeconfig
+        uses: actions/download-artifact@v3
+        with:
           name: kubeconfig
-          path: kubeconfig
+          path: ~/.kube/config
+
+      - name: Download Binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: binaries
+
+      - name: Download Bundle
+        uses: actions/download-artifact@v3
+        with:
+          name: bundle
+
+      - name: Move Zarf to /usr/local/bin
+        run: |
+          sudo mv build/zarf /usr/local/bin/zarf
+          sudo chmod +x /usr/local/bin/zarf
 
       - name: Deploy bundle
         run: |
-          make deploy
+          chmod +x build/uds
+          build/uds deploy build/uds-bundle-software-factory-demo-amd64-*.tar.zst --no-progress --confirm
+
+  test:
+    runs-on: ubuntu-latest
+    needs: "deploy"
+    steps:
+      - name: Download kubeconfig
+        uses: actions/download-artifact@v3
+        with:
+          name: kubeconfig
+          path: ~/.kube/config
 
       - name: Setup LB hostnames
         run: |
@@ -88,16 +132,42 @@ jobs:
 
       - name: Run tests
         run: |
-          make start-proxy
           kubectl rollout status deployment/gitlab-webservice-default -n gitlab --watch --timeout=1200s
           curl https://keycloak.bigbang.dev
           curl https://gitlab.bigbang.dev
           curl https://grafana.bigbang.dev
-          make stop-proxy
 
+  teardown-cluster:
+    runs-on: ubuntu-latest
+    needs: "test"
+    if: always()
+    steps:
       - name: Teardown k3s cluster
         if: always()
         # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
         uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
         with:
           cluster-action: destroy
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: "test"
+    steps:
+      - name: Download Binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: binaries
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: publish
+        run: |
+          echo "publishing"
+          sleep 30s
+          echo "published"
+#         build/uds bundle publish uds-bundle-software-factory-demo-amd64-*.tar.zst oci://ghcr.io/defenseunicorns/uds-package --no-progress
