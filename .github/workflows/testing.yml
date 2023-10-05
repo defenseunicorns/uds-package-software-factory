@@ -44,8 +44,6 @@ jobs:
           sudo rm -rf /usr/share/dotnet
           du -sh /usr/local/lib/android/
           sudo rm -rf /usr/local/lib/android
-          du -sh /opt/ghc
-          sudo rm -rf /opt/ghc
           du -sh /opt/hostedtoolcache/CodeQL/
           sudo rm -rf /opt/hostedtoolcache/CodeQL
           df -h
