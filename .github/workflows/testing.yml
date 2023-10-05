@@ -85,12 +85,10 @@ jobs:
 
       - name: Run tests
         run: |
-          make start-proxy
           kubectl rollout status deployment/gitlab-webservice-default -n gitlab --watch --timeout=1200s
           curl https://keycloak.bigbang.dev
           curl https://gitlab.bigbang.dev
           curl https://grafana.bigbang.dev
-          make stop-proxy
 
       - name: Teardown k3s cluster
         if: always()
