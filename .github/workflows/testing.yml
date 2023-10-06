@@ -64,11 +64,6 @@ jobs:
           ami-prefix: "rc-uds-ci-k3d"
           k3s: "true"
 
-      - name: Print kubeconfig for debug
-        if: contains(github.event.head_commit.message, 'kube-debug')
-        run: |
-          cat ~/.kube/config
-
       - name: Deploy bundle
         run: |
           make deploy
@@ -76,7 +71,11 @@ jobs:
       - name: Setup LB hostnames
         run: |
           utils/metallb/dns.sh
+          echo "hosts patch:"
+          cat hosts.patch
+          echo "hosts file before:"
           sudo utils/metallb/hosts-write.sh
+          echo "hosts file after:"
 
       - name: Run tests
         run: |
