@@ -74,8 +74,10 @@ jobs:
           echo "hosts patch:"
           cat hosts.patch
           echo "hosts file before:"
+          cat /etc/hosts
           sudo utils/metallb/hosts-write.sh
           echo "hosts file after:"
+          cat /etc/hosts
 
       - name: Run tests
         run: |
