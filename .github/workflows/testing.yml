@@ -17,6 +17,17 @@ jobs:
   build-test-and-publish-2:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Create k3s cluster in AWS
+        id: create-cluster
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        with:
+          cluster-action: create
+          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
+          aws-region: us-west-2
+          instance-size: "m6i.8xlarge"
+          ami-prefix: "rc-uds-ci-k3d"
+          k3s: "true"
       - name: Free GH runner build space
         run: |
           df -h
@@ -52,17 +63,6 @@ jobs:
       - name: Add zarf to bin on path
         run: |
           sudo cp build/zarf /usr/local/bin/zarf
-
-      - name: Create k3s cluster in AWS
-        id: create-cluster
-        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
-        with:
-          cluster-action: create
-          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
-          aws-region: us-west-2
-          instance-size: "m6i.8xlarge"
-          ami-prefix: "rc-uds-ci-k3d"
-          k3s: "true"
 
       - name: Deploy bundle
         run: |
