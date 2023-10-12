@@ -96,10 +96,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: kubeconfig
-          path: ~/.kube/config
+          path: ~/.kube/
 
       - name: Download zarf and uds-cli
         run: |
+          ls -la ~/.kube/
           make build/zarf
           make build/uds
 
@@ -120,7 +121,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: kubeconfig
-          path: ~/.kube/config
+          path: ~/.kube/
 
       - name: Setup LB hostnames
         run: |
