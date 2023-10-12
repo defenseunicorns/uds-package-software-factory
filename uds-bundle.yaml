@@ -3,7 +3,7 @@ kind: UDSBundle
 metadata:
   name: software-factory-demo
   description: A UDS bundle for deploying a software factory to k3d for demonstration purposes NOT FOR PRODUCTION
-  version: 0.0.5
+  version: "###BNDL_TMPL_VERSION###"
   architecture: amd64
 
 zarf-packages:
@@ -21,12 +21,12 @@ zarf-packages:
 
   # Namespace pre-reqs for swf capabilities
   - name: software-factory-namespaces
-    path: build
+    repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-namespaces"
     ref: 1.0.0
 
   # Change the realm file keycloak imports from
   - name: software-factory-idam-realm
-    path: build
+    repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-idam-realm"
     ref: 1.0.0
     optional-components:
       - exported-variables
@@ -43,7 +43,7 @@ zarf-packages:
 
   # GitLab SSO secret and variables
   - name: software-factory-idam-gitlab
-    path: build
+    repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-idam-gitlab"
     ref: 1.0.0
     exports:
       - name: GITLAB_IDAM_ENABLED
@@ -52,7 +52,7 @@ zarf-packages:
 
   # SonarQube SSO secret and variables
   - name: software-factory-idam-sonarqube
-    path: build
+    repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-idam-sonarqube"
     ref: 1.0.0
     exports:
       - name: SONARQUBE_IDAM_ENABLED
@@ -125,7 +125,7 @@ zarf-packages:
 
   # Add all virtualservices as internal dns entries for auth callbacks
   - name: software-factory-idam-dns
-    path: build
+    repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-idam-dns"
     ref: 1.0.0
     optional-components:
       - create-internal-dns-entries

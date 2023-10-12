@@ -60,7 +60,7 @@ jobs:
           cluster-action: create
           aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
           aws-region: us-west-2
-          instance-size: "m6i.8xlarge"
+          instance-size: "c7a.16xlarge"
           ami-prefix: "rc-uds-ci-k3d"
           k3s: "true"
 

@@ -1,9 +1,11 @@
 # The version of Zarf to use. To keep this repo as portable as possible the Zarf binary will be downloaded and added to
 # the build folder.
 # renovate: datasource=github-tags depName=defenseunicorns/zarf
-UDS_CLI_VERSION := v0.0.5-alpha
+UDS_CLI_VERSION := v0.0.6-alpha+go-version-fix-with-bndl-tmpl
 
 ZARF_VERSION := v0.29.2
+
+BUNDLE_VERSION ?= $(if $(shell git describe --tags),$(shell git describe --tags),"UnknownVersion")
 
 # The version of the build harness container to use
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness
@@ -31,10 +33,19 @@ ifndef VERBOSE
 .SILENT:
 endif
 
+# Default to ghcr and secure pushes
+REGISTRY := ghcr.io/defenseunicorns
+INSECURE := 
+REGISTRY_TARGET := 
+
 # Optionally add the "-it" flag for docker run commands if the env var "CI" is not set (meaning we are on a local machine and not in github actions)
+# If we are not in CI, set the registry to localhost:5000 and add the insecure flag
 TTY_ARG :=
 ifndef CI
 	TTY_ARG := -it
+	REGISTRY_TARGET := start-registry
+	REGISTRY := localhost:5000
+	INSECURE := --insecure
 endif
 
 .DEFAULT_GOAL := help
@@ -78,6 +89,15 @@ start-proxy:
 .PHONY: stop-proxy
 stop-proxy:
 	cd build && ../utils/stop-proxy.sh
+
+.PHONY: start-registry
+start-registry:
+	if [ "$$(docker compose -f utils/docker-compose.yaml top | wc -m)" -ne "0" ]; then exit 0; fi && \
+	docker compose -f utils/docker-compose.yaml up -d
+
+.PHONY: stop-registry
+stop-registry:
+	docker compose -f utils/docker-compose.yaml down
 
 ########################################################################
 # Test Section
@@ -172,34 +192,33 @@ build/zarf: | build ## Download the Zarf to the build dir
 build/uds: | build ## Download uds-cli to the build dir
 	if [ -f build/uds ] && [ "$$(build/uds version)" = "$(UDS_CLI_VERSION)" ] ; then exit 0; fi && \
 	echo "Downloading uds-cli" && \
-	curl -sL https://github.com/defenseunicorns/uds-cli/releases/download/$(UDS_CLI_VERSION)/uds-cli_$(UDS_CLI_VERSION)_$(UNAME_S)_$(ARCH) -o build/uds && \
+	curl -sL https://github.com/corang/uds-cli/releases/download/$(UDS_CLI_VERSION)/uds-cli_$(UDS_CLI_VERSION)_$(UNAME_S)_$(ARCH) -o build/uds && \
 	chmod +x build/uds
 
-build/software-factory-namespaces: | build ## Build namespaces package
-	cd build && ./zarf package create ../packages/namespaces/ --confirm --output-directory .
+build/software-factory-namespaces: | build $(REGISTRY_TARGET) ## Build namespaces package
+	cd build && ./zarf package create ../packages/namespaces/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
 
-build/idam-gitlab: | build ## Build idam-gitlab package
-	cd build && ./zarf package create ../packages/idam-gitlab/ --confirm --output-directory .
+build/idam-gitlab: | build $(REGISTRY_TARGET) ## Build idam-gitlab package
+	cd build && ./zarf package create ../packages/idam-gitlab/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
 
-build/idam-sonarqube: | build ## Build idam-sonarqube package
-	cd build && ./zarf package create ../packages/idam-sonarqube/ --confirm --output-directory .
+build/idam-sonarqube: | build $(REGISTRY_TARGET) ## Build idam-sonarqube package
+	cd build && ./zarf package create ../packages/idam-sonarqube/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
 
-build/idam-dns: | build ## Build idam-dns package
-	cd build && ./zarf package create ../packages/idam-dns/ --confirm --output-directory .
+build/idam-dns: | build $(REGISTRY_TARGET) ## Build idam-dns package
+	cd build && ./zarf package create ../packages/idam-dns/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
 
-build/idam-realm: | build ## Build idam-realm package
-	cd build && ./zarf package create ../packages/idam-realm/ --confirm --output-directory .
+build/idam-realm: | build $(REGISTRY_TARGET) ## Build idam-realm package
+	cd build && ./zarf package create ../packages/idam-realm/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
 
-build/uds-bundle-software-factory: | build ## Build the software factory
-	cd build && ./uds bundle create ../ --confirm
-	mv uds-bundle-software-factory-demo-*.tar.zst build/
+build/uds-bundle-software-factory: | build $(REGISTRY_TARGET) ## Build the software factory
+	cd build && ./uds bundle create ../ --confirm --output oci://$(REGISTRY)/uds-package $(INSECURE) --oci-concurrency 12 --no-progress --set REGISTRY=$(REGISTRY),VERSION=$(BUNDLE_VERSION)
 
 ########################################################################
 # Deploy Section
 ########################################################################
 
 deploy: ## Deploy the software factory package
-	cd ./build && ./uds bundle deploy uds-bundle-software-factory-demo-*.tar.zst --confirm
+	cd ./build && ./uds bundle deploy oci://$(REGISTRY)/uds-package/software-factory-demo:$(BUNDLE_VERSION)-amd64 $(INSECURE) --oci-concurrency 12 --no-progress --confirm
 
 ########################################################################
 # Macro Section
