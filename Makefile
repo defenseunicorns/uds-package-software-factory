@@ -33,19 +33,22 @@ ifndef VERBOSE
 .SILENT:
 endif
 
-# Default to ghcr and secure pushes
+# Default to ghcr and secure pushes and without dev prefix for the bundle oci location
 REGISTRY := ghcr.io/defenseunicorns
 INSECURE := 
 REGISTRY_TARGET := 
+BUNDLE_DEV_PREFIX := 
 
-# Optionally add the "-it" flag for docker run commands if the env var "CI" is not set (meaning we are on a local machine and not in github actions)
 # If we are not in CI, set the registry to localhost:5000 and add the insecure flag
-TTY_ARG :=
 ifndef CI
-	TTY_ARG := -it
 	REGISTRY_TARGET := start-registry
 	REGISTRY := localhost:5000
 	INSECURE := --insecure
+endif
+
+# If we are not in a tag remove the dev prefix from the bundle oci location
+ifndef TAG
+	BUNDLE_DEV_PREFIX := /dev
 endif
 
 .DEFAULT_GOAL := help
@@ -102,6 +105,14 @@ stop-registry:
 .PHONY: clear-registry
 clear-registry: | stop-registry
 	rm -rf utils/registry-data
+
+.PHONY: registry-size
+registry-size:
+	du -sh utils/registry-data/
+
+.PHONY: print-version
+print-version: ## Print the current parsed version
+	echo $(BUNDLE_VERSION)
 
 ########################################################################
 # Test Section
@@ -221,7 +232,7 @@ build/idam-realm: | build $(REGISTRY_TARGET) ## Build idam-realm package
 	cd build && ./zarf package publish zarf-package-software-factory-idam-realm-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
 build/uds-bundle-software-factory: | build $(REGISTRY_TARGET) ## Build the software factory
-	cd build && ./uds create ../ --confirm --output oci://$(REGISTRY)/uds-package $(INSECURE) --oci-concurrency 12 --no-progress --set REGISTRY=$(REGISTRY),VERSION=$(BUNDLE_VERSION)
+	cd build && ./uds create ../ --confirm --output oci://$(REGISTRY)/uds-package$(BUNDLE_DEV_PREFIX) $(INSECURE) --oci-concurrency 12 --no-progress --set REGISTRY=$(REGISTRY),VERSION=$(BUNDLE_VERSION)
 
 ########################################################################
 # Deploy Section
