@@ -238,6 +238,9 @@ build/uds-bundle-software-factory: | build $(REGISTRY_TARGET) ## Build the softw
 # Deploy Section
 ########################################################################
 
+apply-pepr-flux-resources: | build/zarf ## Apply the pepr flux resources module
+	build/zarf tools kubectl apply -f test/flux-resources-bump/pepr-module-flux-resources.yaml
+
 deploy: ## Deploy the software factory package
 	cd ./build && ./uds bundle deploy oci://$(REGISTRY)/uds-package$(BUNDLE_DEV_PREFIX)/software-factory-demo:$(BUNDLE_VERSION)-amd64 $(INSECURE) --oci-concurrency 12 --no-progress --confirm
 
