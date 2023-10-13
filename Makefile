@@ -239,7 +239,7 @@ build/uds-bundle-software-factory: | build $(REGISTRY_TARGET) ## Build the softw
 ########################################################################
 
 deploy: ## Deploy the software factory package
-	cd ./build && ./uds bundle deploy oci://$(REGISTRY)/uds-package/software-factory-demo:$(BUNDLE_VERSION)-amd64 $(INSECURE) --oci-concurrency 12 --no-progress --confirm
+	cd ./build && ./uds bundle deploy oci://$(REGISTRY)/uds-package$(BUNDLE_DEV_PREFIX)/software-factory-demo:$(BUNDLE_VERSION)-amd64 $(INSECURE) --oci-concurrency 12 --no-progress --confirm
 
 ########################################################################
 # Macro Section
