@@ -19,11 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref_name }}
+        uses: actions/checkout@v4
 
       - name: Create k3s cluster in AWS
         id: create-cluster
@@ -50,11 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref_name }}
+        uses: actions/checkout@v4
 
       - name: Login to registry1
         uses: docker/login-action@v2
@@ -90,11 +82,7 @@ jobs:
           k3s: "true"
 
       - name: Checkout Repo
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref_name }}
+        uses: actions/checkout@v4
 
       - name: Login to GHCR
         uses: docker/login-action@v2
@@ -128,11 +116,7 @@ jobs:
     needs: "deploy"
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref_name }}
+        uses: actions/checkout@v4
 
       - name: Create k3s cluster in AWS
         id: create-cluster
