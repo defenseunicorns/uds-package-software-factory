@@ -28,7 +28,7 @@ jobs:
           cluster-action: create
           aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
           aws-region: us-west-2
-          instance-size: "c7a.16xlarge"
+          instance-size: "m7a.8xlarge"
           ami-prefix: "rc-uds-ci-k3d"
           k3s: "true"
 
@@ -72,14 +72,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: ["create-cluster", "build"]
     steps:
-      - name: Create k3s cluster in AWS
+      - name: Allow access to cluster
         id: create-cluster
         uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
         with:
           cluster-action: create
           aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
           aws-region: us-west-2
-          instance-size: "c7a.16xlarge"
+          instance-size: "m7a.8xlarge"
           ami-prefix: "rc-uds-ci-k3d"
           k3s: "true"
 
@@ -122,14 +122,14 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Create k3s cluster in AWS
+      - name: Allow access to cluster
         id: create-cluster
         uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
         with:
           cluster-action: create
           aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
           aws-region: us-west-2
-          instance-size: "c7a.16xlarge"
+          instance-size: "m7a.8xlarge"
           ami-prefix: "rc-uds-ci-k3d"
           k3s: "true"
 
@@ -142,7 +142,13 @@ jobs:
       - name: Setup LB hostnames
         run: |
           utils/metallb/dns.sh
+          echo "hosts patch:"
+          cat hosts.patch
+          echo "hosts file before:"
+          cat /etc/hosts
           sudo utils/metallb/hosts-write.sh
+          echo "hosts file after:"
+          cat /etc/hosts
 
       - name: Run tests
         run: |
@@ -151,9 +157,47 @@ jobs:
           curl https://gitlab.bigbang.dev
           curl https://grafana.bigbang.dev
 
-  teardown-cluster:
+  debug-cluster:
     runs-on: ubuntu-latest
     needs: "test"
+    if: failure()
+    steps:
+      - name: Allow access to cluster
+        id: create-cluster
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        with:
+          cluster-action: create
+          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
+          aws-region: us-west-2
+          instance-size: "m7a.8xlarge"
+          ami-prefix: "rc-uds-ci-k3d"
+          k3s: "true"
+
+      - name: Download kubeconfig
+        uses: actions/download-artifact@v3
+        with:
+          name: kubeconfig
+          path: ~/.kube/
+
+      - name: Print cluster info
+        run: |
+          kubectl get nodes -o wide
+      
+      - name: Print pod info
+        run: |
+          kubectl get pods -A -o wide
+
+      - name: Print service info
+        run: |
+          kubectl get svc -A -o wide
+
+      - name: Print events
+        run: |
+          kubectl get events -A -o wide
+
+  teardown-cluster:
+    runs-on: ubuntu-latest
+    needs: ["test", "debug-cluster"]
     if: always()
     steps:
       - name: Teardown k3s cluster
