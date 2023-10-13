@@ -1,0 +1,33 @@
+{
+  "name": "flux-resources-bump",
+  "version": "0.0.1",
+  "description": "Bump flux cpu and memory to allow for faster deployments",
+  "keywords": [
+    "pepr",
+    "k8s",
+    "policy-engine",
+    "pepr-module",
+    "security"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "pepr": {
+    "name": "flux-resources-bump",
+    "uuid": "0844b7f4-b340-515f-86ad-11a3bb08cee9",
+    "onError": "ignore",
+    "alwaysIgnore": {
+      "namespaces": [],
+      "labels": []
+    }
+  },
+  "scripts": {
+    "k3d-setup": "k3d cluster delete pepr-dev && k3d cluster create pepr-dev --k3s-arg '--debug@server:0'"
+  },
+  "dependencies": {
+    "pepr": "0.14.1"
+  },
+  "devDependencies": {
+    "typescript": "5.2.2"
+  }
+}

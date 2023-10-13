@@ -1,9 +1,11 @@
 # The version of Zarf to use. To keep this repo as portable as possible the Zarf binary will be downloaded and added to
 # the build folder.
 # renovate: datasource=github-tags depName=defenseunicorns/zarf
-UDS_CLI_VERSION := v0.0.5-alpha
+UDS_CLI_VERSION := v0.0.6-alpha+go-version-fix-with-bndl-tmpl
 
-ZARF_VERSION := v0.29.2
+ZARF_VERSION := v0.29.1
+
+BUNDLE_VERSION ?= $(if $(shell git describe --tags),$(shell git describe --tags),"UnknownVersion")
 
 # The version of the build harness container to use
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness
@@ -31,10 +33,22 @@ ifndef VERBOSE
 .SILENT:
 endif
 
-# Optionally add the "-it" flag for docker run commands if the env var "CI" is not set (meaning we are on a local machine and not in github actions)
-TTY_ARG :=
+# Default to ghcr and secure pushes and without dev prefix for the bundle oci location
+REGISTRY := ghcr.io/defenseunicorns
+INSECURE := 
+REGISTRY_TARGET := 
+BUNDLE_DEV_PREFIX := 
+
+# If we are not in CI, set the registry to localhost:5000 and add the insecure flag
 ifndef CI
-	TTY_ARG := -it
+	REGISTRY_TARGET := start-registry
+	REGISTRY := localhost:5000
+	INSECURE := --insecure
+endif
+
+# If we are not in a tag remove the dev prefix from the bundle oci location
+ifndef TAG
+	BUNDLE_DEV_PREFIX := /dev
 endif
 
 .DEFAULT_GOAL := help
@@ -70,6 +84,35 @@ run-pre-commit-hooks: ## Run all pre-commit hooks. Returns nonzero exit code if 
 .PHONY: fix-cache-permissions
 fix-cache-permissions: ## Fixes the permissions on the pre-commit cache
 	docker run --rm -v "${PWD}:/app" --workdir "/app" -e "PRE_COMMIT_HOME=/app/.cache/pre-commit" $(BUILD_HARNESS_REPO):$(BUILD_HARNESS_VERSION) chmod -R a+rx .cache
+
+.PHONY: start-proxy
+start-proxy:
+	cd build && ../utils/start-proxy.sh
+
+.PHONY: stop-proxy
+stop-proxy:
+	cd build && ../utils/stop-proxy.sh
+
+.PHONY: start-registry
+start-registry:
+	if [ "$$(docker compose -f utils/docker-compose.yaml top | wc -m)" -ne "0" ]; then exit 0; fi && \
+	docker compose -f utils/docker-compose.yaml up -d
+
+.PHONY: stop-registry
+stop-registry:
+	docker compose -f utils/docker-compose.yaml down
+
+.PHONY: clear-registry
+clear-registry: | stop-registry
+	rm -rf utils/registry-data
+
+.PHONY: registry-size
+registry-size:
+	du -sh utils/registry-data/
+
+.PHONY: print-version
+print-version: ## Print the current parsed version
+	echo $(BUNDLE_VERSION)
 
 ########################################################################
 # Test Section
@@ -119,20 +162,22 @@ test-ssh: ## Run this if you set SKIP_TEARDOWN=1 and want to SSH into the still-
 # Cluster Section
 ########################################################################
 
-cluster/reset: cluster/destroy cluster/create ## This will destroy any existing cluster and then create a new one
+cluster/reset: cluster/destroy cluster/create cluster/calico cluster/metallb ## This will destroy any existing cluster and then create a new one
 
-cluster/create: ## Create a k3d cluster with metallb installed
+cluster/create: ## Create a k3d cluster with no CNI
 	K3D_FIX_MOUNTS=1 k3d cluster create k3d-test-cluster --config utils/k3d/k3d-config.yaml
 	k3d kubeconfig merge k3d-test-cluster -o /home/${USER}/cluster-kubeconfig.yaml
+
+cluster/calico: ## Install calico
 	echo "Installing Calico..."
 	kubectl apply --wait=true -f utils/calico/calico.yaml 2>&1 >/dev/null
 	echo "Waiting for Calico to be ready..."
 	kubectl rollout status deployment/calico-kube-controllers -n kube-system --watch --timeout=90s 2>&1 >/dev/null
 	kubectl rollout status daemonset/calico-node -n kube-system --watch --timeout=90s 2>&1 >/dev/null
 	kubectl wait --for=condition=Ready pods --all --all-namespaces 2>&1 >/dev/null
-	echo
+
+cluster/metallb: ## Install metallb
 	utils/metallb/install.sh
-	echo "Cluster is ready!"
 
 cluster/destroy: ## Destroy the k3d cluster
 	k3d cluster delete k3d-test-cluster
@@ -162,34 +207,42 @@ build/zarf: | build ## Download the Zarf to the build dir
 build/uds: | build ## Download uds-cli to the build dir
 	if [ -f build/uds ] && [ "$$(build/uds version)" = "$(UDS_CLI_VERSION)" ] ; then exit 0; fi && \
 	echo "Downloading uds-cli" && \
-	curl -sL https://github.com/defenseunicorns/uds-cli/releases/download/$(UDS_CLI_VERSION)/uds-cli_$(UDS_CLI_VERSION)_$(UNAME_S)_$(ARCH) -o build/uds && \
+	curl -sL https://github.com/corang/uds-cli/releases/download/$(UDS_CLI_VERSION)/uds-cli_$(UDS_CLI_VERSION)_$(UNAME_S)_$(ARCH) -o build/uds && \
 	chmod +x build/uds
 
-build/software-factory-namespaces: | build ## Build namespaces package
-	cd build && ./zarf package create ../packages/namespaces/ --confirm --output-directory .
+build/software-factory-namespaces: | build $(REGISTRY_TARGET) ## Build namespaces package
+	cd build && ./zarf package create ../packages/namespaces/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ./zarf package publish zarf-package-software-factory-namespaces-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
-build/idam-gitlab: | build ## Build idam-gitlab package
-	cd build && ./zarf package create ../packages/idam-gitlab/ --confirm --output-directory .
 
-build/idam-sonarqube: | build ## Build idam-sonarqube package
-	cd build && ./zarf package create ../packages/idam-sonarqube/ --confirm --output-directory .
+build/idam-gitlab: | build $(REGISTRY_TARGET) ## Build idam-gitlab package
+	cd build && ./zarf package create ../packages/idam-gitlab/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ./zarf package publish zarf-package-software-factory-idam-gitlab-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
-build/idam-dns: | build ## Build idam-dns package
-	cd build && ./zarf package create ../packages/idam-dns/ --confirm --output-directory .
+build/idam-sonarqube: | build $(REGISTRY_TARGET) ## Build idam-sonarqube package
+	cd build && ./zarf package create ../packages/idam-sonarqube/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ./zarf package publish zarf-package-software-factory-idam-sonarqube-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
-build/idam-realm: | build ## Build idam-realm package
-	cd build && ./zarf package create ../packages/idam-realm/ --confirm --output-directory .
+build/idam-dns: | build $(REGISTRY_TARGET) ## Build idam-dns package
+	cd build && ./zarf package create ../packages/idam-dns/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ./zarf package publish zarf-package-software-factory-idam-dns-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
-build/uds-bundle-software-factory: | build ## Build the software factory
-	cd build && ./uds bundle create ../ --confirm
-	mv uds-bundle-software-factory-demo-*.tar.zst build/
+build/idam-realm: | build $(REGISTRY_TARGET) ## Build idam-realm package
+	cd build && ./zarf package create ../packages/idam-realm/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ./zarf package publish zarf-package-software-factory-idam-realm-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
+
+build/uds-bundle-software-factory: | build $(REGISTRY_TARGET) ## Build the software factory
+	cd build && ./uds create ../ --confirm --output oci://$(REGISTRY)/uds-package$(BUNDLE_DEV_PREFIX) $(INSECURE) --oci-concurrency 12 --no-progress --set REGISTRY=$(REGISTRY),VERSION=$(BUNDLE_VERSION)
 
 ########################################################################
 # Deploy Section
 ########################################################################
 
+apply-pepr-flux-resources: | build/zarf ## Apply the pepr flux resources module
+	build/zarf tools kubectl apply -f test/flux-resources-bump/pepr-module-flux-resources.yaml
+
 deploy: ## Deploy the software factory package
-	cd ./build && ./uds bundle deploy uds-bundle-software-factory-demo-*.tar.zst --confirm
+	cd ./build && ./uds bundle deploy oci://$(REGISTRY)/uds-package$(BUNDLE_DEV_PREFIX)/software-factory-demo:$(BUNDLE_VERSION)-amd64 $(INSECURE) --oci-concurrency 12 --no-progress --confirm
 
 ########################################################################
 # Macro Section

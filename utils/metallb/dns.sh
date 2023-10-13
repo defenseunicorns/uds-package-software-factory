@@ -6,9 +6,21 @@ TENANT_HOSTS=$(echo "${HOST_LIST}" | grep tenant | cut -d ' ' -f2)
 ADMIN_HOSTS=$(echo "${HOST_LIST}" | grep admin | cut -d ' ' -f2)
 PASSTHROUGH_HOSTS=$(echo "${HOST_LIST}" | grep passthrough | cut -d ' ' -f2)
 
-TENANT_LB_IP=$(kubectl get svc -n istio-system tenant-ingressgateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-ADMIN_LB_IP=$(kubectl get svc -n istio-system admin-ingressgateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-PASSTHROUGH_LB_IP=$(kubectl get svc -n istio-system keycloak-ingressgateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+TENANT_LB_IP=$(kubectl get svc -n istio-system tenant-ingressgateway -o=jsonpath="{.status.loadBalancer.ingress[*]['hostname', 'ip']}")
+ADMIN_LB_IP=$(kubectl get svc -n istio-system admin-ingressgateway -o=jsonpath="{.status.loadBalancer.ingress[*]['hostname', 'ip']}")
+PASSTHROUGH_LB_IP=$(kubectl get svc -n istio-system keycloak-ingressgateway -o=jsonpath="{.status.loadBalancer.ingress[*]['hostname', 'ip']}")
+
+if [[ "${TENANT_LB_IP}" =~ [a-zA-Z] ]] ; then
+    TENANT_LB_IP=$(dig +short "${TENANT_LB_IP}")
+fi
+
+if [[ "${ADMIN_LB_IP}" =~ [a-zA-Z] ]] ; then
+    ADMIN_LB_IP=$(dig +short "${ADMIN_LB_IP}")
+fi
+
+if [[ "${PASSTHROUGH_LB_IP}" =~ [a-zA-Z] ]] ; then
+    PASSTHROUGH_LB_IP=$(dig +short "${PASSTHROUGH_LB_IP}")
+fi
 
 echo "# Following entries are from metallb dns.sh" >> hosts.patch
 

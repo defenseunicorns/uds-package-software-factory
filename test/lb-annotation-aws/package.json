@@ -1,0 +1,33 @@
+{
+  "name": "lb-annotation-aws",
+  "version": "0.0.1",
+  "description": "Annotate all loadbalancers so that they use NLBs instead of ELBs",
+  "keywords": [
+    "pepr",
+    "k8s",
+    "policy-engine",
+    "pepr-module",
+    "security"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "pepr": {
+    "name": "lb-annotation-aws",
+    "uuid": "34fec800-b359-5c99-9155-92b2b09bb22b",
+    "onError": "ignore",
+    "alwaysIgnore": {
+      "namespaces": [],
+      "labels": []
+    }
+  },
+  "scripts": {
+    "k3d-setup": "k3d cluster delete pepr-dev && k3d cluster create pepr-dev --k3s-arg '--debug@server:0'"
+  },
+  "dependencies": {
+    "pepr": "0.14.0"
+  },
+  "devDependencies": {
+    "typescript": "5.2.2"
+  }
+}

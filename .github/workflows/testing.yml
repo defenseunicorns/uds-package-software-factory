@@ -1,0 +1,108 @@
+name: test-new-ci
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
+defaults:
+  run:
+    # We need -e -o pipefail for consistency with GitHub Actions' default behavior
+    shell: bash -e -o pipefail {0}
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-test-and-publish-2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to registry1
+        uses: docker/login-action@v2
+        with:
+          registry: registry1.dso.mil
+          username: ${{ secrets.REGISTRY1_USERNAME }}
+          password: ${{ secrets.REGISTRY1_PASSWORD }}
+
+      - name: Build bundle and all dependencies
+        run: |
+          make build/all
+
+      - name: Add zarf to bin on path
+        run: |
+          sudo cp build/zarf /usr/local/bin/zarf
+
+      - name: Create k3s cluster in AWS
+        id: create-cluster
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        with:
+          cluster-action: create
+          aws-assume-role: ${{ secrets.AWS_COMMERCIAL_ROLE_TO_ASSUME_K3D }}
+          aws-region: us-west-2
+          instance-size: "m7a.8xlarge"
+          ami-prefix: "rc-uds-ci-k3d"
+          k3s: "true"
+
+      - name: Install Pepr nlb lb module
+        run: |
+          zarf tools kubectl apply -f test/lb-annotation-aws/pepr-module-lb-annotate.yaml
+
+      - name: Install Pepr flux resources module
+        run: |
+          zarf tools kubectl apply -f test/flux-resources-bump/pepr-module-flux-resources.yaml
+
+      - name: Deploy bundle
+        run: |
+          make deploy
+
+      - name: Setup LB hostnames
+        run: |
+          utils/metallb/dns.sh
+          sudo utils/metallb/hosts-write.sh
+
+      - name: Run tests
+        run: |
+          kubectl rollout status deployment/gitlab-webservice-default -n gitlab --watch --timeout=1200s
+          curl https://keycloak.bigbang.dev -v
+          curl https://gitlab.bigbang.dev -v
+          curl https://grafana.bigbang.dev -v
+
+      - name: Print cluster info
+        if: failure()
+        run: |
+          kubectl get nodes -o wide
+      
+      - name: Print pod info
+        if: failure()
+        run: |
+          kubectl get pods -A -o wide
+
+      - name: Print service info
+        if: failure()
+        run: |
+          kubectl get svc -A -o wide
+
+      - name: Print events
+        if: failure()
+        run: |
+          kubectl get events -A -o wide
+
+      - name: Teardown k3s cluster
+        if: always()
+        # renovate: datasource=github-tags depName=defenseunicorns/uds-aws-ci-k3d versioning=semver
+        uses: defenseunicorns/uds-aws-ci-k3d@swf_additions
+        with:
+          cluster-action: destroy

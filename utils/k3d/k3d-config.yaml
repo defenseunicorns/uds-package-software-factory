@@ -31,12 +31,5 @@ volumes:
   - volume: /sys/fs/bpf:/sys/fs/bpf:shared
     nodeFilters:
       - server:*
-ports:
-  - port: 80:80
-    nodeFilters:
-      - loadbalancer
-  - port: 443:443
-    nodeFilters:
-      - loadbalancer
 kubeAPI:
   hostPort: "6443"

@@ -1,0 +1,278 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pepr-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+subjects:
+  - kind: ServiceAccount
+    name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+    namespace: pepr-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+  namespace: pepr-system
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-api-token
+  namespace: pepr-system
+type: Opaque
+data:
+  value: >-
+    MGE4OGRlZjRmNzNlMGIyMTE0NmFiOWU0MzE0NTE5N2IyZTllNzJiZTQwYTU2MzZmZTY0YjZkODRlNTA0NDUxMg==
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-tls
+  namespace: pepr-system
+type: kubernetes.io/tls
+data:
+  tls.crt: >-
+    LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlDd3pDQ0FhdWdBd0lCQWdJQkFUQU5CZ2txaGtpRzl3MEJBUXNGQURBQU1CNFhEVEl6TVRBeE1ERTRNell4DQpNbG9YRFRJME1UQXhNREU0TXpZeE1sb3dBRENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DDQpnZ0VCQU45U1RCZEM0aS9NcmhIREduR0hVYm15S0N3YmpiOHd6Y2g1OEI3VE41TS81d01VZ2JtREVTQ3NSQlh4DQpUYkQ1ZWNhQ2FGRGh3SEp4Qnpwc3BiS3Q4MlRkejVDMzB4VVQ4UTdLN0c0aGF3NXorMzJROUlsWGd5VzVFT2o0DQptbU95QW85VG9CakFLU21JNVZZNjAyU3pxaWdTaVRoYnh1bkNuQ042Q0ZXWE04OWdCZ3h6bjQ4R1Vzd1V3NUttDQpUaWRxMTE0V0VGQ3BWUnVMM20yS29YbzJuZWh6Vnc0V0JWMjlkY2daazZyL1hoWGtLN3RWMUQvTldOdWtxU1NQDQpzbU00a1hVeDlrL29hYWpZNGFYbnk2TDJ3YmZ0SVVmNzNxRGlBQnRCRFhTTm5VWHlFTjVoSlJocHBIR3hGUVdEDQpkZ3hwbVdPeTZyT1BhYzJyajd0bVgvOUhnOEVDQXdFQUFhTklNRVl3UkFZRFZSMFJCRDB3TzRJNWNHVndjaTB6DQpOR1psWXpnd01DMWlNelU1TFRWak9Ua3RPVEUxTlMwNU1tSXlZakE1WW1JeU1tSXVjR1Z3Y2kxemVYTjBaVzB1DQpjM1pqTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFBMm1RMkFiLzdONHFlU2V5czRMT2d1TVpKNTEwMmJlVWZLDQpqQm5HREhWWWd1Y0R3QTNQZngzWHNEY1ZwZUNwNnk0QWZmd3IwU1QzMDI5b09XMjVBZ2NxeGtwaWJWcjVKUUU0DQo4NmVNN3JzY0dFZTIxRGZhd2pXck9GeWROdXkrOElMVktlWXBaNXgyZWo1RFE2aVBaMi9aQUxDQVFzRHNmd0JGDQo5TlBSTlVBbFBLVG1CbDdMT1ZyMnd2bTVKNi9KVHBCbHZUcEMwbHdMSE12OHJVc0wzaVlJaGpWRTAzTllRa2pCDQoxaWw0aFZYdm9BeWFlTTBKUkRva3BOSC9YMzJsVThaRkRrSjIzRldKalhQTXJnczBvOUdqOU9idG5mRDZ0NTRODQpLRERQcUUwT1ZWdjZKSlc1dlErempkekIrdTNIeU5XUEg4RUxwbzh0RHV3MHhVTFJhWisyDQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tDQo=
+  tls.key: >-
+    LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQ0KTUlJRXBBSUJBQUtDQVFFQTMxSk1GMExpTDh5dUVjTWFjWWRSdWJJb0xCdU52ekROeUhud0h0TTNrei9uQXhTQg0KdVlNUklLeEVGZkZOc1BsNXhvSm9VT0hBY25FSE9teWxzcTN6Wk4zUGtMZlRGUlB4RHNyc2JpRnJEblA3ZlpEMA0KaVZlREpia1E2UGlhWTdJQ2oxT2dHTUFwS1lqbFZqclRaTE9xS0JLSk9Gdkc2Y0tjSTNvSVZaY3p6MkFHREhPZg0KandaU3pCVERrcVpPSjJyWFhoWVFVS2xWRzR2ZWJZcWhlamFkNkhOWERoWUZYYjExeUJtVHF2OWVGZVFydTFYVQ0KUDgxWTI2U3BKSSt5WXppUmRUSDJUK2hwcU5qaHBlZkxvdmJCdCswaFIvdmVvT0lBRzBFTmRJMmRSZklRM21FbA0KR0dta2NiRVZCWU4yREdtWlk3THFzNDlwemF1UHUyWmYvMGVEd1FJREFRQUJBb0lCQUIvakxUM3JEUnluSjJSeg0KalRIbHU3dlRYbHpCOHh1aTJTeXdOZmhUZWkyRk9UUUlPR2U5VG5PY1lCSnVyMW0rOHU1RWpsR2M1OXVreGxQeQ0KSnpkeGFDakxGVWx1Nk1Nck9FYy9uc0tHU2d1T2NHYTRZbnBwUVFRMkV6TTQxWTY1Q3hneWFDWHdsbEFQSGQ2OA0KclQrYXBJZ1pSczBCMUhxL1pqSnQ4OXBlS2RzenhmTzRTRDZqYVJOMEV6WDNHeFFoQ2tnRC9VK2RMaDRURE1QUw0KUU5lS2Y1ZTQreW1nemNkeHlEeHNDZjV5WVIxT0hWb3NMWnMyR1R2WXJDSHFsSFlPL1VOZnRRRVNBeGdvdW1aZA0KeWEvWmNNYWNlMWt3b3pCcDA2a3JSVHk1M1V2ODJjZEdZZzFBMWxNVGZKWTVQczhvN1ZobHRiL2FwMXowbDZ4Uw0KV0NzQ1Jnc0NnWUVBL1ZiRkdTQ3p3Tjd5bU9QRFB2QnlhWWFSdDVUdDZVU2lXd3p2UXJ5NGsyNU5BZ21SazBGbA0KTFE0ZFk0eC83UzJzQ3BKVCtrQ1hnbjQ5TTVJS1lxNjdpaldVbnJBOUJmeDlZRW1wREgxbU1CdVVlSU4zaFp2OA0KbzZtZFRzSklzeEVHRUxydUZSZHFlZzBVT09iQWdseGhad3BXZVEyUGp4US9PYVc2Zzd0RmJiTUNnWUVBNGFyUA0KWlM1VXNZU1pZZ3d0czM2by9mY0JuakxNVC9FNzRUSkRtYjdJVU1Bb2dXdFRNbTVhckVFQmlMRU1BTUh3M1l5Wg0KUTNwK0ZEWDhVUzBpcGVKWUg5WTdqZWZXRDdjYXVRK0lGOTY5T0lENEJjajQwb3VyS0Zhb201eUZ1Ty9LdCtQdw0KM2doMWhKY3pWeUlaWGMvSVBiRjRuZzBmbGp2U0Jic29EUi9SRnJzQ2dZQUpCckZwRHNnNHcvakN4OEtxR0drTA0KSjNkRG9qUER6dVUxOTBVRERMUksxSEE3OVZsUmROQUZCZTY0SUVaaWpmRUdRMlpva1NxVXhLaXJrTFY4Qkp1Nw0KOWVMQXNLakw4TTRLd3pVWnM5SVRQcmhRZnVhZ1JRbUFUMGZDaVp1TGZieklsZEJyd2ZUU09tc1JCKyt0OVZxbg0KRURBNmllZ21nZU1xeTZQVWs3U0tqd0tCZ1FDb3BoRE0yeTBzWlo2RHFmcFZsS2tTODVCZi9ESzQ0OTRPVkpRMA0KeUdISUIzTytGTWxlZlI2Q2NTcUdUMXBiRHBYRjNSZUZXSHYwK3N1UWx4eTN3RXAvc0lsZGFnK09PeGRiaW9INA0KNU51ZzZMRnpFVmp6Y0xIL09aUlVoMHRnaE1TSlhXNWJZUk1DZmtVK0x4dXFBbWp4d2pvVVZGWnczay85UEh1WQ0KSTFrTmxRS0JnUUN5WGhSMmFNMElaRFBiUGMwcXFycG1WYTFYZGZqR21oS1ZZOEFLNlBaNzV0cklaRTR5c20xOA0KSU5GSEJac1BuOEE4NjBrNmNIdWFKenVjYzdYbWJpcGZFVXJYRHhkdzNQZzMrZ3lxSGk5WEZXS0dWQ2hnL1Vvag0KNUlQT0pMTmxYOSsrcEZxRUNmMStNc3BMUHpQbCtVY3BwYTZHb1VLNjFJL2I4VFBZYTJKOC93PT0NCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tDQo=
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+  namespace: pepr-system
+  labels:
+    app: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+  template:
+    metadata:
+      labels:
+        app: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+    spec:
+      priorityClassName: system-node-critical
+      serviceAccountName: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+      containers:
+        - name: server
+          image: ghcr.io/defenseunicorns/pepr/controller:v0.14.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - node
+            - /app/node_modules/pepr/dist/controller.js
+            - 843c58f04a414a448a883afb883fb8e1a8531ad80f657d68939fcf319eae6106
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+              scheme: HTTPS
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+              scheme: HTTPS
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          env:
+            - name: PEPR_PRETTY_LOG
+              value: 'false'
+            - name: LOG_LEVEL
+              value: debug
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /etc/certs
+              readOnly: true
+            - name: api-token
+              mountPath: /app/api-token
+              readOnly: true
+            - name: module
+              mountPath: /app/load
+              readOnly: true
+      volumes:
+        - name: tls-certs
+          secret:
+            secretName: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-tls
+        - name: api-token
+          secret:
+            secretName: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-api-token
+        - name: module
+          secret:
+            secretName: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-module
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+  namespace: pepr-system
+spec:
+  selector:
+    app: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+  ports:
+    - port: 443
+      targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-watcher
+  namespace: pepr-system
+spec:
+  selector:
+    app: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-watcher
+  ports:
+    - port: 443
+      targetPort: 3000
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-module
+  namespace: pepr-system
+type: Opaque
+data:
+  module-843c58f04a414a448a883afb883fb8e1a8531ad80f657d68939fcf319eae6106.js.gz: >-
+    H4sIAAAAAAAAA42SUWvbMBSF3/srhAZpDJbqJA00Di5ruz4U0jE6xh5KHyTrNtWiSp4kJ4Tg/74rJ9uawmAvRvfKks757lkLT1zl4WerPQxpA42n2XyNXVHtrHiFkhrJhLUuiqidZWITaL4GH7AoacELPqK5glB73cS+d7X/GYgwhhgnlBRG2BqPkOBIfBERP7AlbQDyeXEdiLYhglDEPZNbrGm+gu3GeRXKx72gnK4usE0bZ3S9ZWCX2kKqcZO9OtWaVAWoW6/jlj7l+z9CubNOoYPLanSBQgva5elI+W9jbatVSSfnz1BfFAWTk+mMTevZjM1G0ymbjeVYFjMpx2NJc2dvvXe+pHppnUcFwmzENtz11f6N0IgaZTw+5UZIMGnVdfmeFaqjq4liAWLb0DKtSW1aROGJAgMIsPenYE0GA/J2u/Yg3m4ztpoEJvySnDJsyHb5MYDHIZXFKXpW0IBVYGudkPQEcHCj8x4Inv90tB+3zWGaJZ3yMR/TrusDAe9jktvKwoYAvxGNkNog++EB7YErMCPfp0Mp8pc6ia6PSZKrEVXKQBJwlJvj2AiPzr1b65RAUGSj40vK0bsY0fxoAF2W776/gC1DV9l5GAIX/Ov+0YzfhZueqBpm/L5NuoexutxF/iA2PDRQ86SpqugCVV0fVNHBIOIV8eqPmSE92OASouCrVoK3OMfAtTvDeLFkiv12xdKdGFuLiLIumyeUjn9Bsvd9oocif7RP2fzk7OwDEmh9DfeiabRdfntYVP3s/yen/Efgr6I5+QWPQQJ56QMAAA==
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: peprstores.pepr.dev
+spec:
+  group: pepr.dev
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            data:
+              type: object
+              additionalProperties:
+                type: string
+  scope: Namespaced
+  names:
+    plural: peprstores
+    singular: peprstore
+    kind: PeprStore
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-store
+  namespace: pepr-system
+rules:
+  - apiGroups:
+      - pepr.dev/*
+    resources:
+      - peprstores
+    resourceNames:
+      - ''
+    verbs:
+      - create
+      - get
+      - patch
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-store
+  namespace: pepr-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-store
+subjects:
+  - kind: ServiceAccount
+    name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b-store
+    namespace: pepr-system
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+webhooks:
+  - name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b.pepr.dev
+    admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      caBundle: >-
+        LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlDdERDQ0FaeWdBd0lCQWdJQkFUQU5CZ2txaGtpRzl3MEJBUXNGQURBY01Sb3dHQVlEVlFRREV4RlFaWEJ5DQpJRVZ3YUdWdFpYSmhiQ0JEUVRBZUZ3MHlNekV3TVRBeE9ETTJNVEphRncweU5ERXdNVEF4T0RNMk1USmFNQUF3DQpnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFDODdHUCtqeFphb01Hb2lCVXBibytaDQptVnEzUU41OXlKLzY2ejU4RURpYWlMbnpaNHNEOWt4VjZGTklUNTFxNUFUYzZBQjNsK1NUUnlNQWF4T01BbzhWDQp4aWRhWGRNWnlXZC9IQmdKV1ljYnQ2QzI5cU9kZVI1T3dwYmRaUXEwOW8vZmM5RXR2OU8vUVk3emNjWEZwdnJDDQpLNUY0ajhFRWgrVHFWVGFRajdRbTlGbjBEeU9WV0V2N3BnUFZaQVF3SzlnZTF4Wkt0QXJDU3luY1hqY0VWMlRCDQp4Uk9uOFg0UXNWSHhwR0dBa0g2OG5qdjF4V2k0SXh5L2hwVFdrVHFUTk1hR3Fnc1JYM1l1R3RkOXY2eGo4dm9wDQphQmdkc0VKLzJQVUdGR204TmhqQk9HWWRSMDVtS0ZMcTdnT2JYMHVLemxmejVyaVdJWnB4amJaRGJwcHpsa0E3DQpBZ01CQUFHakhUQWJNQXdHQTFVZEV3UUZNQU1CQWY4d0N3WURWUjBQQkFRREFnTDBNQTBHQ1NxR1NJYjNEUUVCDQpDd1VBQTRJQkFRQ3VPZ0tXLzZ5eTN1YUJxNVBMd2xoTjdUK1k2ZEdSaVFiZUNRK0hWby9qWVRhaGo0cGpYU0RyDQpPMlV5cHBVbWt6RjlXbzV2L3BQTGRCR3NiVFIzMWR2UUg1VGJaTU8zZmJkWGNtR2M0cVNSUnFFK1NyQlkzaFZVDQpyTUVJSTRqRHhuR1NzZjl0QzRKWHpya291Z3VWdmNFdXZwa0Y5dnF1VG5KNldsd3ZESnFLVVN0VWhxczZjMUltDQpWb0k2V3JLZld3bUVmV2tVdzQxWGV2Ulo0WXBVek5RLytwT1Vyd2taVzJIL2VtZUhrL21WNUhrdTZ5dGFzdU9IDQpuVjBacE1UcktLWG5nZTI2SzhLS0JMc0tJaFdDODhZbk1rdlp2N1hCNCsxSVB3Y3JncmZ1L010eDBQd0VwdlExDQphMHhEQS9Oa3JpWlMzZFhBbUI3MGN5UktxWkJhUk5rMQ0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ0K
+      service:
+        name: pepr-34fec800-b359-5c99-9155-92b2b09bb22b
+        namespace: pepr-system
+        path: >-
+          /mutate/0a88def4f73e0b21146ab9e43145197b2e9e72be40a5636fe64b6d84e5044512
+    failurePolicy: Ignore
+    matchPolicy: Equivalent
+    timeoutSeconds: 10
+    namespaceSelector:
+      matchExpressions:
+        - key: pepr.dev
+          operator: NotIn
+          values:
+            - ignore
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - kube-system
+            - pepr-system
+    objectSelector:
+      matchExpressions:
+        - key: pepr.dev
+          operator: NotIn
+          values:
+            - ignore
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - kube-system
+            - pepr-system
+    rules:
+      - apiGroups:
+          - ''
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+        resources:
+          - services
+    sideEffects: None
