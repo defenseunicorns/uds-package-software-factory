@@ -3,7 +3,7 @@
 # renovate: datasource=github-tags depName=defenseunicorns/zarf
 UDS_CLI_VERSION := v0.0.6-alpha+go-version-fix-with-bndl-tmpl
 
-ZARF_VERSION := v0.30.0
+ZARF_VERSION := v0.29.1
 
 BUNDLE_VERSION ?= $(if $(shell git describe --tags),$(shell git describe --tags),"UnknownVersion")
 
