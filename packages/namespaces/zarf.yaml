@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory-namespaces
   description: "Required namespaces for all capabilities of software factory"
-  version: "1.0.0"
+  version: "###ZARF_PKG_TMPL_VERSION###"
   architecture: amd64
 
 components:

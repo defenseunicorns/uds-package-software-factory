@@ -22,12 +22,12 @@ zarf-packages:
   # Namespace pre-reqs for swf capabilities
   - name: software-factory-namespaces
     repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-namespaces"
-    ref: 1.0.0
+    ref: "###BNDL_TMPL_VERSION###"
 
   # Change the realm file keycloak imports from
   - name: software-factory-idam-realm
     repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-idam-realm"
-    ref: 1.0.0
+    ref: "###BNDL_TMPL_VERSION###"
     optional-components:
       - exported-variables
     exports:
@@ -44,7 +44,7 @@ zarf-packages:
   # GitLab SSO secret and variables
   - name: software-factory-idam-gitlab
     repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-idam-gitlab"
-    ref: 1.0.0
+    ref: "###BNDL_TMPL_VERSION###"
     exports:
       - name: GITLAB_IDAM_ENABLED
       - name: GITLAB_IDAM_ALLOWED_SSOS
@@ -53,7 +53,7 @@ zarf-packages:
   # SonarQube SSO secret and variables
   - name: software-factory-idam-sonarqube
     repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-idam-sonarqube"
-    ref: 1.0.0
+    ref: "###BNDL_TMPL_VERSION###"
     exports:
       - name: SONARQUBE_IDAM_ENABLED
       - name: SONARQUBE_IDAM_CLIENT_ID
@@ -126,6 +126,6 @@ zarf-packages:
   # Add all virtualservices as internal dns entries for auth callbacks
   - name: software-factory-idam-dns
     repository: "###BNDL_TMPL_REGISTRY###/swf-dependency/software-factory-idam-dns"
-    ref: 1.0.0
+    ref: "###BNDL_TMPL_VERSION###"
     optional-components:
       - create-internal-dns-entries

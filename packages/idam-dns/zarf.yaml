@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory-idam-dns
   description: "Creates internal DNS entries for auth callbacks"
-  version: "1.0.0"
+  version: "###ZARF_PKG_TMPL_VERSION###"
   architecture: amd64
 
 components:

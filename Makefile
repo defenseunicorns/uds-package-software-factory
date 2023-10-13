@@ -3,7 +3,7 @@
 # renovate: datasource=github-tags depName=defenseunicorns/zarf
 UDS_CLI_VERSION := v0.0.6-alpha+go-version-fix-with-bndl-tmpl
 
-ZARF_VERSION := v0.29.2
+ZARF_VERSION := v0.30.0
 
 BUNDLE_VERSION ?= $(if $(shell git describe --tags),$(shell git describe --tags),"UnknownVersion")
 
@@ -98,6 +98,10 @@ start-registry:
 .PHONY: stop-registry
 stop-registry:
 	docker compose -f utils/docker-compose.yaml down
+
+.PHONY: clear-registry
+clear-registry: | stop-registry
+	rm -rf utils/registry-data
 
 ########################################################################
 # Test Section
@@ -196,22 +200,28 @@ build/uds: | build ## Download uds-cli to the build dir
 	chmod +x build/uds
 
 build/software-factory-namespaces: | build $(REGISTRY_TARGET) ## Build namespaces package
-	cd build && ./zarf package create ../packages/namespaces/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
+	cd build && ./zarf package create ../packages/namespaces/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ~/zarf/build/zarf package publish zarf-package-software-factory-namespaces-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
+
 
 build/idam-gitlab: | build $(REGISTRY_TARGET) ## Build idam-gitlab package
-	cd build && ./zarf package create ../packages/idam-gitlab/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
+	cd build && ./zarf package create ../packages/idam-gitlab/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ~/zarf/build/zarf package publish zarf-package-software-factory-idam-gitlab-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
 build/idam-sonarqube: | build $(REGISTRY_TARGET) ## Build idam-sonarqube package
-	cd build && ./zarf package create ../packages/idam-sonarqube/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
+	cd build && ./zarf package create ../packages/idam-sonarqube/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ~/zarf/build/zarf package publish zarf-package-software-factory-idam-sonarqube-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
 build/idam-dns: | build $(REGISTRY_TARGET) ## Build idam-dns package
-	cd build && ./zarf package create ../packages/idam-dns/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
+	cd build && ./zarf package create ../packages/idam-dns/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ~/zarf/build/zarf package publish zarf-package-software-factory-idam-dns-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
 build/idam-realm: | build $(REGISTRY_TARGET) ## Build idam-realm package
-	cd build && ./zarf package create ../packages/idam-realm/ --confirm --oci-concurrency 12 --output oci://$(REGISTRY)/swf-dependency $(INSECURE)
+	cd build && ./zarf package create ../packages/idam-realm/ --confirm --output-directory . --set VERSION=$(BUNDLE_VERSION)
+	cd build && ~/zarf/build/zarf package publish zarf-package-software-factory-idam-realm-amd64-$(BUNDLE_VERSION).tar.zst oci://$(REGISTRY)/swf-dependency --oci-concurrency 12 $(INSECURE)
 
 build/uds-bundle-software-factory: | build $(REGISTRY_TARGET) ## Build the software factory
-	cd build && ./uds bundle create ../ --confirm --output oci://$(REGISTRY)/uds-package $(INSECURE) --oci-concurrency 12 --no-progress --set REGISTRY=$(REGISTRY),VERSION=$(BUNDLE_VERSION)
+	cd build && ./uds create ../ --confirm --output oci://$(REGISTRY)/uds-package $(INSECURE) --oci-concurrency 12 --no-progress --set REGISTRY=$(REGISTRY),VERSION=$(BUNDLE_VERSION)
 
 ########################################################################
 # Deploy Section
