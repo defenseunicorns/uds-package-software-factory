@@ -1,0 +1,3 @@
+auth:
+  username: kcadmin
+  database: keycloak

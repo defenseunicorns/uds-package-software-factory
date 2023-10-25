@@ -17,7 +17,7 @@ zarf-packages:
   # Defense Unicorns Big Bang Distro
   - name: dubbd-k3d
     repository: ghcr.io/defenseunicorns/packages/dubbd-k3d
-    ref: 0.8.1
+    ref: 0.10.1
 
   # Namespace pre-reqs for swf capabilities
   - name: software-factory-namespaces
@@ -34,12 +34,20 @@ zarf-packages:
       - name: REALM_IMPORT_FILE
 
   # Identity and Access Management
+  - name: keycloak-postgres
+    path: build
+    ref: 0.0.1
+    exports:
+      - name: KEYCLOAK_DB_PASSWORD
+
   - name: uds-idam
     repository: ghcr.io/defenseunicorns/uds-capability/uds-idam
-    ref: 0.1.9
+    ref: 0.1.12
     imports:
       - name: REALM_IMPORT_FILE
         package: software-factory-idam-realm
+      - name: KEYCLOAK_DB_PASSWORD
+        package: keycloak-postgres
 
   # GitLab SSO secret and variables
   - name: software-factory-idam-gitlab
