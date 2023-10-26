@@ -1,0 +1,9 @@
+bundle:
+  deploy:
+    zarf-packages:
+      software-factory-idam-gitlab:
+        set:
+          DOMAIN: "bigbang.dev"
+      software-factory-idam-realm:
+        set:
+          DOMAIN: "bigbang.dev"

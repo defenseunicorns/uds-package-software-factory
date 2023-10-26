@@ -6,6 +6,10 @@ metadata:
   version: "1.0.0"
   architecture: amd64
 
+variables:
+  - name: DOMAIN
+    default: "test.dev"
+
 components:
   - name: realm-file
     required: true

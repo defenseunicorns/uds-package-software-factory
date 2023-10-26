@@ -7,6 +7,8 @@ metadata:
   architecture: amd64
 
 variables:
+  - name: DOMAIN
+    default: "test.dev"
   - name: GITLAB_SSO_JSON
     default: gitlab-sso-demo.json
     prompt: false
