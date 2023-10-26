@@ -1,0 +1,22 @@
+bundle:
+  deploy:
+    zarf-packages:
+      dubbd-k3d:
+        set:
+          DOMAIN: "doug.bigbang.dev"
+      software-factory-idam-gitlab:
+        set:
+          DOMAIN: "doug.bigbang.dev"
+      software-factory-idam-realm:
+        set:
+          DOMAIN: "doug.bigbang.dev"
+      uds-idam:
+        set:
+          DOMAIN: "doug.bigbang.dev"
+      gitlab:
+        set:
+          DOMAIN: "doug.bigbang.dev"
+      sonarqube:
+        set:
+          DOMAIN: "doug.bigbang.dev"
+          SONARQUBE_IDAM_REALM_URL: "https://keycloak.doug.bigbang.dev/auth/realms/baby-yoda"
