@@ -6,6 +6,10 @@ metadata:
   version: "1.0.0"
   architecture: amd64
 
+variables:
+  - name: DOMAIN
+    default: "test.dev"
+
 components:
   - name: exported-variables
     required: true
@@ -27,7 +31,7 @@ components:
             setVariables:
               - name: SONARQUBE_IDAM_PROVIDER_NAME
           # Get the URL for the realm used for auth
-          - cmd: echo https://keycloak.bigbang.dev/auth/realms/baby-yoda
+          - cmd: echo https://keycloak.###ZARF_VAR_DOMAIN###/auth/realms/baby-yoda
             setVariables:
               - name: SONARQUBE_IDAM_REALM_URL
           # Get the SAML certificate from keycloak

@@ -3,7 +3,10 @@ bundle:
     zarf-packages:
       software-factory-idam-gitlab:
         set:
-          DOMAIN: "bigbang.dev"
+          DOMAIN: "mtsi.bigbang.dev"
       software-factory-idam-realm:
         set:
-          DOMAIN: "bigbang.dev"
+          DOMAIN: "mtsi.bigbang.dev"
+      software-factory-idam-sonarqube:
+        set:
+          DOMAIN: "mtsi.bigbang.dev"
