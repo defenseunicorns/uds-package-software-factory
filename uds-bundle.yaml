@@ -27,7 +27,7 @@ zarf-packages:
   # Change the realm file keycloak imports from
   - name: software-factory-idam-realm
     path: build
-    ref: 1.0.0
+    ref: 1.0.1
     optional-components:
       - exported-variables
     exports:
@@ -52,7 +52,7 @@ zarf-packages:
   # GitLab SSO secret and variables
   - name: software-factory-idam-gitlab
     path: build
-    ref: 1.0.0
+    ref: 1.0.1
     exports:
       - name: GITLAB_IDAM_ENABLED
       - name: GITLAB_IDAM_ALLOWED_SSOS
@@ -61,7 +61,7 @@ zarf-packages:
   # SonarQube SSO secret and variables
   - name: software-factory-idam-sonarqube
     path: build
-    ref: 1.0.0
+    ref: 1.0.1
     exports:
       - name: SONARQUBE_IDAM_ENABLED
       - name: SONARQUBE_IDAM_CLIENT_ID

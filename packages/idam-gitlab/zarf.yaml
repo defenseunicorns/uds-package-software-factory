@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory-idam-gitlab
   description: "The IDAM/SSO manifest and variables for the GitLab Capability"
-  version: "1.0.0"
+  version: "1.0.1"
   architecture: amd64
 
 variables:
