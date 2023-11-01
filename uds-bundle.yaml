@@ -3,7 +3,7 @@ kind: UDSBundle
 metadata:
   name: software-factory-demo
   description: A UDS bundle for deploying a software factory to k3d for demonstration purposes NOT FOR PRODUCTION
-  version: 0.0.5
+  version: 0.0.6
   architecture: amd64
 
 zarf-packages:
@@ -86,7 +86,7 @@ zarf-packages:
 
   - name: gitlab
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab
-    ref: 0.1.1
+    ref: 0.1.2
     imports:
       - name: GITLAB_IDAM_ENABLED
         package: software-factory-idam-gitlab
@@ -111,7 +111,7 @@ zarf-packages:
 
   - name: sonarqube
     repository: ghcr.io/defenseunicorns/uds-capability/sonarqube
-    ref: 0.0.10
+    ref: 0.0.11
     imports:
       - name: SONARQUBE_IDAM_ENABLED
         package: software-factory-idam-sonarqube
@@ -127,6 +127,46 @@ zarf-packages:
         package: software-factory-idam-sonarqube
       - name: SONARQUBE_IDAM_PROVIDER_EMAIL
         package: software-factory-idam-sonarqube
+
+  # Jira
+  - name: jira-postgres
+    repository: ghcr.io/defenseunicorns/uds-capability/jira/dev-dependency/jira-postgres
+    ref: 0.0.1
+
+  - name: jira
+    repository: ghcr.io/defenseunicorns/uds-capability/jira
+    ref: 0.0.5
+
+  # Confluence
+  - name: confluence-postgres
+    repository: ghcr.io/defenseunicorns/uds-capability/confluence/dev-dependency/confluence-postgres
+    ref: 0.0.1
+
+  - name: confluence
+    repository: ghcr.io/defenseunicorns/uds-capability/confluence
+    ref: 0.0.4
+
+   # Mattermost Operator with a Mattermost instance
+  - name: mattermost-minio
+    repository: ghcr.io/defenseunicorns/uds-capability/mattermost/dev-dependency/mattermost-minio
+    ref: 0.0.1
+
+  - name: mattermost-postgres
+    repository: ghcr.io/defenseunicorns/uds-capability/mattermost/dev-dependency/mattermost-postgres
+    ref: 0.0.2
+
+  - name: mattermost
+    repository: ghcr.io/defenseunicorns/uds-capability/mattermost
+    ref: 0.0.2
+
+  # Nexus
+  - name: nexus-postgres
+    repository: ghcr.io/defenseunicorns/uds-capability/nexus/dev-dependency/nexus-postgres
+    ref: 0.0.1
+
+  - name: nexus
+    repository: ghcr.io/defenseunicorns/uds-capability/nexus
+    ref: 0.0.4
 
   # Add all virtualservices as internal dns entries for auth callbacks
   - name: software-factory-idam-dns
