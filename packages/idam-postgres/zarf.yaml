@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: keycloak-postgres
+  version: "0.0.1"
+  architecture: amd64
+
+components:
+  - name: postgres-kyverno-exceptions
+    required: true
+    manifests:
+      - name: kyverno-exceptions
+        files:
+          - policy-exceptions/externalName.yaml
+          - policy-exceptions/registry.yaml
+  - name: postgres
+    required: true
+    charts:
+      - name: postgresql
+        version: 12.6.6
+        namespace: keycloak
+        url: https://charts.bitnami.com/bitnami
+        valuesFiles:
+          - "values.yaml"
+    images:
+      - docker.io/bitnami/postgresql:15.3.0-debian-11-r24
+    actions:
+      onDeploy:
+        after:
+          - wait:
+              cluster:
+                kind: Pod
+                name: postgresql-0
+                condition: Ready
+                namespace: keycloak
+  - name: postgres-secret
+    required: true
+    actions:
+      onDeploy:
+        before:
+          - cmd: kubectl get secret -n keycloak postgresql --template={{.data.password}} | base64 -d
+            mute: true
+            setVariables:
+              - name: KEYCLOAK_DB_PASSWORD
+                sensitive: true
+        after:
+          - cmd: kubectl create secret generic keycloak-postgres -n keycloak --from-literal=password=${ZARF_VAR_KEYCLOAK_DB_PASSWORD} --dry-run=client -o yaml | kubectl apply -f -
+  - name: postgres-service
+    required: true
+    manifests:
+      - name: service for keycloak
+        files:
+          - service.yaml

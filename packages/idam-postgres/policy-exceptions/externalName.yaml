@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v2alpha1
+kind: PolicyException
+metadata:
+  name: keycloak-postgres-external-names-exception
+  namespace: keycloak
+spec:
+  exceptions:
+  - policyName: restrict-external-names
+    ruleNames:
+    - external-names
+  match:
+    any:
+    - resources:
+        kinds:
+        - Service
+        namespaces:
+        - keycloak
+        names:
+        - keycloak-postgresql

@@ -19,6 +19,10 @@ This is the early stages of a UDS Bundle we call the UDS Software Factory. This 
 | [Gitlab](https://github.com/defenseunicorns/uds-capability-gitlab) | Alpha |
 | [Gitlab-Runner](https://github.com/defenseunicorns/uds-capability-gitlab-runner) | Alpha |
 | [SonarQube](https://github.com/defenseunicorns/uds-capability-sonarqube) | Alpha |
+| [Jira](https://github.com/defenseunicorns/uds-capability-jira) | Alpha |
+| [Confluence](https://github.com/defenseunicorns/uds-capability-confluence) | Alpha |
+| [Mattermost](https://github.com/defenseunicorns/uds-capability-mattermost-operator) | Alpha |
+| [Nexus](https://github.com/defenseunicorns/uds-capability-nexus) | Alpha |
 
 ## Prerequisites
 

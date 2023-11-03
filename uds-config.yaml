@@ -1,0 +1,44 @@
+bundle:
+  deploy:
+    zarf-packages:
+      dubbd-k3d:
+        set:
+          DOMAIN: "bigbang.dev"
+      software-factory-idam-gitlab:
+        set:
+          DOMAIN: "bigbang.dev"
+      software-factory-idam-realm:
+        set:
+          DOMAIN: "bigbang.dev"
+      uds-idam:
+        set:
+          DOMAIN: "bigbang.dev"
+      gitlab:
+        set:
+          DOMAIN: "bigbang.dev"
+          GITLAB_DB_NAME: "gitlabdb"
+          GITLAB_DB_USERNAME: "gitlab"
+      sonarqube:
+        set:
+          DOMAIN: "bigbang.dev"
+          SONARQUBE_IDAM_REALM_URL: "https://keycloak.bigbang.dev/auth/realms/baby-yoda"
+          SONARQUBE_DB_NAME: "sonarqubedb"
+          SONARQUBE_DB_USERNAME: "sonarqube"
+      jira:
+        set:
+          DOMAIN: "bigbang.dev"
+          JIRA_DB_NAME: "jiradb"
+          JIRA_DB_USERNAME: "jira"
+      confluence:
+        set:
+          DOMAIN: "bigbang.dev"
+          CONFLUENCE_DB_NAME: "confluencedb"
+          CONFLUENCE_DB_USERNAME: "confluence"
+      mattermost:
+        set:
+          DOMAIN: "bigbang.dev"
+      nexus:
+        set:
+          DOMAIN: "bigbang.dev"
+          NEXUS_DB_NAME: "nexusdb"
+          NEXUS_DB_USERNAME: "nexus"

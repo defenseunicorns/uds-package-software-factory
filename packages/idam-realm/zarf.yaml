@@ -3,8 +3,12 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory-idam-realm
   description: "Brings realm for keycloak to import"
-  version: "1.0.0"
+  version: "1.0.1"
   architecture: amd64
+
+variables:
+  - name: DOMAIN
+    default: "test.dev"
 
 components:
   - name: realm-file

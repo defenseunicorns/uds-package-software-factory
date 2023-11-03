@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: software-factory-idam-sonarqube
   description: "The IDAM/SSO manifest and variables for the SonarQube Capability"
-  version: "1.0.0"
+  version: "1.0.1"
   architecture: amd64
 
 components:
@@ -26,10 +26,6 @@ components:
           - cmd: echo saml
             setVariables:
               - name: SONARQUBE_IDAM_PROVIDER_NAME
-          # Get the URL for the realm used for auth
-          - cmd: echo https://keycloak.bigbang.dev/auth/realms/baby-yoda
-            setVariables:
-              - name: SONARQUBE_IDAM_REALM_URL
           # Get the SAML certificate from keycloak
           - cmd: ./zarf tools kubectl run saml-cert -n keycloak --image=registry1.dso.mil/ironbank/big-bang/base:2.0.0 -- sleep infinity
           - wait:

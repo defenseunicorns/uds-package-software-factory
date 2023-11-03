@@ -142,7 +142,7 @@ cluster/destroy: ## Destroy the k3d cluster
 ########################################################################
 
 .PHONY: build/all
-build/all: build build/zarf build/uds build/software-factory-namespaces build/idam-dns build/idam-realm build/idam-gitlab build/idam-sonarqube build/uds-bundle-software-factory ## Build everything
+build/all: build build/zarf build/uds build/software-factory-namespaces build/idam-dns build/idam-realm build/idam-postgres build/idam-gitlab build/idam-sonarqube build/uds-bundle-software-factory ## Build everything
 
 build: ## Create build directory
 	mkdir -p build
@@ -180,6 +180,9 @@ build/idam-dns: | build ## Build idam-dns package
 build/idam-realm: | build ## Build idam-realm package
 	cd build && ./zarf package create ../packages/idam-realm/ --confirm --output-directory .
 
+build/idam-postgres: | build ## Build idam-postgres package
+	cd build && ./zarf package create ../packages/idam-postgres/ --confirm --output-directory .
+
 build/uds-bundle-software-factory: | build ## Build the software factory
 	cd build && ./uds bundle create ../ --confirm
 	mv uds-bundle-software-factory-demo-*.tar.zst build/
@@ -189,6 +192,7 @@ build/uds-bundle-software-factory: | build ## Build the software factory
 ########################################################################
 
 deploy: ## Deploy the software factory package
+	cp uds-config.yaml ./build/
 	cd ./build && ./uds bundle deploy uds-bundle-software-factory-demo-*.tar.zst --confirm
 
 ########################################################################

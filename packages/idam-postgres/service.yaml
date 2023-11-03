@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-postgresql
+  namespace: keycloak
+spec:
+  type: ExternalName
+  externalName: postgresql.keycloak.svc.cluster.local

@@ -7,15 +7,15 @@
       "Gitlab"
     ],
     "response_type": "code",
-    "issuer": "https://keycloak.bigbang.dev/auth/realms/baby-yoda",
+    "issuer": "https://keycloak.###ZARF_VAR_DOMAIN###/auth/realms/baby-yoda",
     "client_auth_method": "query",
     "discovery": true,
     "uid_field": "preferred_username",
     "client_options": {
       "identifier": "dev_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_gitlab",
       "secret": "",
-      "redirect_uri": "https://gitlab.bigbang.dev/users/auth/openid_connect/callback",
-      "end_session_endpoint": "https://keycloak.bigbang.dev/auth/realms/baby-yoda/protocol/openid-connect/logout"
+      "redirect_uri": "https://gitlab.###ZARF_VAR_DOMAIN###/users/auth/openid_connect/callback",
+      "end_session_endpoint": "https://keycloak.###ZARF_VAR_DOMAIN###/auth/realms/baby-yoda/protocol/openid-connect/logout"
     }
   }
 }
