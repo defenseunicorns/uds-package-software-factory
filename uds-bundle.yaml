@@ -153,7 +153,7 @@ zarf-packages:
 
   - name: mattermost-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/mattermost/dev-dependency/mattermost-postgres
-    ref: 0.0.2
+    ref: 0.0.3
 
   - name: mattermost
     repository: ghcr.io/defenseunicorns/uds-capability/mattermost
