@@ -17,7 +17,7 @@ zarf-packages:
   # Defense Unicorns Big Bang Distro
   - name: dubbd-k3d
     repository: ghcr.io/defenseunicorns/packages/dubbd-k3d
-    ref: 0.12.1
+    ref: 0.13.0
 
   # Namespace pre-reqs for swf capabilities
   - name: software-factory-namespaces
