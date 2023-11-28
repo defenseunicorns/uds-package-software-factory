@@ -25,7 +25,7 @@ jobs:
           token: ${{ secrets.PAT }}
           repository: ${{ github.repository }}
           ref: ${{ github.ref_name }}
-    
+
       # Run this step first so we can fail fast in case an invalid package name is provided
       - name: Get latest package version
         id: latest-package-version
@@ -106,6 +106,7 @@ jobs:
           zarf package create packages/idam-gitlab    --confirm --no-progress --output-directory build
           zarf package create packages/idam-sonarqube --confirm --no-progress --output-directory build
           zarf package create packages/idam-realm     --confirm --no-progress --output-directory build
+          zarf package create packages/idam-postgres  --confirm --no-progress --output-directory build
           zarf package create packages/namespaces     --confirm --no-progress --output-directory build
 
       - name: Build software factory bundle
