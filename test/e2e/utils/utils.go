@@ -166,7 +166,7 @@ func SetupTestPlatform(t *testing.T, platform *types.TestPlatform) { //nolint:fu
 
 		if isUpgrade == "yes" {
 			// Deploy current SWF version
-			output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/uds bundle deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:%s --confirm --no-progress`, latestVersion))
+			output, err = platform.RunSSHCommandAsSudo(fmt.Sprintf(`~/app/build/uds deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:%s --confirm --no-progress`, latestVersion))
 			require.NoError(t, err, output)
 		}
 
