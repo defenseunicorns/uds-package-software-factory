@@ -3,7 +3,7 @@ kind: UDSBundle
 metadata:
   name: software-factory-demo
   description: A UDS bundle for deploying a software factory to k3d for demonstration purposes NOT FOR PRODUCTION
-  version: 0.0.7
+  version: 0.0.8
   architecture: amd64
 
 zarf-packages:
@@ -17,7 +17,7 @@ zarf-packages:
   # Defense Unicorns Big Bang Distro
   - name: dubbd-k3d
     repository: ghcr.io/defenseunicorns/packages/dubbd-k3d
-    ref: 0.13.0
+    ref: 0.14.0
 
   # Namespace pre-reqs for swf capabilities
   - name: software-factory-namespaces
@@ -42,7 +42,7 @@ zarf-packages:
 
   - name: uds-idam
     repository: ghcr.io/defenseunicorns/uds-capability/uds-idam
-    ref: 0.1.12
+    ref: 0.1.14
     imports:
       - name: REALM_IMPORT_FILE
         package: software-factory-idam-realm
@@ -74,19 +74,19 @@ zarf-packages:
   # Gitlab
   - name: gitlab-redis
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-redis
-    ref: 0.0.2
+    ref: 0.1.8
 
   - name: gitlab-minio
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-minio
-    ref: 0.0.2
+    ref: 0.1.8
 
   - name: gitlab-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-postgres
-    ref: 0.0.2
+    ref: 0.1.8
 
   - name: gitlab
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab
-    ref: 0.1.2
+    ref: 0.1.8
     imports:
       - name: GITLAB_IDAM_ENABLED
         package: software-factory-idam-gitlab
@@ -98,20 +98,20 @@ zarf-packages:
   # Gitlab Runner
   - name: gitlab-runner-rbac
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner/dev-dependency/gitlab-runner-rbac
-    ref: 0.0.1
+    ref: 0.1.2
 
   - name: gitlab-runner
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab-runner
-    ref: 0.0.8
+    ref: 0.1.2
 
   # Sonarqube
   - name: sonarqube-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/sonarqube/dev-dependency/sonarqube-postgres
-    ref: 0.0.2
+    ref: 0.1.2
 
   - name: sonarqube
     repository: ghcr.io/defenseunicorns/uds-capability/sonarqube
-    ref: 0.0.11
+    ref: 0.1.2
     imports:
       - name: SONARQUBE_IDAM_ENABLED
         package: software-factory-idam-sonarqube
@@ -131,42 +131,42 @@ zarf-packages:
   # Jira
   - name: jira-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/jira/dev-dependency/jira-postgres
-    ref: 0.0.1
+    ref: 0.1.2
 
   - name: jira
     repository: ghcr.io/defenseunicorns/uds-capability/jira
-    ref: 0.0.5
+    ref: 0.1.2
 
   # Confluence
   - name: confluence-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/confluence/dev-dependency/confluence-postgres
-    ref: 0.0.1
+    ref: 0.1.2
 
   - name: confluence
     repository: ghcr.io/defenseunicorns/uds-capability/confluence
-    ref: 0.0.4
+    ref: 0.1.2
 
    # Mattermost Operator with a Mattermost instance
   - name: mattermost-minio
     repository: ghcr.io/defenseunicorns/uds-capability/mattermost/dev-dependency/mattermost-minio
-    ref: 0.0.2
+    ref: 0.1.2
 
   - name: mattermost-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/mattermost/dev-dependency/mattermost-postgres
-    ref: 0.0.3
+    ref: 0.1.2
 
   - name: mattermost
     repository: ghcr.io/defenseunicorns/uds-capability/mattermost
-    ref: 0.0.2
+    ref: 0.1.2
 
   # Nexus
   - name: nexus-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/nexus/dev-dependency/nexus-postgres
-    ref: 0.0.1
+    ref: 0.1.2
 
   - name: nexus
     repository: ghcr.io/defenseunicorns/uds-capability/nexus
-    ref: 0.0.4
+    ref: 0.1.2
 
   # Add all virtualservices as internal dns entries for auth callbacks
   - name: software-factory-idam-dns

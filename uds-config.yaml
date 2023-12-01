@@ -18,6 +18,8 @@ bundle:
           DOMAIN: "bigbang.dev"
           GITLAB_DB_NAME: "gitlabdb"
           GITLAB_DB_USERNAME: "gitlab"
+          GITLAB_PAGES_ENABLED: "false"
+          GITLAB_SIGNUP_ENABLED: "true"
       sonarqube:
         set:
           DOMAIN: "bigbang.dev"

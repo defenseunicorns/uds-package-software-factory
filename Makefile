@@ -1,14 +1,14 @@
 # The version of Zarf to use. To keep this repo as portable as possible the Zarf binary will be downloaded and added to
 # the build folder.
 # renovate: datasource=github-tags depName=defenseunicorns/zarf
-UDS_CLI_VERSION := v0.0.11-alpha
+UDS_CLI_VERSION := v0.3.1
 
-ZARF_VERSION := v0.30.1
+ZARF_VERSION := v0.31.3
 
 # The version of the build harness container to use
 BUILD_HARNESS_REPO := ghcr.io/defenseunicorns/build-harness/build-harness
 # renovate: datasource=docker depName=ghcr.io/defenseunicorns/build-harness/build-harness
-BUILD_HARNESS_VERSION := 1.10.2
+BUILD_HARNESS_VERSION := 1.14.2
 
 # Figure out which Zarf binary we should use based on the operating system we are on
 ZARF_BIN := zarf
@@ -179,7 +179,7 @@ build/idam-realm: | build ## Build idam-realm package
 	cd build && ./zarf package create ../packages/idam-realm/ --confirm --output-directory .
 
 build/idam-postgres: | build ## Build idam-postgres package
-	cd build && ./zarf package create ../packages/idam-postgres/ --confirm --output-directory .
+	cd build && ./zarf package create --skip-sbom ../packages/idam-postgres/ --confirm --output-directory .
 
 build/uds-bundle-software-factory: | build ## Build the software factory
 	cd build && ./uds create ../ --confirm

@@ -33,7 +33,7 @@ This is the early stages of a UDS Bundle we call the UDS Software Factory. This 
 ### Kubernetes Cluster
 
 - 1.26
-- Compute power that is comparable to the **[m6id.8xlarge](https://aws.amazon.com/ec2/instance-types/#:~:text=Up%20to%2010-,m6id.8xlarge,-32)** AWS instance type used in our E2E tests.
+- Compute power that is comparable to the **[m6id.12xlarge](https://aws.amazon.com/ec2/instance-types/#:~:text=Up%20to%2010-,m6id.8xlarge,-32)** AWS instance type used in our E2E tests.
 
 ## Documentation
 
@@ -43,4 +43,4 @@ This is the early stages of a UDS Bundle we call the UDS Software Factory. This 
 
 - Ensure the machine you are using has a valid kubecontext and has access to a sufficiently large cluster
 - Ensure uds-cli is present on your machine by running `uds version` and verify it matches the version in the [makefile](https://github.com/defenseunicorns/uds-package-software-factory/blob/main/Makefile#L4)
-- Run `uds bundle deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:<swf-version> --confirm` and replace `<swf-version>` with the [version of SWF](https://github.com/defenseunicorns/uds-package-software-factory/pkgs/container/uds-package%2Fsoftware-factory-demo) you need
+- Run `uds deploy oci://ghcr.io/defenseunicorns/uds-package/software-factory-demo:<swf-version> --confirm` and replace `<swf-version>` with the [version of SWF](https://github.com/defenseunicorns/uds-package-software-factory/pkgs/container/uds-package%2Fsoftware-factory-demo) you need
