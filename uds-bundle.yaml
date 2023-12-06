@@ -10,7 +10,7 @@ zarf-packages:
   # Zarf init
   - name: init
     repository: ghcr.io/defenseunicorns/packages/init
-    ref: v0.30.1
+    ref: v0.31.3
     optional-components:
       - git-server
 
@@ -131,20 +131,20 @@ zarf-packages:
   # Jira
   - name: jira-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/jira/dev-dependency/jira-postgres
-    ref: 0.1.2
+    ref: 0.1.3
 
   - name: jira
     repository: ghcr.io/defenseunicorns/uds-capability/jira
-    ref: 0.1.2
+    ref: 0.1.3
 
   # Confluence
   - name: confluence-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/confluence/dev-dependency/confluence-postgres
-    ref: 0.1.2
+    ref: 0.1.3
 
   - name: confluence
     repository: ghcr.io/defenseunicorns/uds-capability/confluence
-    ref: 0.1.2
+    ref: 0.1.3
 
    # Mattermost Operator with a Mattermost instance
   - name: mattermost-minio
