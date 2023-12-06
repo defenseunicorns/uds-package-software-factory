@@ -3,7 +3,7 @@ kind: UDSBundle
 metadata:
   name: software-factory-demo
   description: A UDS bundle for deploying a software factory to k3d for demonstration purposes NOT FOR PRODUCTION
-  version: 0.0.8
+  version: 0.0.9
   architecture: amd64
 
 zarf-packages:
