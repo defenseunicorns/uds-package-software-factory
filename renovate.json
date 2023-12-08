@@ -74,7 +74,7 @@
       "datasourceTemplate": "github-tags"
     },
     {
-      "fileMatch": [".*\/?zarf\\.ya?ml$"],
+      "fileMatch": [".*/?zarf\\.ya?ml$"],
       "matchStrings": [
         "-\\s+['\"](?<depName>[^:]+):(?<currentValue>.*)['\"]",
         "\\s*url:\\s+oci://(?<depName>[^:]+):(?<currentValue>.*)"
@@ -90,7 +90,28 @@
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}",
       "extractVersionTemplate": "{{#if extractVersion}}{{{extractVersion}}}{{else}}^(?<version>.*)${{/if}}"
+    },
+{
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "\\.github/workflows/oscal/config-swf-oscal-component\\.yaml"
+      ],
+      "matchStrings": [
+        "defenseunicorns/uds-capability-gitlab-runner@(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "defenseunicorns/uds-package-dubbd@(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "defenseunicorns/uds-capability-gitlab-@(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "defenseunicorns/uds-capability-sonarqube@(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "defenseunicorns/uds-capability-jira@(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "defenseunicorns/uds-capability-confluence@(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "defenseunicorns/uds-capability-mattermost-operator@(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "defenseunicorns/uds-capability-nexus@(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver"
     }
+  ]
+}
   ],
   "packageRules": [
     {

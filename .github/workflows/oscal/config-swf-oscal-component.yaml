@@ -1,0 +1,30 @@
+name: ./oscal-component.yaml # Name of the generated file
+metadata: # OSCAL-compliant metadata
+  title: UDS Package Software Factory
+  version: 0.0.1
+  oscal-version: 1.1.1
+  parties:
+    - uuid: f3cf70f8-ba44-4e55-9ea3-389ef24847d3
+      name: Defense Unicorns
+      links:
+        - href: https://defenseunicorns.com
+          rel: website
+      type: organization
+components: # Define paths on the local filesystem or remote paths in git repositories to OSCAL component definition files
+  remote:
+    - git: https://github.com/defenseunicorns/uds-package-dubbd@v0.14.0
+      path: ./defense-unicorns-distro/oscal-component.yaml
+    - git: https://github.com/defenseunicorns/uds-capability-gitlab@v0.1.8
+      path: oscal-component.yaml
+    - git: https://github.com/defenseunicorns/uds-capability-gitlab-runner@v0.1.2
+      path: oscal-component.yaml
+    - git: https://github.com/defenseunicorns/uds-capability-sonarqube@v0.1.2
+      path: oscal-component.yaml
+    - git: https://github.com/defenseunicorns/uds-capability-jira@v0.1.3
+      path: oscal-component.yaml
+    - git: https://github.com/defenseunicorns/uds-capability-confluence@v0.1.3
+      path: oscal-component.yaml
+    - git: https://github.com/defenseunicorns/uds-capability-mattermost-operator@v0.1.3
+      path: oscal-component.yaml
+    - git: https://github.com/defenseunicorns/uds-capability-nexus@v0.1.2
+      path: oscal-component.yaml
