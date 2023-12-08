@@ -74,7 +74,7 @@
       "datasourceTemplate": "github-tags"
     },
     {
-      "fileMatch": [".*/?zarf\\.ya?ml$"],
+      "fileMatch": [".*\/?zarf\\.ya?ml$"],
       "matchStrings": [
         "-\\s+['\"](?<depName>[^:]+):(?<currentValue>.*)['\"]",
         "\\s*url:\\s+oci://(?<depName>[^:]+):(?<currentValue>.*)"
