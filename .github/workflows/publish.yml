@@ -80,10 +80,10 @@ jobs:
         uses: supplypike/setup-bin@v3
         with:
           # renovate: uds-cli-uri datasource=github-tags depName=defenseunicorns/uds-cli
-          uri: 'https://github.com/defenseunicorns/uds-cli/releases/download/v0.5.0/uds-cli_v0.5.0_Linux_amd64 '
+          uri: 'https://github.com/defenseunicorns/uds-cli/releases/download/v0.5.1/uds-cli_v0.5.1_Linux_amd64 '
           name: 'uds'
           # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
-          version: 'v0.5.0'
+          version: 'v0.5.1'
 
       - name: Login to GHCR
         uses: docker/login-action@v2
@@ -102,12 +102,13 @@ jobs:
       - name: Build Software Factory Dependencies Packages
         run: |
           mkdir -p build
-          zarf package create packages/idam-dns       --confirm --no-progress --output-directory build
-          zarf package create packages/idam-gitlab    --confirm --no-progress --output-directory build
-          zarf package create packages/idam-sonarqube --confirm --no-progress --output-directory build
-          zarf package create packages/idam-realm     --confirm --no-progress --output-directory build
-          zarf package create packages/idam-postgres  --confirm --no-progress --output-directory build
-          zarf package create packages/namespaces     --confirm --no-progress --output-directory build
+          zarf package create packages/idam-dns                          --confirm --no-progress --output-directory build
+          zarf package create packages/idam-gitlab                       --confirm --no-progress --output-directory build
+          zarf package create packages/idam-sonarqube                    --confirm --no-progress --output-directory build
+          zarf package create packages/idam-realm                        --confirm --no-progress --output-directory build
+          zarf package create packages/idam-postgres                     --confirm --no-progress --output-directory build
+          zarf package create packages/namespaces                        --confirm --no-progress --output-directory build
+          zarf package create packages/additional-kyverno-exceptions     --confirm --no-progress --output-directory build
 
       - name: Build software factory bundle
         run: uds create --confirm --no-progress
