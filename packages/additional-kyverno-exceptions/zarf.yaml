@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: additional-kyverno-exceptions
+  version: "0.0.1"
+  architecture: amd64
+
+components:
+  - name: sonarqube-idam-kyverno-policy-exception
+    required: true
+    manifests:
+      - name: sonarqube-idam-kyverno-policy-exception
+        namespace: keycloak
+        files:
+          - sonarqube/non-root-user.yaml
+  - name: jira-kyverno-policy-exception
+    required: true
+    manifests:
+      - name: jira-kyverno-policy-exception
+        namespace: jira
+        files:
+          - jira/non-root-user.yaml

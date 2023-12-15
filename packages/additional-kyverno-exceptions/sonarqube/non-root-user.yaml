@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v2alpha1
+kind: PolicyException
+metadata:
+  name: sonarqube-idam-exceptions
+  namespace: keycloak
+spec:
+  exceptions:
+  - policyName: require-non-root-user
+    ruleNames:
+    - non-root-user
+  - policyName: restrict-host-path-write
+    ruleNames:
+    - require-readonly-hostpath
+  match:
+    any:
+    - resources:
+        kinds:
+        - Pod
+        namespaces:
+        - keycloak
+        names:
+        - saml-cert

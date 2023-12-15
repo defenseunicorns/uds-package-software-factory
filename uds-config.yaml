@@ -1,46 +1,36 @@
-bundle:
-  deploy:
-    zarf-packages:
-      dubbd-k3d:
-        set:
-          DOMAIN: "bigbang.dev"
-      software-factory-idam-gitlab:
-        set:
-          DOMAIN: "bigbang.dev"
-      software-factory-idam-realm:
-        set:
-          DOMAIN: "bigbang.dev"
-      uds-idam:
-        set:
-          DOMAIN: "bigbang.dev"
-      gitlab:
-        set:
-          DOMAIN: "bigbang.dev"
-          GITLAB_DB_NAME: "gitlabdb"
-          GITLAB_DB_USERNAME: "gitlab"
-          GITLAB_PAGES_ENABLED: "false"
-          GITLAB_SIGNUP_ENABLED: "true"
-      sonarqube:
-        set:
-          DOMAIN: "bigbang.dev"
-          SONARQUBE_IDAM_REALM_URL: "https://keycloak.bigbang.dev/auth/realms/baby-yoda"
-          SONARQUBE_DB_NAME: "sonarqubedb"
-          SONARQUBE_DB_USERNAME: "sonarqube"
-      jira:
-        set:
-          DOMAIN: "bigbang.dev"
-          JIRA_DB_NAME: "jiradb"
-          JIRA_DB_USERNAME: "jira"
-      confluence:
-        set:
-          DOMAIN: "bigbang.dev"
-          CONFLUENCE_DB_NAME: "confluencedb"
-          CONFLUENCE_DB_USERNAME: "confluence"
-      mattermost:
-        set:
-          DOMAIN: "bigbang.dev"
-      nexus:
-        set:
-          DOMAIN: "bigbang.dev"
-          NEXUS_DB_NAME: "nexusdb"
-          NEXUS_DB_USERNAME: "nexus"
+options:
+  log_level: info
+variables:
+  dubbd-k3d:
+    DOMAIN: "bigbang.dev"
+  software-factory-idam-gitlab:
+    DOMAIN: "bigbang.dev"
+  software-factory-idam-realm:
+    DOMAIN: "bigbang.dev"
+  uds-idam:
+    DOMAIN: "bigbang.dev"
+  gitlab:
+    DOMAIN: "bigbang.dev"
+    GITLAB_DB_NAME: "gitlabdb"
+    GITLAB_DB_USERNAME: "gitlab"
+    GITLAB_PAGES_ENABLED: "false"
+    GITLAB_SIGNUP_ENABLED: "true"
+  sonarqube:
+    DOMAIN: "bigbang.dev"
+    SONARQUBE_IDAM_REALM_URL: "https://keycloak.bigbang.dev/auth/realms/baby-yoda"
+    SONARQUBE_DB_NAME: "sonarqubedb"
+    SONARQUBE_DB_USERNAME: "sonarqube"
+  jira:
+    DOMAIN: "bigbang.dev"
+    JIRA_DB_NAME: "jiradb"
+    JIRA_DB_USERNAME: "jira"
+  confluence:
+    DOMAIN: "bigbang.dev"
+    CONFLUENCE_DB_NAME: "confluencedb"
+    CONFLUENCE_DB_USERNAME: "confluence"
+  mattermost:
+    DOMAIN: "bigbang.dev"
+  nexus:
+    DOMAIN: "bigbang.dev"
+    NEXUS_DB_NAME: "nexusdb"
+    NEXUS_DB_USERNAME: "nexus"
