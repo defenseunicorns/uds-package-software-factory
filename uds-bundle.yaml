@@ -79,19 +79,19 @@ packages:
   # Gitlab
   - name: gitlab-redis
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-redis
-    ref: 0.1.10
+    ref: 0.1.11
 
   - name: gitlab-minio
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-minio
-    ref: 0.1.10
+    ref: 0.1.11
 
   - name: gitlab-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-postgres
-    ref: 0.1.10
+    ref: 0.1.11
 
   - name: gitlab
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab
-    ref: 0.1.10
+    ref: 0.1.11
     imports:
       - name: GITLAB_IDAM_ENABLED
         package: software-factory-idam-gitlab
