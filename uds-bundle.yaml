@@ -136,11 +136,11 @@ packages:
   # Jira
   - name: jira-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/jira/dev-dependency/jira-postgres
-    ref: 0.1.4
+    ref: 0.1.5
 
   - name: jira
     repository: ghcr.io/defenseunicorns/uds-capability/jira
-    ref: 0.1.4
+    ref: 0.1.5
 
   # Confluence
   - name: confluence-postgres
