@@ -17,7 +17,7 @@ packages:
   # Defense Unicorns Big Bang Distro
   - name: dubbd-k3d
     repository: ghcr.io/defenseunicorns/packages/dubbd-k3d
-    ref: 0.15.0
+    ref: 0.16.0
 
   # Namespace pre-reqs for swf capabilities
   - name: software-factory-namespaces
@@ -79,19 +79,19 @@ packages:
   # Gitlab
   - name: gitlab-redis
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-redis
-    ref: 0.1.14
+    ref: 0.1.15
 
   - name: gitlab-minio
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-minio
-    ref: 0.1.11
+    ref: 0.1.15
 
   - name: gitlab-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab/dev-dependency/gitlab-postgres
-    ref: 0.1.11
+    ref: 0.1.15
 
   - name: gitlab
     repository: ghcr.io/defenseunicorns/uds-capability/gitlab
-    ref: 0.1.14
+    ref: 0.1.15
     imports:
       - name: GITLAB_IDAM_ENABLED
         package: software-factory-idam-gitlab
@@ -112,11 +112,11 @@ packages:
   # Sonarqube
   - name: sonarqube-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/sonarqube/dev-dependency/sonarqube-postgres
-    ref: 0.1.2
+    ref: 0.1.3
 
   - name: sonarqube
     repository: ghcr.io/defenseunicorns/uds-capability/sonarqube
-    ref: 0.1.2
+    ref: 0.1.3
     imports:
       - name: SONARQUBE_IDAM_ENABLED
         package: software-factory-idam-sonarqube
@@ -136,20 +136,20 @@ packages:
   # Jira
   - name: jira-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/jira/dev-dependency/jira-postgres
-    ref: 0.1.3
+    ref: 0.1.4
 
   - name: jira
     repository: ghcr.io/defenseunicorns/uds-capability/jira
-    ref: 0.1.3
+    ref: 0.1.4
 
   # Confluence
   - name: confluence-postgres
     repository: ghcr.io/defenseunicorns/uds-capability/confluence/dev-dependency/confluence-postgres
-    ref: 0.1.3
+    ref: 0.1.4
 
   - name: confluence
     repository: ghcr.io/defenseunicorns/uds-capability/confluence
-    ref: 0.1.3
+    ref: 0.1.4
 
    # Mattermost Operator with a Mattermost instance
   - name: mattermost-minio
