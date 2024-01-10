@@ -1,0 +1,35 @@
+name: lula-lint
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    # We need -e -o pipefail for consistency with GitHub Actions' default behavior
+    shell: bash -e -o pipefail {0}
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "oscal-component.yaml"
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repo and setup the tooling for this job
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: pull
+    steps:
+      - name: Lula Lint
+        uses: ./.github/actions/lula
+        with:
+          oscal-path: "/uds-package-software-factory/oscal-component.yaml"
