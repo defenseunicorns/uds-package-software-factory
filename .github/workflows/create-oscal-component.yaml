@@ -27,7 +27,7 @@ jobs:
       - name: Uses Go
         uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
-          go-version: latest
+          go-version: stable
 
       - name: Node and NPM
         uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
