@@ -1,0 +1,23 @@
+name: Lula
+
+description: Runs Lula Lint to validate OSCAL Schema
+
+inputs:
+  oscal-path:
+    description: Path to OSCAL
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # Update GitHub status for pending pipeline run
+    - name: Install Lula
+      shell: bash -e -o pipefail {0}
+      run: |
+        curl -L -o lula "https://github.com/defenseunicorns/lula/releases/download/v0.0.1/lula_v0.0.1_Linux_amd64"
+        chmod +x lula
+    
+    - name: Lula Lint
+      shell: bash -e -o pipefail {0}
+      run: | 
+        ./lula tools lint -f ${{  inputs.oscal-path  }}

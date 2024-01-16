@@ -1,0 +1,34 @@
+name: lula-lint
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    # We need -e -o pipefail for consistency with GitHub Actions' default behavior
+    shell: bash -e -o pipefail {0}
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "oscal-component.yaml"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repo and setup the tooling for this job
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Lula Setup
+        uses: defenseunicorns/lula-action/setup@095636b7880051e11b05f10a582fdd911526161c # Commit Tag
+
+      - name: Lula Lint
+        uses: defenseunicorns/lula-action/lint@095636b7880051e11b05f10a582fdd911526161c # Commit Tag
+        with:
+          oscal-target: "oscal-component.yaml"

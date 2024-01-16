@@ -1,0 +1,70 @@
+name: CI SWF OSCAL
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - ".gitignore"
+      - "LICENSE"
+      - "**/*.md"
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  create-and-update-swf-oscal:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ github.head_ref }}
+
+
+      - name: Uses Go
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+        with:
+          go-version: stable
+
+      - name: Node and NPM
+        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
+        with:
+          node-version: latest
+
+      - name: Download Component Generator
+        run: |
+          git clone https://github.com/defenseunicorns/component-generator.git
+          cd component-generator/
+          make build
+          cd ..
+
+      - name: Create SWF OSCAL-Component File
+        run: ./component-generator/bin/component-generator aggregate --input .github/workflows/oscal/config-swf-oscal-component.yaml
+
+      - name: Clean Up
+        run: rm -rf component-generator
+
+      - name: Yaml Formatter and Cleanup
+        run: |
+          npm install --save-dev --save-exact prettier
+          npx prettier oscal-component.yaml --write
+          npm uninstall --save-dev prettier
+          rm -rf node_modules/
+          rm package.json
+          rm package-lock.json
+
+      - name: Lula Setup
+        uses: defenseunicorns/lula-action/setup@095636b7880051e11b05f10a582fdd911526161c # Commit Tag
+
+      - name: Lula Lint
+        uses: defenseunicorns/lula-action/lint@095636b7880051e11b05f10a582fdd911526161c # Commit Tag
+        with:
+          oscal-target: "oscal-component.yaml"
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d # v5.0.0
+        with:
+          skip_checkout: true
