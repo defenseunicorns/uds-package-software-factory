@@ -16,20 +16,19 @@ on:
       - "oscal-component.yaml"
 
 jobs:
-  pull:
+  lint:
     runs-on: ubuntu-latest
     steps:
       # Checkout the repo and setup the tooling for this job
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
-  lint:
-    runs-on: ubuntu-latest
-    needs: pull
-    steps:
+      - name: Lula Setup
+        uses: defenseunicorns/lula-action/setup@095636b7880051e11b05f10a582fdd911526161c # Commit Tag
+
       - name: Lula Lint
-        uses: ./.github/actions/lula
+        uses: defenseunicorns/lula-action/lint@095636b7880051e11b05f10a582fdd911526161c # Commit Tag
         with:
-          oscal-path: "/uds-package-software-factory/oscal-component.yaml"
+          oscal-target: "oscal-component.yaml"
