@@ -1,7 +1,7 @@
-golang 1.21.0
-golangci-lint 1.54.1
-pre-commit 3.3.3
-terraform 1.5.5
-tflint 0.47.0
-tfsec 1.28.1
-sops 3.7.3
+golang 1.22.1
+golangci-lint 1.57.1
+pre-commit 3.7.0
+terraform 1.7.5
+tflint 0.50.3
+tfsec 1.28.5
+sops 3.8.1
